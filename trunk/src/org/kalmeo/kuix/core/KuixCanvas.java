@@ -31,6 +31,7 @@ import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.GameCanvas;
 
 import org.kalmeo.kuix.core.focus.FocusManager;
+import org.kalmeo.kuix.transition.Transition;
 import org.kalmeo.kuix.util.Metrics;
 import org.kalmeo.kuix.widget.Desktop;
 import org.kalmeo.util.NumberUtil;
@@ -65,6 +66,10 @@ public final class KuixCanvas extends GameCanvas {
 	// Double buffering image for devices that doesn't implement it natively
 	private Image imageBuffer = null;
 
+	// Transition stuff
+	private Transition transition;
+	private boolean transitionRunning = false;
+	
 	// Last pointer drag status
 	private int pointerPressedX = 0;
 	private int pointerPressedY = 0;
@@ -136,6 +141,17 @@ public final class KuixCanvas extends GameCanvas {
 		this.debugInfosKuixKeyCode = debugInfosKuixKeyCode;
 	}
 
+	/**
+	 * Define the next repaint transition. The transition delay depends on the
+	 * transition implementation.
+	 * 
+	 * @param transition
+	 */
+	public void setTransition(Transition transition) {
+		this.transition = transition;
+		transitionRunning = false;
+	}
+	
 	/**
 	 * Initialize the Canvas
 	 */
@@ -386,13 +402,8 @@ public final class KuixCanvas extends GameCanvas {
 		needToChangeSize = false;
 		desiredWidth = -1;
 		desiredHeight = -1;
-		if (isDoubleBuffered()) {
-			imageBuffer = null;
-			imageBufferGraphics = null;
-		} else {
-			imageBuffer = Image.createImage(w, h);
-			imageBufferGraphics = imageBuffer.getGraphics();
-		}
+		imageBuffer = Image.createImage(w, h);
+		imageBufferGraphics = imageBuffer.getGraphics();
 		canvasGraphics = getGraphics();
 		if (desktop != null) {
 			desktop.setBounds(0, 0, w, h);
@@ -413,22 +424,27 @@ public final class KuixCanvas extends GameCanvas {
 	 */
 	private void forceRepaint() {
 		
-		if (imageBufferGraphics != null) {
-			// Define clip rect region
-			if (!repaintRegion.isEmpty()) {
-				imageBufferGraphics.setClip(repaintRegion.x, repaintRegion.y, repaintRegion.width, repaintRegion.height);
+		// Define clip rect region
+		if (!repaintRegion.isEmpty()) {
+			imageBufferGraphics.setClip(repaintRegion.x, repaintRegion.y, repaintRegion.width, repaintRegion.height);
+		}
+
+		if (transition != null) {
+			if (!transitionRunning) {
+				Image oldImage = Image.createImage(imageBuffer);
+				desktop.paintImpl(imageBufferGraphics);
+				transition.init(oldImage, imageBuffer);
+				transitionRunning = true;
 			}
+			if (transition.process(canvasGraphics)) {
+				transition = null;
+				transitionRunning = false;
+			}
+		} else {
 			// Repaint desktop
 			desktop.paintImpl(imageBufferGraphics);
 			// Paint buffured image
 			canvasGraphics.drawImage(imageBuffer, 0, 0, 0);
-		} else {
-			// Define clip rect region
-			if (!repaintRegion.isEmpty()) {
-				canvasGraphics.setClip(repaintRegion.x, repaintRegion.y, repaintRegion.width, repaintRegion.height);
-			}
-			// Repaint desktop
-			desktop.paintImpl(canvasGraphics);
 		}
 		repaintRegion.setBounds(0, 0, 0, 0);
 		
@@ -439,7 +455,7 @@ public final class KuixCanvas extends GameCanvas {
 		
 		flushGraphics();
 		
-		needToRepaint = false;
+		needToRepaint = false || transitionRunning;
 	}
 	
 	/**

@@ -24,6 +24,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import org.kalmeo.kuix.widget.Widget;
+import org.kalmeo.util.Filter;
 import org.kalmeo.util.LinkedList;
 import org.kalmeo.util.LinkedListItem;
 
@@ -276,6 +277,35 @@ public class DataProvider implements LinkedListItem {
 		}
 	}
 
+	/**
+	 * Search a {@link LinkedListItem} in {@link LinkedList} and return <code>true</code> if it's in.
+	 * The value linked to <code>property</code> must be a {@link LinkedList}. 
+	 * 
+	 * @param property the property where <code>item</code> may be found
+	 * @param item the {@link LinkedListItem} to search
+	 * @return <code>true</code> if <code>item</code> exist in {@link LinkedList} <code>property</code>, <code>false</code> else.
+	 */
+	public boolean contains(String property, final DataProvider item) {
+		if (item != null && itemsValues != null && itemsValues.containsKey(property)) {
+			Object tmpItems = itemsValues.get(property);
+			if (tmpItems instanceof LinkedList) {
+				LinkedList items = ((LinkedList) tmpItems);
+				if (items.find(new Filter() {
+					public int accept(Object obj) {
+						if (obj.equals(item)) {
+							return 1;
+						}
+						return 0;
+					}
+					
+				}) != null) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Sort <code>property</code> items list.
 	 * 

@@ -23,6 +23,7 @@ package org.kalmeo.kuix.widget;
 
 import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.kuix.core.KuixConstants;
+import org.kalmeo.kuix.core.KuixMIDlet;
 import org.kalmeo.kuix.core.focus.FocusManager;
 import org.kalmeo.kuix.core.focus.ScreenFocusManager;
 import org.kalmeo.kuix.layout.BorderLayout;
@@ -32,6 +33,7 @@ import org.kalmeo.kuix.layout.Layout;
 import org.kalmeo.kuix.layout.LayoutData;
 import org.kalmeo.kuix.layout.StaticLayout;
 import org.kalmeo.kuix.layout.StaticLayoutData;
+import org.kalmeo.kuix.transition.Transition;
 import org.kalmeo.kuix.util.Alignment;
 import org.kalmeo.kuix.util.Gap;
 import org.kalmeo.kuix.util.Insets;
@@ -59,11 +61,25 @@ import org.kalmeo.util.BooleanUtil;
  * 		<td> Define the screen title. The value is a string text. </td>
  *	</tr>
  * 	<tr class="TableRowColor">
+ * 		<td> <code>transition</code> </th>
+ * 		<td> <code>No</code> </td>
+ * 		<td> <code>Yes</code> </td>
+ * 		<td> <code>No</code> </td>
+ * 		<td> Define the screen appear transition. Default value is <code>null</code>. The value is a transition string (e.g. <code>slide(left)</code>). </td>
+ *	</tr>
+ * 	<tr class="TableRowColor">
  * 		<td> <code>focusloop</code> </th>
  * 		<td> <code>No</code> </td>
  * 		<td> <code>Yes</code> </td>
  * 		<td> <code>No</code> </td>
  * 		<td> Define the screen's focus manager 'loop' parameter. Default value is <code>false</code>. </td>
+ *	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<td> <code>firstisleft</code> </th>
+ * 		<td> <code>No</code> </td>
+ * 		<td> <code>Yes</code> </td>
+ * 		<td> <code>No</code> </td>
+ * 		<td> Define if the first menu is on the left or the right. </td>
  *	</tr>
  * 	<tr class="TableRowColor">
  * 		<td colspan="5"> Inherited attributes : see {@link AbstractActionWidget} </td>
@@ -316,6 +332,9 @@ public class Screen extends Widget {
 	// Text widget for title
 	private Text title;
 	
+	// The facultative transition used when this screen appear
+	private Transition transition;
+	
 	// Used to determine if firstMenu is on the left and then the secondMenu onthe right
 	private boolean firstIsLeft = true;
 	
@@ -364,6 +383,10 @@ public class Screen extends Widget {
 	public boolean setAttribute(String name, String value) {
 		if (KuixConstants.TITLE_ATTRIBUTE.equals(name)) {
 			setTitle(value);
+			return true;
+		}
+		if (KuixConstants.TRANSITION_ATTRIBUTE.equals(name)) {
+			setTransition(Kuix.getConverter().convertTransition(value));
 			return true;
 		}
 		if (KuixConstants.FOCUS_LOOP_ATTRIBUTE.equals(name)) {
@@ -463,6 +486,20 @@ public class Screen extends Widget {
 		}
 	}
 	
+	/**
+	 * @return the transition
+	 */
+	public Transition getTransition() {
+		return transition;
+	}
+
+	/**
+	 * @param transition the transition to set
+	 */
+	public void setTransition(Transition transition) {
+		this.transition = transition;
+	}
+
 	/**
 	 * Create the internal topBar instance if it doesn't exist and return it.
 	 * 
@@ -594,6 +631,16 @@ public class Screen extends Widget {
 		}
 		if (secondMenu != null) {
 			secondMenu.setVisible(true);
+		}
+	}
+	
+	/**
+	 * Set this {@link Screen} has current.
+	 */
+	public void setCurrent() {
+		try {
+			KuixMIDlet.getDefault().getCanvas().getDesktop().setCurrentScreen(this);
+		} catch (Exception e) {
 		}
 	}
 	
