@@ -181,7 +181,7 @@ public class FocusManager {
 		if (otherFocus != null) {
 			ScrollContainer scrollContainer = findFirstScrollContainerParent(otherFocus);
 			if (scrollContainer != null) {
-				if (!scrollContainer.bestScrollToChild(otherFocus, true)) {
+				if (!scrollContainer.bestScrollToChild(otherFocus, startWidget != null)) {
 					return;
 				}
 			}
@@ -333,13 +333,15 @@ public class FocusManager {
 			case KuixConstants.KEY_PRESSED_EVENT_TYPE:
 			case KuixConstants.KEY_REPEATED_EVENT_TYPE: {
 				
-				Screen screen = rootWidget.getDesktop().getCurrentScreen();
-				if (screen != null) {
-					Menu menu = screen.getScreenMenu(kuixKeyCode);
-					if (menu != null) {
-						menu.processActionEvent();
+				if (kuixKeyCode == KuixConstants.KUIX_KEY_SOFT_LEFT || kuixKeyCode == KuixConstants.KUIX_KEY_SOFT_RIGHT) {
+					Screen screen = rootWidget.getDesktop().getCurrentScreen();
+					if (screen != null) {
+						Menu menu = screen.getScreenMenu(kuixKeyCode);
+						if (menu != null) {
+							menu.processActionEvent();
+						}
+						return true;
 					}
-					return true;
 				}
 				break;
 				

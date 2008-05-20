@@ -33,6 +33,7 @@ import org.kalmeo.kuix.layout.Layout;
 import org.kalmeo.kuix.layout.LayoutData;
 import org.kalmeo.kuix.layout.StaticLayout;
 import org.kalmeo.kuix.layout.StaticLayoutData;
+import org.kalmeo.kuix.transition.Transition;
 import org.kalmeo.kuix.util.Insets;
 
 /**
@@ -335,6 +336,13 @@ public class Desktop extends Widget {
 			this.screen.remove();
 		}
 		this.screen = screen;
+		
+		// Check transition
+		Transition transition = screen.getTransition();
+		if (transition != null) {
+			getCanvas().setTransition(transition);
+		}
+		
 		if (screen != null) {
 			super.add(screen);
 		}

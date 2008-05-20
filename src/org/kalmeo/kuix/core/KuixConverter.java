@@ -39,6 +39,8 @@ import org.kalmeo.kuix.layout.Layout;
 import org.kalmeo.kuix.layout.StaticLayout;
 import org.kalmeo.kuix.layout.StaticLayoutData;
 import org.kalmeo.kuix.layout.TableLayout;
+import org.kalmeo.kuix.transition.SlideTransition;
+import org.kalmeo.kuix.transition.Transition;
 import org.kalmeo.kuix.util.Alignment;
 import org.kalmeo.kuix.util.Color;
 import org.kalmeo.kuix.util.Gap;
@@ -244,28 +246,44 @@ public class KuixConverter {
 	
 	/**
 	 * @param rawData
+	 * @return The converted {@link Transition}
+	 */
+	public Transition convertTransition(String rawData) {
+		if (isNone(rawData)) {
+			return null;
+		}
+		String rawParams = null;
+		if ((rawParams = extractRawParams("slide", rawData)) != null) {
+			Alignment alignment = convertAlignment(rawParams);
+			return new SlideTransition(alignment);
+		}
+		throw new IllegalArgumentException("Bad transition value");
+	}
+	
+	/**
+	 * @param rawData
 	 * @return The converted {@link Color}
 	 */
 	protected Color convertColor(String rawData) {
 		if (isNone(rawData)) {
 			return null;
 		}
-		if (rawData.startsWith("#")) {
+		if (rawData != null && rawData.startsWith("#")) {
 			return new Color(Integer.parseInt(rawData.substring(1), 16));
 		}
-		if (rawData.equals("red")) {
+		if ("red".equals(rawData)) {
 			return Color.RED;
 		}
-		if (rawData.equals("green")) {
+		if ("green".equals(rawData)) {
 			return Color.GREEN;
 		}
-		if (rawData.equals("blue")) {
+		if ("blue".equals(rawData)) {
 			return Color.BLUE;
 		}
-		if (rawData.equals("white")) {
+		if ("white".equals(rawData)) {
 			return Color.WHITE;
 		}
-		if (rawData.equals("black")) {
+		if ("black".equals(rawData)) {
 			return Color.BLACK;
 		}
 		throw new IllegalArgumentException("Bad color value");
