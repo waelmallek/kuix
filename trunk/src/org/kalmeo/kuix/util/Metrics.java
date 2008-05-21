@@ -98,8 +98,8 @@ public class Metrics {
 			int bottom = Math.max(this.y + this.height, y + height);
 			this.x = Math.min(this.x, x);
 			this.y = Math.min(this.y, y);
-			this.width = right - x;
-			this.height = bottom - y;
+			this.width = right - this.x;
+			this.height = bottom - this.y;
 		}
 	}
 

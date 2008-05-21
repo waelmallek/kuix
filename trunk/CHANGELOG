@@ -4,6 +4,7 @@
 
 - Bug fix : Text widget new respects margin to draw text value
 - Bug fix : Remove a NullPointerException in TextField.getDisplayedText() when text was null
+- Bug fix : Repaint region is now correctly computed in ScrollContainer widget
 
 - Add Screen.setCurrent() method to set the screen as current Desktop screen
 - Add animated transitions (like slide) on screen. The transition is executed when a screen appear. You can implements your own transitions. Screen's transition is defined via CSS with a new *transition* style property.
