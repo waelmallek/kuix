@@ -61,13 +61,6 @@ import org.kalmeo.util.BooleanUtil;
  * 		<td> Define the screen title. The value is a string text. </td>
  *	</tr>
  * 	<tr class="TableRowColor">
- * 		<td> <code>transition</code> </th>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the screen appear transition. Default value is <code>null</code>. The value is a transition string (e.g. <code>slide(left)</code>). </td>
- *	</tr>
- * 	<tr class="TableRowColor">
  * 		<td> <code>focusloop</code> </th>
  * 		<td> <code>No</code> </td>
  * 		<td> <code>Yes</code> </td>
@@ -107,6 +100,12 @@ import org.kalmeo.util.BooleanUtil;
  * 		<td> <code>bld(center)</code> </td>
  * 		<td> <code>No</code> </td>
  * 		<td> <b>Uneditable</b>, see {@link Widget} </td>
+ *	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<td> <code>transition</code> </th>
+ * 		<td> <code>none</code> </td>
+ * 		<td> <code>No</code> </td>
+ * 		<td> Define the screen's appear transition. Default value is <code>none</code>. The value is a transition string (e.g. <code>slide(left)</code>). </td>
  *	</tr>
  * 	<tr class="TableRowColor">
  * 		<td colspan="4"> Inherited style properties : see {@link Widget} </td>
@@ -332,9 +331,6 @@ public class Screen extends Widget {
 	// Text widget for title
 	private Text title;
 	
-	// The facultative transition used when this screen appear
-	private Transition transition;
-	
 	// Used to determine if firstMenu is on the left and then the secondMenu onthe right
 	private boolean firstIsLeft = true;
 	
@@ -383,10 +379,6 @@ public class Screen extends Widget {
 	public boolean setAttribute(String name, String value) {
 		if (KuixConstants.TITLE_ATTRIBUTE.equals(name)) {
 			setTitle(value);
-			return true;
-		}
-		if (KuixConstants.TRANSITION_ATTRIBUTE.equals(name)) {
-			setTransition(Kuix.getConverter().convertTransition(value));
 			return true;
 		}
 		if (KuixConstants.FOCUS_LOOP_ATTRIBUTE.equals(name)) {
@@ -449,6 +441,17 @@ public class Screen extends Widget {
 		return Widget.DEFAULT_GAP;
 	}
 
+	/**
+	 * @return the transition
+	 */
+	public Transition getTransition() {
+		Object transition = getStylePropertyValue(KuixConstants.TRANSITION_STYLE_PROPERTY, false);
+		if (transition != null) {
+			return (Transition) transition;
+		}
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#getDefaultStylePropertyValue(java.lang.String)
 	 */
@@ -486,20 +489,6 @@ public class Screen extends Widget {
 		}
 	}
 	
-	/**
-	 * @return the transition
-	 */
-	public Transition getTransition() {
-		return transition;
-	}
-
-	/**
-	 * @param transition the transition to set
-	 */
-	public void setTransition(Transition transition) {
-		this.transition = transition;
-	}
-
 	/**
 	 * Create the internal topBar instance if it doesn't exist and return it.
 	 * 
