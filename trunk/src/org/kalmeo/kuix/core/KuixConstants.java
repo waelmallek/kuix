@@ -119,7 +119,6 @@ public interface KuixConstants {
 	public static final String DATAPROVIDER_ATTRIBUTE 						= "dataprovider";
 	public static final String FOCUS_LOOP_ATTRIBUTE 						= "focusloop";
 	public static final String FIRST_IS_LEFT_ATTRIBUTE 						= "firstisleft";
-	public static final String TRANSITION_ATTRIBUTE 						= "transition";
 	
 	public static final String ON_FOCUS_ATTRIBUTE 							= "onfocus";
 	public static final String ON_LOST_FOCUS_ATTRIBUTE 						= "onlostfocus";
@@ -151,6 +150,7 @@ public interface KuixConstants {
 	public static final String SPAN_STYLE_PROPERTY 							= "span";
 	public static final String WEIGHT_STYLE_PROPERTY 						= "weight";
 	public static final String ALIGN_STYLE_PROPERTY 						= "align";
+	public static final String TRANSITION_STYLE_PROPERTY					= "transition";
 	
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Internal style classes

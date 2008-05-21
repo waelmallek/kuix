@@ -241,6 +241,11 @@ public class KuixConverter {
 			return convertIntArray(rawValue, 2, " ");
 		}
 		
+		// Transition
+		if (KuixConstants.TRANSITION_STYLE_PROPERTY.equals(name)) {
+			return convertTransition(rawValue);
+		}
+		
 		throw new IllegalArgumentException("Unknow style name " + name);
 	}
 	
