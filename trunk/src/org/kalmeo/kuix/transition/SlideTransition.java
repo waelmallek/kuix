@@ -58,7 +58,7 @@ public class SlideTransition implements Transition {
 		this.newImage = newImage;
 		
 		// Init offsets
-		yOffset = 0;
+		xOffset = 0;
 		yOffset = 0;
 		if (direction.isLeft()) {
 			xOffset = -newImage.getWidth();
@@ -78,7 +78,7 @@ public class SlideTransition implements Transition {
 	public boolean process(Graphics g) {
 		xOffset = xOffset / 2;
 		yOffset = yOffset / 2;
-		g.drawImage(oldImage, 0, 0, 0);
+		g.drawImage(oldImage, xOffset, 0, 0);
 		g.drawImage(newImage, xOffset, yOffset, 0);
 		return xOffset == 0 && yOffset == 0;
 	}
