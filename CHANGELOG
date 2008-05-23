@@ -7,7 +7,7 @@
 - Bug fix : Repaint region is now correctly computed in ScrollContainer widget
 
 - Add Screen.setCurrent() method to set the screen as current Desktop screen
-- Add animated transitions (like slide) on screen. The transition is executed when a screen appear. You can implements your own transitions. Screen's transition is defined via CSS with a new *transition* style property.
+- Add animated transitions (like slide or fade) on screen. The transition is executed when a screen appear. You can implements your own transitions. Screen's transition is defined via CSS with a new *transition* style property.
 
 - Focus navigation was rewrited : 
   - Widget.getNextFocus(...) and Widget.getPreviousFocus(...) was replaced by Widget.getOtherFocus(...)
