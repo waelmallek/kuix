@@ -24,28 +24,33 @@ package org.kalmeo.kuix.transition;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
-import org.kalmeo.kuix.util.Alignment;
+import org.kalmeo.util.worker.Worker;
 
 /**
  * @author bbeaulant
  */
-public class SlideTransition implements Transition {
+public class FadeTransition implements Transition {
 
-	private Alignment direction;
+	private int alphaIncrement;
+	private int argbIncrement;
 	
-	protected Image oldImage;
-	protected Image newImage;
+	private Image newImage;
 	
-	private int xOffset;
-	private int yOffset;
+	private int[] oldRgb;
+	private int oldImageWidth;
+	private int oldImageHeight;
+	
+	private int frameIndex = 0;
 	
 	/**
-	 * Construct a {@link SlideTransition}
+	 * Construct a {@link FadeTransition}
 	 *
-	 * @param direction
+	 * @param duration the transition duraction in milliseconds
 	 */
-	public SlideTransition(Alignment direction) {
-		this.direction = direction;
+	public FadeTransition(int duration) {
+		int frameDuration = Worker.instance.getFrameDuration();
+		alphaIncrement = 0xFF / (duration / frameDuration);
+		argbIncrement = alphaIncrement << 24;
 	}
 
 	/* (non-Javadoc)
@@ -53,22 +58,13 @@ public class SlideTransition implements Transition {
 	 */
 	public void init(Image oldImage, Image newImage) {
 		
-		// Save images
-		this.oldImage = oldImage;
-		this.newImage = newImage;
+		oldImageWidth = oldImage.getWidth();
+		oldImageHeight = oldImage.getHeight();
+		oldRgb = new int[oldImageWidth * oldImageHeight];
+		oldImage.getRGB(oldRgb, 0, oldImageWidth, 0, 0, oldImageWidth, oldImageHeight);
 		
-		// Init offsets
-		xOffset = 0;
-		yOffset = 0;
-		if (direction.isLeft()) {
-			xOffset = -newImage.getWidth();
-		} else if (direction.isRight()) {
-			xOffset = newImage.getWidth();
-		} else if (direction.isTop()) {
-			yOffset = -newImage.getHeight();
-		} else if (direction.isBottom()) {
-			yOffset = newImage.getHeight();
-		}
+		// Save images
+		this.newImage = newImage;
 		
 	}
 
@@ -76,11 +72,16 @@ public class SlideTransition implements Transition {
 	 * @see org.kalmeo.kuix.transition.Transition#process(javax.microedition.lcdui.Graphics)
 	 */
 	public boolean process(Graphics g) {
-		xOffset = xOffset / 2;
-		yOffset = yOffset / 2;
-		g.drawImage(oldImage, 0, 0, 0);
-		g.drawImage(newImage, xOffset, yOffset, 0);
-		return xOffset == 0 && yOffset == 0;
+		g.drawImage(newImage, 0, 0, 0);
+		if (((oldRgb[0] >> 24) & 0xFF) >= alphaIncrement) {
+			int parity = frameIndex++ % 2;
+			for (int i = oldRgb.length - 1 - parity; i>=0; i -= 2) {
+				oldRgb[i] -= argbIncrement;
+			}
+			g.drawRGB(oldRgb, 0, oldImageWidth, 0, 0, oldImageWidth, oldImageHeight, true);
+			return false;
+		}
+		return true;
 	}
 
 }

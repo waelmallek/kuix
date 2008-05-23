@@ -197,41 +197,46 @@ public final class KuixCanvas extends GameCanvas {
 				
 				if (sizeInitialized) {
 				
-					// Key events
-					if (!keyEvents.isEmpty()) {
-						synchronized (this) {
-							for (int i = 0; i < keyEvents.size(); ++i) {
-								int[] keyEvent = ((int[]) keyEvents.elementAt(i));
-								FocusManager focusManager = getDesktop().getCurrentFocusManager();
-								if (focusManager != null && focusManager.processKeyEvent((byte) keyEvent[0], keyEvent[1])) {
-									repaintNextFrame();
-								}
-							}
-						}
-						keyEvents.removeAllElements();
-					}
-					
-					// Pointer events
-					if (!pointerEvents.isEmpty()) {
-						synchronized (this) {
-							for (int i = 0; i < pointerEvents.size(); ++i) {
-								int[] pointerEvent = ((int[]) pointerEvents.elementAt(i));
-								FocusManager focusManager = getDesktop().getCurrentFocusManager();
-								if (focusManager.processPointerEvent((byte) pointerEvent[0], pointerEvent[1], pointerEvent[2])) {
-									repaintNextFrame();
-								} else if ((byte) pointerEvent[0] == KuixConstants.POINTER_DROPPED_EVENT_TYPE) {
-									if (desktop.getDraggedWidget() != null) {
-										desktop.removeDraggedWidget(true);
+					// Key events, Pointer events and revalidation are execute only if transition is not running
+					if (!transitionRunning) {
+						
+						// Key events
+						if (!keyEvents.isEmpty()) {
+							synchronized (this) {
+								for (int i = 0; i < keyEvents.size(); ++i) {
+									int[] keyEvent = ((int[]) keyEvents.elementAt(i));
+									FocusManager focusManager = getDesktop().getCurrentFocusManager();
+									if (focusManager != null && focusManager.processKeyEvent((byte) keyEvent[0], keyEvent[1])) {
+										repaintNextFrame();
 									}
 								}
 							}
+							keyEvents.removeAllElements();
 						}
-						pointerEvents.removeAllElements();
-					}
-					
-					// Revalidate if needed
-					if (needToRevalidate) {
-						forceRevalidate();
+						
+						// Pointer events
+						if (!pointerEvents.isEmpty()) {
+							synchronized (this) {
+								for (int i = 0; i < pointerEvents.size(); ++i) {
+									int[] pointerEvent = ((int[]) pointerEvents.elementAt(i));
+									FocusManager focusManager = getDesktop().getCurrentFocusManager();
+									if (focusManager.processPointerEvent((byte) pointerEvent[0], pointerEvent[1], pointerEvent[2])) {
+										repaintNextFrame();
+									} else if ((byte) pointerEvent[0] == KuixConstants.POINTER_DROPPED_EVENT_TYPE) {
+										if (desktop.getDraggedWidget() != null) {
+											desktop.removeDraggedWidget(true);
+										}
+									}
+								}
+							}
+							pointerEvents.removeAllElements();
+						}
+						
+						// Revalidate if needed
+						if (needToRevalidate) {
+							forceRevalidate();
+						}
+						
 					}
 					
 					// Repaint

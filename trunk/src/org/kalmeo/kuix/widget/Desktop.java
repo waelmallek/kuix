@@ -335,14 +335,14 @@ public class Desktop extends Widget {
 		if (this.screen != null) {
 			this.screen.remove();
 		}
-		this.screen = screen;
 		
 		// Check transition
 		Transition transition = screen.getTransition();
-		if (transition != null) {
+		if (transition != null && this.screen != null) {
 			getCanvas().setTransition(transition);
 		}
 		
+		this.screen = screen;
 		if (screen != null) {
 			super.add(screen);
 		}

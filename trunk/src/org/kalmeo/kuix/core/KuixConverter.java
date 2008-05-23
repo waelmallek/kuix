@@ -39,6 +39,7 @@ import org.kalmeo.kuix.layout.Layout;
 import org.kalmeo.kuix.layout.StaticLayout;
 import org.kalmeo.kuix.layout.StaticLayoutData;
 import org.kalmeo.kuix.layout.TableLayout;
+import org.kalmeo.kuix.transition.FadeTransition;
 import org.kalmeo.kuix.transition.SlideTransition;
 import org.kalmeo.kuix.transition.Transition;
 import org.kalmeo.kuix.util.Alignment;
@@ -261,6 +262,9 @@ public class KuixConverter {
 		if ((rawParams = extractRawParams("slide", rawData)) != null) {
 			Alignment alignment = convertAlignment(rawParams);
 			return new SlideTransition(alignment);
+		}
+		if ((rawParams = extractRawParams("fade", rawData)) != null) {
+			return new FadeTransition(Integer.parseInt(rawParams));
 		}
 		throw new IllegalArgumentException("Bad transition value");
 	}
@@ -840,10 +844,12 @@ public class KuixConverter {
 	}
 	
 	/**
+	 * Check if the given <code>rawData</code> is 'none'
+	 * 
 	 * @param rawData
 	 * @return <code>true</code> if rawData equals "none"
 	 */
-	private static boolean isNone(String rawData) {
+	protected static boolean isNone(String rawData) {
 		return ("none".equals(rawData));
 	}
 	
