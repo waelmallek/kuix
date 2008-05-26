@@ -45,6 +45,7 @@ import org.kalmeo.kuix.widget.Widget;
 import org.kalmeo.util.Filter;
 import org.kalmeo.util.LinkedList;
 import org.kalmeo.util.StringTokenizer;
+import org.kalmeo.util.StringUtil;
 import org.kalmeo.util.frame.FrameHandler;
 import org.kalmeo.util.xml.LightXmlParser;
 import org.kalmeo.util.xml.LightXmlParserHandler;
@@ -1000,8 +1001,6 @@ public final class Kuix {
 				messageTable = new Hashtable();
 				loadMessages(inputStream);
 			} else {
-				// no messages bundle was found - initialization failed
-				i18nErrorMessage = processPattern(INIT_I18N_ERROR_MSG, new Object[] { "No default messages found" });
 				return false;
 			}
 			inputStream = null;
@@ -1032,8 +1031,6 @@ public final class Kuix {
 				loadMessages(inputStream);
 			}
 		} catch (Exception e) {
-			// houston we have a problem
-			i18nErrorMessage = processPattern(INIT_I18N_ERROR_MSG, new Object[] { e.getMessage() });
 			e.printStackTrace();
 		}
 		
@@ -1041,19 +1038,6 @@ public final class Kuix {
 		Kuix.locale = locale;
 		
 		return messageTable != null;
-	}
-
-	/**
-	 * Returns an error message if there was any problem with accessing the
-	 * localized text. The message also possibly explainins a reason of the
-	 * failure. The message is taken from
-	 * <CODE>_INIT_I18N_ERROR_MSG</CODE>.
-	 * 
-	 * @return error message if there was any failure or null when everything is
-	 *         OK.
-	 */
-	public static String getI18nErrorMessage() {
-		return i18nErrorMessage;
 	}
 
 	/**
@@ -1091,38 +1075,8 @@ public final class Kuix {
 				return KuixConstants.DEFAULT_UNKNOWN_I18N_MESSAGE;
 			}
 		}
-		StringBuffer toAppendTo = new StringBuffer();
 		String s = (String) messageTable.get(key);
-		if (s == null) {
-			return KuixConstants.DEFAULT_UNKNOWN_I18N_MESSAGE;
-		}
-		int l = s.length();
-		int n = 0, lidx = -1, lastidx = 0;
-		for (int i = 0; i < l; i++) {
-			if (s.charAt(i) == '{') {
-				n++;
-				if (n == 1) {
-					lidx = i;
-					toAppendTo.append(s.substring(lastidx, i));
-					lastidx = i;
-				}
-			}
-			if (s.charAt(i) == '}') {
-				if (n == 1) {
-					toAppendTo.append(processPattern(s.substring(lidx + 1, i), args));
-					lidx = -1;
-					lastidx = i + 1;
-				}
-				n--;
-			}
-		}
-		if (n > 0) {
-			toAppendTo.append(processPattern(s.substring(lidx + 1), args));
-		} else {
-			toAppendTo.append(s.substring(lastidx));
-		}
-
-		return toAppendTo.toString();
+		return StringUtil.format(s, args);
 	}
 
 	/**
@@ -1165,12 +1119,6 @@ public final class Kuix {
 	 * Internal i18n code
 	 */
 
-	// Error message used in the case there is any problem with initialization
-	// of internationalization support. Please note, the error message should contain
-	// one parameter sign - '{0}', which is used to fill in a reason of the
-	// failure.
-	private static final String INIT_I18N_ERROR_MSG = "Error when initializing i18n support, reason: {0}";
-
 	// Characters separating keys and values
 	private static final String KEY_VALUE_SEPARATORS = "=: \t\r\n\f";
 	
@@ -1186,9 +1134,6 @@ public final class Kuix {
 	// Contains the last used locale, or null is never set.
 	private static String locale;
 	
-	// Contains an error message if there was any problem with i18n support. If everything is OK, this field is null.
-	private static String i18nErrorMessage = null;
-
 	/**
 	 * Loads messages from input stream to hash table.
 	 * 
@@ -1383,26 +1328,4 @@ public final class Kuix {
 		return outBuffer.toString();
 	}
 
-	/**
-	 * Extracts N-th from an array of argumens.
-	 * 
-	 * @param indexString a String number
-	 * @param args array of arguments
-	 * @return the indexString-th parameter from the array
-	 */
-	private static String processPattern(String indexString, Object[] args) {
-		try {
-			int index = Integer.parseInt(indexString);
-			if ((args != null) && (index >= 0) && (index < args.length)) {
-				if (args[index] != null) {
-					return args[index].toString();
-				}
-			}
-		} catch (NumberFormatException nfe) {
-			// NFE - nothing bad basically - the argument is not a number
-			// swallow it for the time being and show default string
-		}
-		return KuixConstants.DEFAULT_UNKNOWN_I18N_MESSAGE;
-	}
-	
 }
