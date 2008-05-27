@@ -1,0 +1,76 @@
+# Kuix Changelog
+
+##Version 1.0.0RC3 (2008-05-27)
+
+- This release need **kutil 1.0.0**
+
+- Bug fix : Text widget new respects margin to draw text value
+- Bug fix : Remove a NullPointerException in TextField.getDisplayedText() when text was null
+- Bug fix : Repaint region is now correctly computed in ScrollContainer widget
+
+- Add Screen.setCurrent() method to set the screen as current Desktop screen
+- Add animated transitions (like slide or fade) on screen. The transition is executed when a screen appear. You can implements your own transitions. Screen's transition is defined via CSS with a new *transition* style property.
+- Add "cleanUpWhenRemoved" attribute on Screen widget. If you set this attribute to *true* the *Screen.cleanUp()* method is called when the screen is removed frome the widget tree. Useful only if the screen need to be destroy after.
+
+- Switch from **protected** to **public** : Widget.paint(...), Widget.paintBackground(...), Widget.paintBorder(...), Widget.paintImpl(...) methods
+
+- Remove the Kuix.getI18nErrorMessage() method.
+
+- Focus navigation was rewrited : 
+  - Widget.getNextFocus(...) and Widget.getPreviousFocus(...) was replaced by Widget.getOtherFocus(...)
+  - New smart focus navigation
+- Screen menus now switch soft keys to "Select" (same action as FIRE) and "Cancel" (close the popupMenu) when a popupMenu is opened
+  - You can now choice if the order of firstMenu and secondMenu (left or right) by using the 'firstIsLeft="true"' attribute on a Screen widget 
+  - You can customize "Select" and "Cancel" default texts by adding respectively SELECT and CANCEL key in i18n files
+
+##Version 1.0.0RC2 (2008-05-06)
+
+- Bug fix : TextField 'enabled' attribute enabled or disabled the TextField Widget
+- Bug fix : KuixMIDlet.isFullScreen() is now called when creating the KuixCanvas
+- Bug fix : avoid endless loop while using 'focusLoop="true"' on an empty list
+- Optimize redraw process by invalidate only specific screen region through Widget.invalidateAppearance() method
+- Startup locale could be set with JAD parameter : 'KUIX-Locale'
+- Widget.isFocused() and Widget.isFocusable() is now public
+- 'setFocusable(false)' now unfocused the widget 
+- org.kalmeo.widget.Screen now extends Widget
+- Widget's shortcuts can now call independant actions. (eg &lt;button onAction="myActionZero" shortcuts="0|#=myActionPound|*=myActionStar"/>)
+- Add slide text animation en Text widget if text content is bigger than widget width
+- Add Screen.getTopBar() and Screen.getBottomBar() to retrieve topBar and bottomBar instances
+- Remove Screen.setFirstMenu() and Screen.setSecondMenu() methods. Use Screen.getFirstMenu() or Screen.getSecondMenu() to create/retrieve menus instances.
+- org.kalmeo.kuix.widget.SystemMenu class has been moved and renamed as Screen internal class : ScreenMenu
+- Internals widgets (like Screen's TopBar / BottomBar) could be accesed via xml like other widgets (eg '&lt;screen>&lt;topbar>Foo&lt;/topbar>&lt;/screen>')
+
+##Version 1.0.0RC1 (2008-04-25)
+
+- *Kuix is now released under GPL license*
+- Bug fix : RadioGroup value could be set before adding RadioButton to defined the default selected RadioButton
+- Optimize memory use for drawing
+- Optimize screen size change processing
+- Worker tasks are no more removed while the application is paused
+- Add public access to FocusManager.setLoop() and FocusManager.isLoop()
+- Add 'focusLoop' attribute to Screen widget to enabled or disabled loop parameter on screen's focus manager.
+- Add repaintNextFrame(x, y, width, height) to repaint a specific region of the screen
+- Add 'invalidateAppearance' method on Widget class to repaint only the widget screen region
+- It's now possible to change the "Debug Infos key" (@see KuixCanvas.setDebugInfosKey()) from JAD file through 'KUIX-Debug-Infos-Key' paramter
+
+##Version 0.9.1 (2008-04-11)
+
+- Startup optimzations : loading capabilities
+- KuixCanvas is now final and could not be overrided
+- 'desktop' parameter in 'initDesktopStyles' method has been removed
+- 'initDesktopStyles' and 'initDesktopContent' have been moved to KuixMIDlet
+- 'onStart' has been changed to 'onStarted' and moved to KuixMIDlet
+- 'onResume' has been changed to 'onResumed' and moved to KuixMIDlet
+- 'onPause' has been moved to KuixMIDlet
+- 'onDestroy' has been moved to KuixMIDlet
+- 'getInitializationBackgroundColor', 'getInitializationMessageColor', 'getInitializationMessage', 'getInitializationImageFile' method were added on KuixMIDlet to customize loading screen
+- It is now possible to hide style by setting 'none'
+- Rename 'ProgressBar' widget to 'Gauge' and add interactive capatibilities on it
+- Add 'onChange' on 'Gauge' widget call only if it is focusable
+- Move 'enable' capabilities from 'AbstractActionWidget' to 'AbstractFocusableWidget'
+- Add custom widget capabilities in xml files. Use this syntax &lt;MyWidget package="com.mypackage" /> to load com.mypackage.MyWidget class. This class need to extend org.kalmeo.kuix.widget.Widget. This syntax is case sensitive.
+- getTag() on new widgets created by "new Widget()" or all similar constructors returns now "widget" and not null.
+
+##Version 0.9 (2008-03-12)
+
+- First public release
