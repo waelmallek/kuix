@@ -1381,7 +1381,7 @@ public class Widget {
 	/**
 	 * CleanUp all widget's link.<br/><b>Caution</b> : This method do NOT
 	 * remove the widget from widget tree. It only clean external references
-	 * like dataBinding, etc...
+	 * like dataBinding, menu cache, etc...
 	 */
 	public void cleanUp() {
 		
@@ -1458,11 +1458,11 @@ public class Widget {
 	}
 	
 	/**
-	 * Paint the widget
+	 * Paint the widget.
 	 * 
 	 * @param g
 	 */
-	protected void paint(Graphics g) {
+	public void paint(Graphics g) {
 		paintBackground(g);
 		paintBorder(g);
 	}
@@ -1472,7 +1472,7 @@ public class Widget {
 	 * 
 	 * @param g
 	 */
-	protected void paintBackground(Graphics g) {
+	public void paintBackground(Graphics g) {
 		Insets margin = getMargin();
 		Insets border = getBorder();
 		drawBackground(	g, 
@@ -1531,7 +1531,7 @@ public class Widget {
 	 * 
 	 * @param g
 	 */
-	protected void paintBorder(Graphics g) {
+	public void paintBorder(Graphics g) {
 		Insets margin = getMargin();
 		drawBorder(	g, 
 					margin.left, 
@@ -1718,7 +1718,7 @@ public class Widget {
 	 * 
 	 * @param g
 	 */
-	protected void paintImpl(Graphics g) {
+	public void paintImpl(Graphics g) {
 		if (!visible) {	// Do not use 'isVisible()' instead of 'visible' because of recurcive call of paintImpl. 
 			return;
 		}
@@ -1750,6 +1750,8 @@ public class Widget {
 	}
 	
 	/**
+	 * Call the <code>paintImpl</code> method on widget's children.
+	 * 
 	 * @param g
 	 */
 	protected void paintChildrenImpl(Graphics g) {

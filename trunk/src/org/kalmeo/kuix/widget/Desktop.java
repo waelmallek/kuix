@@ -541,7 +541,7 @@ public class Desktop extends Widget {
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#paint(javax.microedition.lcdui.Graphics)
 	 */
-	protected void paint(Graphics g) {
+	public void paint(Graphics g) {
 		paintBackground(g);
 	}
 	

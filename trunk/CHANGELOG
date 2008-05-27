@@ -1,6 +1,8 @@
 # Kuix Changelog
 
-##Version 1.0.0RC3 (2008-XX-XX)
+##Version 1.0.0RC3 (2008-05-27)
+
+- This release need **kutil 1.0.0**
 
 - Bug fix : Text widget new respects margin to draw text value
 - Bug fix : Remove a NullPointerException in TextField.getDisplayedText() when text was null
@@ -8,6 +10,9 @@
 
 - Add Screen.setCurrent() method to set the screen as current Desktop screen
 - Add animated transitions (like slide or fade) on screen. The transition is executed when a screen appear. You can implements your own transitions. Screen's transition is defined via CSS with a new *transition* style property.
+- Add "cleanUpWhenRemoved" attribute on Screen widget. If you set this attribute to *true* the *Screen.cleanUp()* method is called when the screen is removed frome the widget tree. Useful only if the screen need to be destroy after.
+
+- Switch from **protected** to **public** : Widget.paint(...), Widget.paintBackground(...), Widget.paintBorder(...), Widget.paintImpl(...) methods
 
 - Remove the Kuix.getI18nErrorMessage() method.
 

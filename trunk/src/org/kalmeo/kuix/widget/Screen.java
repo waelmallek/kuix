@@ -72,7 +72,14 @@ import org.kalmeo.util.BooleanUtil;
  * 		<td> <code>No</code> </td>
  * 		<td> <code>Yes</code> </td>
  * 		<td> <code>No</code> </td>
- * 		<td> Define if the first menu is on the left or the right. </td>
+ * 		<td> Define if the first menu is on the left or the right. Default value is <code>true</code> </td>
+ *	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<td> <code>cleanupwhenremoved</code> </th>
+ * 		<td> <code>No</code> </td>
+ * 		<td> <code>Yes</code> </td>
+ * 		<td> <code>No</code> </td>
+ * 		<td> Define if the <code>cleanUp</code> method is called when this {@link Screen} is removed from the widget tree. Activate this parameter if you don't want to see this Screen any more. Default value is <code>false</code>. </td>
  *	</tr>
  * 	<tr class="TableRowColor">
  * 		<td colspan="5"> Inherited attributes : see {@link AbstractActionWidget} </td>
@@ -303,15 +310,19 @@ public class Screen extends Widget {
 		 */
 		public boolean processActionEvent() {
 			if (internal) {
+				boolean switchToDefaultMenu = true;
 				if (this == firstInternalMenu) {
 					FocusManager focusManager = getDesktop().getCurrentFocusManager();
 					if (focusManager != null) {
-						focusManager.processKeyEvent(KuixConstants.KEY_PRESSED_EVENT_TYPE, KuixConstants.KUIX_KEY_FIRE);
+						switchToDefaultMenu = focusManager.processKeyEvent(KuixConstants.KEY_PRESSED_EVENT_TYPE, KuixConstants.KUIX_KEY_FIRE) && !(focusManager.getFocusedWidget() instanceof Menu);
 					}
 				} else {
 					hideAllPopupMenu();
 				}
-				switchToDefaultMenus();
+				if (switchToDefaultMenu) {
+					switchToDefaultMenus();
+				}
+				return true;
 			} else if (popup != null) {
 				switchToInternalMenus();
 			}
@@ -330,6 +341,9 @@ public class Screen extends Widget {
 	
 	// Text widget for title
 	private Text title;
+	
+	// Used to determine if this screen call its cleanUp method when removed from its parent
+	private boolean cleanUpWhenRemoved = false;
 	
 	// Used to determine if firstMenu is on the left and then the secondMenu onthe right
 	private boolean firstIsLeft = true;
@@ -387,6 +401,10 @@ public class Screen extends Widget {
 		}
 		if (KuixConstants.FIRST_IS_LEFT_ATTRIBUTE.equals(name)) {
 			firstIsLeft = BooleanUtil.parseBoolean(value);
+			return true;
+		}
+		if (KuixConstants.CLEAN_UP_WHEN_REMOVED.equals(name)) {
+			cleanUpWhenRemoved = BooleanUtil.parseBoolean(value);
 			return true;
 		}
 		return super.setAttribute(name, value);
@@ -653,6 +671,15 @@ public class Screen extends Widget {
 	public boolean processPointerEvent(byte type, int x, int y) {
 		// Does nothing on pointer events
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#onRemoved(org.kalmeo.kuix.widget.Widget)
+	 */
+	protected void onRemoved(Widget parent) {
+		if (cleanUpWhenRemoved) {
+			cleanUp();
+		}
 	}
 	
 }

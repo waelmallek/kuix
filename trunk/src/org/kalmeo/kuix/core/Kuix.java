@@ -1076,7 +1076,10 @@ public final class Kuix {
 			}
 		}
 		String s = (String) messageTable.get(key);
-		return StringUtil.format(s, args);
+		if (s != null) {
+			return StringUtil.format(s, args);
+		}
+		return KuixConstants.DEFAULT_UNKNOWN_I18N_MESSAGE;
 	}
 
 	/**

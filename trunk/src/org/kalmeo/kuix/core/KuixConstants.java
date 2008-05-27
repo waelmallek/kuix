@@ -119,6 +119,7 @@ public interface KuixConstants {
 	public static final String DATAPROVIDER_ATTRIBUTE 						= "dataprovider";
 	public static final String FOCUS_LOOP_ATTRIBUTE 						= "focusloop";
 	public static final String FIRST_IS_LEFT_ATTRIBUTE 						= "firstisleft";
+	public static final String CLEAN_UP_WHEN_REMOVED 						= "cleanupwhenremoved";
 	
 	public static final String ON_FOCUS_ATTRIBUTE 							= "onfocus";
 	public static final String ON_LOST_FOCUS_ATTRIBUTE 						= "onlostfocus";

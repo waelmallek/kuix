@@ -299,7 +299,7 @@ public class TextField extends Text {
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Text#paint(javax.microedition.lcdui.Graphics)
 	 */
-	protected void paint(Graphics g) {
+	public void paint(Graphics g) {
 		super.paint(g);
 		paintBorder(g);
 	}

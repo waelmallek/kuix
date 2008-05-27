@@ -213,12 +213,13 @@ public class Menu extends MenuItem {
 	 * @see org.kalmeo.kuix.widget.MenuItem#processActionEvent()
 	 */
 	public boolean processActionEvent() {
-		boolean process = false;
-		if (popup != null && popup.parent == null) {
-			showPopup();
-			return process;
+		if (popup != null) {
+			if (popup.parent == null) {
+				showPopup();
+			}
+			return true;
 		}
-		return super.processActionEvent() || process;
+		return super.processActionEvent();
 	}
 
 }

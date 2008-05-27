@@ -35,10 +35,6 @@ import org.kalmeo.kuix.widget.Widget;
 /**
  * @author bbeaulant
  */
-/**
- * @author bbeaulant
- *
- */
 public class FocusManager {
 
 	// The widget that this FocusManager is reltative to
