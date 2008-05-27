@@ -27,6 +27,9 @@ import javax.microedition.lcdui.Image;
 import org.kalmeo.kuix.util.Alignment;
 
 /**
+ * This class implements a slide transition between two screens. This transition
+ * could be parametrized with a direction (left, right, top and bottom).
+ * 
  * @author bbeaulant
  */
 public class SlideTransition implements Transition {

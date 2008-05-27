@@ -27,6 +27,9 @@ import javax.microedition.lcdui.Image;
 import org.kalmeo.util.worker.Worker;
 
 /**
+ * This class implements a fade transition between two screens. This transition
+ * could be parametrized with a duration.
+ * 
  * @author bbeaulant
  */
 public class FadeTransition implements Transition {
@@ -73,7 +76,7 @@ public class FadeTransition implements Transition {
 	 */
 	public boolean process(Graphics g) {
 		g.drawImage(newImage, 0, 0, 0);
-		if (((oldRgb[0] >> 24) & 0xFF) >= alphaIncrement) {
+		if (oldRgb.length != 0 && ((oldRgb[0] >> 24) & 0xFF) >= alphaIncrement) {
 			int parity = frameIndex++ % 2;
 			for (int i = oldRgb.length - 1 - parity; i>=0; i -= 2) {
 				oldRgb[i] -= argbIncrement;
