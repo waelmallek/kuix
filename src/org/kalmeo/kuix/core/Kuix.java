@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UTFDataFormatException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Stack;
@@ -52,7 +53,6 @@ import org.kalmeo.util.xml.LightXmlParserHandler;
 
 /**
  * 
- * TODO : Add annimation support 
  * TODO : Fix Table layout bug in ScrollContainer widget
  * TODO : fix setCurrentScreen after showPopupBox (problem with focusManager priority)
  * 
@@ -1030,6 +1030,8 @@ public final class Kuix {
 				// load messages to messageTable hashtable
 				loadMessages(inputStream);
 			}
+		} catch (UTFDataFormatException e) {
+			System.err.println("I18N Error : *.properties files need to be UTF-8 encoded");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1143,9 +1145,9 @@ public final class Kuix {
 	 * @param inStream stream from which the messages are read
 	 * @throws IOException if there is any problem with reading the messages
 	 */
-	private static synchronized void loadMessages(InputStream inStream) throws IOException {
+	private static synchronized void loadMessages(InputStream inStream) throws Exception {
 
-		InputStreamReader inputStream = new InputStreamReader(inStream);
+		InputStreamReader inputStream = new InputStreamReader(inStream, "UTF-8");
 		while (true) {
 			// Get next line
 			String line = readLine(inputStream);
@@ -1157,27 +1159,33 @@ public final class Kuix {
 				// Find start of key
 				int len = line.length();
 				int keyStart;
-				for (keyStart = 0; keyStart < len; keyStart++)
-					if (WHITESPACE_CHARS.indexOf(line.charAt(keyStart)) == -1)
+				for (keyStart = 0; keyStart < len; keyStart++) {
+					if (WHITESPACE_CHARS.indexOf(line.charAt(keyStart)) == -1) {
 						break;
+					}
+				}
 
 				// Blank lines are ignored
-				if (keyStart == len)
+				if (keyStart == len) {
 					continue;
+				}
 
 				// Continue lines that end in slashes if they are not comments
 				char firstChar = line.charAt(keyStart);
 				if ((firstChar != '#') && (firstChar != '!')) {
 					while (continueLine(line)) {
 						String nextLine = readLine(inputStream);
-						if (nextLine == null)
+						if (nextLine == null) {
 							nextLine = "";
+						}
 						String loppedLine = line.substring(0, len - 1);
 						// Advance beyond whitespace on new line
 						int startIndex;
-						for (startIndex = 0; startIndex < nextLine.length(); startIndex++)
-							if (WHITESPACE_CHARS.indexOf(nextLine.charAt(startIndex)) == -1)
+						for (startIndex = 0; startIndex < nextLine.length(); startIndex++) {
+							if (WHITESPACE_CHARS.indexOf(nextLine.charAt(startIndex)) == -1) {
 								break;
+							}
+						}
 						nextLine = nextLine.substring(startIndex, nextLine.length());
 						line = new String(loppedLine + nextLine);
 						len = line.length();
@@ -1187,27 +1195,33 @@ public final class Kuix {
 					int separatorIndex;
 					for (separatorIndex = keyStart; separatorIndex < len; separatorIndex++) {
 						char currentChar = line.charAt(separatorIndex);
-						if (currentChar == '\\')
+						if (currentChar == '\\') {
 							separatorIndex++;
-						else if (KEY_VALUE_SEPARATORS.indexOf(currentChar) != -1)
+						} else if (KEY_VALUE_SEPARATORS.indexOf(currentChar) != -1) {
 							break;
+						}
 					}
 
 					// Skip over whitespace after key if any
 					int valueIndex;
-					for (valueIndex = separatorIndex; valueIndex < len; valueIndex++)
-						if (WHITESPACE_CHARS.indexOf(line.charAt(valueIndex)) == -1)
+					for (valueIndex = separatorIndex; valueIndex < len; valueIndex++) {
+						if (WHITESPACE_CHARS.indexOf(line.charAt(valueIndex)) == -1) {
 							break;
+						}
+					}
 
 					// Skip over one non whitespace key value separators if any
-					if (valueIndex < len)
-						if (STRICT_KEY_VALUE_SEPARTORS.indexOf(line.charAt(valueIndex)) != -1)
+					if (valueIndex < len) {
+						if (STRICT_KEY_VALUE_SEPARTORS.indexOf(line.charAt(valueIndex)) != -1) {
 							valueIndex++;
+						}
+					}
 
 					// Skip over white space after other separators if any
 					while (valueIndex < len) {
-						if (WHITESPACE_CHARS.indexOf(line.charAt(valueIndex)) == -1)
+						if (WHITESPACE_CHARS.indexOf(line.charAt(valueIndex)) == -1) {
 							break;
+						}
 						valueIndex++;
 					}
 					String key = line.substring(keyStart, separatorIndex);

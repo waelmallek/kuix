@@ -49,6 +49,7 @@ import org.kalmeo.util.LinkedList;
 import org.kalmeo.util.LinkedListItem;
 import org.kalmeo.util.MathFP;
 import org.kalmeo.util.NumberUtil;
+import org.kalmeo.util.LinkedList.LinkedListEnumeration;
 
 /**
  * This class is the base of all Kuix widgets.
@@ -1782,7 +1783,7 @@ public class Widget {
 	}
 
 	/**
-	 * Return the specified style property value représenting by the
+	 * Return the specified style property value reprï¿½senting by the
 	 * <code>name</code>, or <code>null</code>.
 	 * 
 	 * @param name
@@ -2164,11 +2165,11 @@ public class Widget {
 	 * @param type
 	 * @param property
 	 * @param item
-	 * @param items
+	 * @param itemsEnumeration
 	 * 
 	 * @return <code>true</code> if the event is treated by the widget
 	 */
-	public boolean processItemsModelUpdateEvent(byte type, String property, DataProvider item, LinkedList items) {
+	public boolean processItemsModelUpdateEvent(byte type, String property, DataProvider item, LinkedListEnumeration itemsEnumeration) {
 		return false;
 	}
 	

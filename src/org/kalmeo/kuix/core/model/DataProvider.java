@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with org.kalmeo.kuix.  If not, see <http://www.gnu.org/licenses/>.
  *  
- * Creation date : 7 févr. 08
+ * Creation date : 7 fï¿½vr. 08
  * Copyright (c) Kalmeo 2008. All rights reserved.
  */
 
@@ -27,6 +27,7 @@ import org.kalmeo.kuix.widget.Widget;
 import org.kalmeo.util.Filter;
 import org.kalmeo.util.LinkedList;
 import org.kalmeo.util.LinkedListItem;
+import org.kalmeo.util.LinkedList.LinkedListEnumeration;
 
 /**
  * This class represent the base object of the Kuix data model. 
@@ -41,10 +42,14 @@ public class DataProvider implements LinkedListItem {
 	public static final byte ADD_AFTER_MODEL_UPDATE_EVENT_TYPE 		= 3;
 	public static final byte REMOVE_MODEL_UPDATE_EVENT_TYPE 		= 4;
 	public static final byte SORT_MODEL_UPDATE_EVENT_TYPE 			= 5;
-	public static final byte CLEAR_MODEL_UPDATE_EVENT_TYPE 			= 6;
+	public static final byte FILTER_MODEL_UPDATE_EVENT_TYPE 		= 6;
+	public static final byte CLEAR_MODEL_UPDATE_EVENT_TYPE 			= 7;
 
-	// Hashtable of property / itemValues pair
+	// Hashtable of property / itemsValues pair
 	private Hashtable itemsValues;
+	
+	// Hashtable of property / itemsFilters pair
+	private Hashtable itemsFilters;
 
 	// List of binded widgets
 	private Vector bindedWidgets;
@@ -55,22 +60,23 @@ public class DataProvider implements LinkedListItem {
 
 	/**
 	 * Returns the value corresponding the given <code>property</code>.
-	 * Override the method to returns your custums values.<br/> Be careful to
+	 * Override the method to returns your custums values.<br> Be careful to
 	 * always call the <code>super.getValue(property)</code>.
 	 * 
 	 * @param property
 	 * @return the <code>property</code> value
 	 */
 	public Object getValue(String property) {
-		if (itemsValues != null) {
-			return itemsValues.get(property);
-		}
-		return null;
+		return enumerateItems(property);
 	}
 
 	/**
+	 * Returns the <code>property</code> associated string value, or null if
+	 * the property has no value or value is not a string.
+	 * 
 	 * @param property
-	 * @return the <code>property</code> string value
+	 * @return the string value, or null if the property
+	 *         has no value or value is not a string.
 	 */
 	public String getStringValue(String property) {
 		try {
@@ -78,6 +84,27 @@ public class DataProvider implements LinkedListItem {
 		} catch (Exception e) {
 			return null;
 		}
+	}
+
+	/**
+	 * Returns the <code>property</code> associated items value, or null if
+	 * the property has no value or value is not a {@link LinkedList}.<br>
+	 * This method defer from <code>getValue</code> because it returns a unique
+	 * {@link LinkedList} instance by property instead of a new
+	 * {@link LinkedListEnumeration} each time the method is called.
+	 * 
+	 * @param property
+	 * @return the {@link LinkedList} value, or null if the property has no
+	 *         value or value is not a {@link LinkedList}.
+	 */
+	public LinkedList getItemsValue(String property) {
+		try {
+			if (itemsValues != null) {
+				return (LinkedList) itemsValues.get(property);
+			}
+		} catch (Exception e) {
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -115,21 +142,15 @@ public class DataProvider implements LinkedListItem {
 	 * 
 	 * @param property
 	 * @return the {@link LinkedList} relative to the given
-	 *         <code>property</code>
+	 *         <code>property</code>, or <code>null</code> if an other non
+	 *         items value is associated with this <code>property</code>.
 	 */
-	private LinkedList getOrCreateItemValue(String property) {
+	private LinkedList getOrCreateItemsValue(String property) {
 		if (itemsValues == null) {
 			itemsValues = new Hashtable();
 		}
-		LinkedList items;
-		if (itemsValues.containsKey(property)) {
-			Object tmpItems = itemsValues.get(property);
-			if (tmpItems instanceof LinkedList) {
-				items = (LinkedList) tmpItems;
-			} else {
-				return null;
-			}
-		} else {
+		LinkedList items = getItemsValue(property);
+		if (items == null && !itemsValues.containsKey(property)) {
 			items = new LinkedList();
 			itemsValues.put(property, items);
 		}
@@ -145,15 +166,12 @@ public class DataProvider implements LinkedListItem {
 	 * @return the first or last item
 	 */
 	private DataProvider getFirstOrLastItem(String property, boolean first) {
-		Object value = getValue(property);
-		if (value instanceof LinkedList) {
-			LinkedList linkedList = (LinkedList) value;
-			if (!linkedList.isEmpty()) {
-				if (first) {
-					return (DataProvider) linkedList.getFirst();
-				} else {
-					return (DataProvider) linkedList.getLast();
-				}
+		LinkedList items = getItemsValue(property);
+		if (items != null) {
+			if (first) {
+				return (DataProvider) items.getFirst();
+			} else {
+				return (DataProvider) items.getLast();
 			}
 		}
 		return null;
@@ -168,9 +186,9 @@ public class DataProvider implements LinkedListItem {
 	 *         <code>property</code>
 	 */
 	public int countItemValues(String property) {
-		Object value = getValue(property);
-		if (value instanceof LinkedList) {
-			return ((LinkedList) value).getLength();
+		LinkedList items = getItemsValue(property);
+		if (items != null) {
+			return items.getLength();
 		}
 		return 0;
 	}
@@ -195,6 +213,23 @@ public class DataProvider implements LinkedListItem {
 	 */
 	public DataProvider getLastItem(String property) {
 		return getFirstOrLastItem(property, false);
+	}
+	
+	/**
+	 * Returns the {@link LinkedListEnumeration} instance or <code>null</code>
+	 * if no value is associated with this <code>property</code>.
+	 * 
+	 * @param property
+	 * @return the {@link LinkedListEnumeration} instance or <code>null</code>
+	 *         if no value is associated with this <code>property</code>.
+	 */
+	public LinkedListEnumeration enumerateItems(String property) {
+		LinkedList items = getItemsValue(property);
+		if (items != null) {
+			// TODO : use the filter
+			return items.enumerate(null);
+		}
+		return null;
 	}
 	
 	/**
@@ -224,7 +259,7 @@ public class DataProvider implements LinkedListItem {
 	 */
 	public int addItem(String property, DataProvider item, DataProvider referenceItem, boolean after) {
 		if (item != null) {
-			LinkedList items = getOrCreateItemValue(property);
+			LinkedList items = getOrCreateItemsValue(property);
 			if (items != null) {
 				if (items.isEmpty() || referenceItem == null) {
 					items.add(item);
@@ -253,10 +288,9 @@ public class DataProvider implements LinkedListItem {
 	 *         faild.
 	 */
 	public int removeItem(String property, DataProvider item) {
-		if (item != null && itemsValues != null && itemsValues.containsKey(property)) {
-			Object tmpItems = itemsValues.get(property);
-			if (tmpItems instanceof LinkedList) {
-				LinkedList items = ((LinkedList) tmpItems);
+		if (item != null && itemsValues != null) {
+			LinkedList items = getItemsValue(property);
+			if (items != null) {
 				items.remove(item);
 				dispatchItemsUpdateEvent(REMOVE_MODEL_UPDATE_EVENT_TYPE, property, item, null);
 				return items.getLength();
@@ -278,18 +312,20 @@ public class DataProvider implements LinkedListItem {
 	}
 
 	/**
-	 * Search a {@link LinkedListItem} in {@link LinkedList} and return <code>true</code> if it's in.
-	 * The value linked to <code>property</code> must be a {@link LinkedList}. 
+	 * Search a {@link LinkedListItem} in {@link LinkedList} and return
+	 * <code>true</code> if it's in. The value linked to <code>property</code>
+	 * must be a {@link LinkedList}.
 	 * 
 	 * @param property the property where <code>item</code> may be found
 	 * @param item the {@link LinkedListItem} to search
-	 * @return <code>true</code> if <code>item</code> exist in {@link LinkedList} <code>property</code>, <code>false</code> else.
+	 * @return <code>true</code> if <code>item</code> exist in
+	 *         {@link LinkedList} <code>property</code>, <code>false</code>
+	 *         else.
 	 */
 	public boolean contains(String property, final DataProvider item) {
-		if (item != null && itemsValues != null && itemsValues.containsKey(property)) {
-			Object tmpItems = itemsValues.get(property);
-			if (tmpItems instanceof LinkedList) {
-				LinkedList items = ((LinkedList) tmpItems);
+		if (item != null) {
+			LinkedList items = getItemsValue(property);
+			if (items != null) {
 				if (items.find(new Filter() {
 					public int accept(Object obj) {
 						if (obj.equals(item)) {
@@ -297,7 +333,6 @@ public class DataProvider implements LinkedListItem {
 						}
 						return 0;
 					}
-					
 				}) != null) {
 					return true;
 				}
@@ -313,13 +348,29 @@ public class DataProvider implements LinkedListItem {
 	 * @param flag
 	 */
 	public void sortItems(String property, int flag) {
-		if (itemsValues != null && itemsValues.containsKey(property)) {
-			Object tmpItems = itemsValues.get(property);
-			if (tmpItems instanceof LinkedList) {
-				LinkedList items = ((LinkedList) tmpItems);
-				items.sort(flag);
-				dispatchItemsUpdateEvent(SORT_MODEL_UPDATE_EVENT_TYPE, property, null, items);
+		// TODO check the enumerate interest
+		LinkedList items = getItemsValue(property);
+		if (items != null) {
+			items.sort(flag);
+			dispatchItemsUpdateEvent(SORT_MODEL_UPDATE_EVENT_TYPE, property, null, enumerateItems(property));
+		}
+	}
+	
+	/**
+	 * Filter <code>property</code> items list.
+	 * 
+	 * @param property
+	 * @param filter the {@link Filter} to apply to the enumeration. Set it null to retrieve all items of the enumeration
+	 */
+	public void setItemsFilter(String property, Filter filter) {
+		LinkedList items = getItemsValue(property);
+		if (items != null) {
+			if (itemsFilters == null) {
+				itemsFilters = new Hashtable();
 			}
+			itemsFilters.put(property, filter);
+			LinkedListEnumeration itemsEnumeration = items.enumerate(filter);
+			dispatchItemsUpdateEvent(FILTER_MODEL_UPDATE_EVENT_TYPE, property, null, itemsEnumeration);
 		}
 	}
 
@@ -372,8 +423,7 @@ public class DataProvider implements LinkedListItem {
 	 */
 	protected void dispatchUpdateEvent(String property) {
 		if (bindedWidgets != null) {
-			int size = bindedWidgets.size();
-			for (int i = 0; i < size; ++i) {
+			for (int i = bindedWidgets.size() - 1; i >= 0; --i) {
 				((Widget) (bindedWidgets.elementAt(i))).processModelUpdateEvent(property);
 			}
 		}
@@ -386,13 +436,12 @@ public class DataProvider implements LinkedListItem {
 	 * @param type
 	 * @param property
 	 * @param item
-	 * @param items
+	 * @param itemsEnumeration
 	 */
-	protected void dispatchItemsUpdateEvent(byte type, String property, DataProvider item, LinkedList items) {
+	protected void dispatchItemsUpdateEvent(byte type, String property, DataProvider item, LinkedListEnumeration itemsEnumeration) {
 		if (bindedWidgets != null) {
-			int size = bindedWidgets.size();
-			for (int i = 0; i < size; ++i) {
-				((Widget) (bindedWidgets.elementAt(i))).processItemsModelUpdateEvent(type, property, item, items);
+			for (int i = bindedWidgets.size() - 1; i >= 0; --i) {
+				((Widget) (bindedWidgets.elementAt(i))).processItemsModelUpdateEvent(type, property, item, itemsEnumeration);
 			}
 		}
 	}

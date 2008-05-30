@@ -52,7 +52,14 @@ import org.kalmeo.kuix.util.Metrics;
  * 		<td> <code>No</code> </td>
  * 		<td> <code>Yes</code> </td>
  * 		<td> <code>No</code> </td>
- * 		<td> Define the image source file path. By default if the path is relative (do not start by '/'), the path is relative to '/img/'. </td>
+ * 		<td> Define the image source file path. By default if the path is relative (do not start by '/'), the path is relative to '/img/'. This attribute is not compatible with <code>imagedata</code>. </td>
+ *	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<td> <code>imagedata</code> </th>
+ * 		<td> <code>Yes</code> </td>
+ * 		<td> <code>Yes</code> </td>
+ * 		<td> <code>No</code> </td>
+ * 		<td> Define the image data source. The data could be extract from image file stream, like png, gif or jpeg.<br/> Implementations are required to support images stored in the PNG format. This attribute is not compatible with <code>src</code>.  </td>
  *	</tr>
  * 	<tr class="TableRowColor">
  * 		<td colspan="5"> Inherited attributes : see {@link Widget} </td>

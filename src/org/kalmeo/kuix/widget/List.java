@@ -33,6 +33,7 @@ import org.kalmeo.kuix.layout.Layout;
 import org.kalmeo.kuix.util.Alignment;
 import org.kalmeo.util.LinkedList;
 import org.kalmeo.util.LinkedListItem;
+import org.kalmeo.util.LinkedList.LinkedListEnumeration;
 
 /**
  * This class represent a list.
@@ -160,8 +161,8 @@ public class List extends Widget {
 	 */
 	public boolean setObjectAttribute(String name, Object value) {
 		if (KuixConstants.ITEMS_ATTRIBUTE.equals(name)) {
-			if (value instanceof LinkedList) {
-				setItems((LinkedList) value);
+			if (value instanceof LinkedListEnumeration) {
+				setItems((LinkedListEnumeration) value);
 				return true;
 			} else if (value == null) {
 				setItems(null);
@@ -216,14 +217,15 @@ public class List extends Widget {
 	/**
 	 * Redifine all item values
 	 * 
-	 * @param items
+	 * @param itemsEnumeration
 	 */
-	public void setItems(LinkedList items) {
+	public void setItems(LinkedListEnumeration itemsEnumeration) {
 		removeAllItems();
-		if (items != null) {
+		if (itemsEnumeration != null) {
 			try {
-				for (LinkedListItem item = items.getFirst(); item != null; item = item.getNext()) {
-					addItem((DataProvider) item);
+				itemsEnumeration.reset();
+				while (itemsEnumeration.hasNextItems()) {
+					addItem((DataProvider) itemsEnumeration.nextItem());
 				}
 			} catch (ClassCastException e) {
 				// An item need to extends the DataProvider model
@@ -279,9 +281,21 @@ public class List extends Widget {
 	 * @return The added {@link ListItem}
 	 */
 	public ListItem addItem(DataProvider item, InputStream renderer, DataProvider referenceItem, boolean after) {
+		return internalAddItem(item, renderer, referenceItem != null ? getListItem(referenceItem) : null, after);
+	}
+	
+	/**
+	 * Add an item value near an other {@link ListItem}.
+	 * 
+	 * @param item
+	 * @param renderer
+	 * @param referenceListItem
+	 * @param after
+	 * @return The added {@link ListItem}
+	 */
+	private ListItem internalAddItem(DataProvider item, InputStream renderer, ListItem referenceListItem, boolean after) {
 		ListItem listItem = new ListItem(item);
-		if (referenceItem != null) {
-			ListItem referenceListItem = getListItem(referenceItem);
+		if (referenceListItem != null) {
 			super.add(listItem, referenceListItem, after);
 		} else {
 			super.add(listItem);
@@ -300,13 +314,21 @@ public class List extends Widget {
 	 */
 	public boolean removeItem(DataProvider item) {
 		ListItem listItem = getListItem(item);
+		internalRemoveItem(listItem);
+		return listItem != null;
+	}
+	
+	/**
+	 * @param listItem
+	 * @return <code>true</code> if the <code>listItem</code> is found and the
+	 *         associated {@link ListItem} removed
+	 */
+	private void internalRemoveItem(ListItem listItem) {
 		if (listItem != null) {
+			dataProvidersMapping.remove(listItem.getDataProvider());
 			listItem.cleanUp();
 			listItem.remove();
-			dataProvidersMapping.remove(item);
-			return true;
 		}
-		return false;
 	}
 	
 	/**
@@ -329,9 +351,9 @@ public class List extends Widget {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.Widget#processItemsModelUpdateEvent(byte, java.lang.String, org.kalmeo.kuix.core.model.DataProvider, org.kalmeo.util.LinkedList)
+	 * @see org.kalmeo.kuix.widget.Widget#processItemsModelUpdateEvent(byte, java.lang.String, org.kalmeo.kuix.core.model.DataProvider, org.kalmeo.util.LinkedList.LinkedListEnumeration)
 	 */
-	public boolean processItemsModelUpdateEvent(byte type, String property, DataProvider item, LinkedList items) {
+	public boolean processItemsModelUpdateEvent(byte type, String property, DataProvider item, LinkedListEnumeration itemsEnumeration) {
 		if (hasBindInstruction()) {
 			for (BindInstruction bindInstruction = (BindInstruction) bindInstructions.getFirst(); bindInstruction != null; bindInstruction = bindInstruction.next) {
 				if (bindInstruction.hasProperty(property)) {
@@ -353,28 +375,96 @@ public class List extends Widget {
 							removeItem(item);
 							return true;
 
-						case DataProvider.SORT_MODEL_UPDATE_EVENT_TYPE:
+						case DataProvider.SORT_MODEL_UPDATE_EVENT_TYPE: {
 							
 							// Reorder listItems
 							
-							// Extract first item
-							DataProvider firstItem = (DataProvider) items.getFirst();
-							
-							// Bring the first item to front
-							ListItem previousListItem = getListItem(firstItem);
-							bringToFront(previousListItem);
+							ListItem previousListItem = null;
+							itemsEnumeration.reset();
+							if (itemsEnumeration.hasNextItems()) {
+								// Bring the first item to front
+								previousListItem = getListItem((DataProvider) itemsEnumeration.nextItem());
+								bringToFront(previousListItem);
+							}
 							
 							// BringNear the orthers
 							ListItem listItem;
-							for (LinkedListItem tmpItem = firstItem.getNext(); tmpItem != null; tmpItem = tmpItem.getNext()) {
-								listItem = getListItem((DataProvider) tmpItem);
+							while (itemsEnumeration.hasNextItems()) {
+								listItem = getListItem((DataProvider) itemsEnumeration.nextItem());
 								if (listItem != null) {
 									bringNear(listItem, previousListItem, true);
 									previousListItem = listItem;
 								}
 							}
-							
 							return true;
+						}
+							
+						case DataProvider.FILTER_MODEL_UPDATE_EVENT_TYPE: {
+							
+							itemsEnumeration.reset();
+							if (itemsEnumeration.hasNextItems()) {
+								
+								LinkedList items = itemsEnumeration.getList();
+								LinkedListItem linkedListItem = itemsEnumeration.nextItem();
+								ListItem listItem = (ListItem) getChild();
+								
+								for (LinkedListItem currentItem = items.getFirst(); currentItem != null; currentItem = currentItem.getNext()) {
+									
+									boolean isEnumerationItem = currentItem.equals(linkedListItem);
+									boolean isListItemDataProvider = listItem != null && currentItem.equals(listItem.getDataProvider());
+									
+									// If listItem and linkedListItem are not in at least one of two list, continue
+									if (!isListItemDataProvider && !isEnumerationItem) {
+										continue;
+									}
+									
+									// If listItem and linkedListItem are in both of two list, get next items and continue
+									if (isListItemDataProvider && isEnumerationItem) {
+										linkedListItem = null;
+										if (itemsEnumeration.hasNextItems()) {
+											linkedListItem = itemsEnumeration.nextItem();
+										}
+										
+										listItem = (ListItem) listItem.next;
+										continue;
+									}
+									
+									// If not in list but in enumeration, add in list
+									if (!isListItemDataProvider && isEnumerationItem) {
+										if (listItem != null) {
+											if (renderer != null) {
+												renderer.reset();
+											}
+											internalAddItem((DataProvider) linkedListItem, renderer, listItem, false);
+										} else {
+											addItem((DataProvider) linkedListItem);
+										}
+										
+										if (itemsEnumeration.hasNextItems()) {
+											linkedListItem = itemsEnumeration.nextItem();
+										} else {
+											linkedListItem = null;
+										}
+										
+									// If already in list but not in enumeration, remove it
+									} else if (isListItemDataProvider && !isEnumerationItem) {
+										ListItem nextListItem = (ListItem) listItem.next;
+										internalRemoveItem(listItem);
+										listItem = nextListItem;
+									}
+									
+									// All items are trailed in linkedList and list
+									if (linkedListItem == null && listItem == null) {
+										break;
+									}
+								}
+								return true;
+								
+							}
+							
+							removeAllItems();
+							return true;
+						}
 							
 						case DataProvider.CLEAR_MODEL_UPDATE_EVENT_TYPE:
 							removeAllItems();

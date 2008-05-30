@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with org.kalmeo.kuix.  If not, see <http://www.gnu.org/licenses/>.
  *  
- * Creation date : 5 déc. 07
+ * Creation date : 5 dï¿½c. 07
  * Copyright (c) Kalmeo 2007-2008. All rights reserved.
  * http://www.kalmeo.org
  */
@@ -224,7 +224,7 @@ public class Screen extends Widget {
 	/**
 	 * This class represents a screen top or bottom bar (used for title and/or menu)
 	 */
-	class ScreenBar extends Widget {
+	public class ScreenBar extends Widget {
 		
 		private BorderLayoutData layoutData;
 		
@@ -258,7 +258,7 @@ public class Screen extends Widget {
 	/**
 	 * This class represents a screen menu
 	 */
-	class ScreenMenu extends Menu {
+	public class ScreenMenu extends Menu {
 
 		private StaticLayoutData layoutData;
 		private boolean internal;
@@ -541,7 +541,7 @@ public class Screen extends Widget {
 	 * @return the {@link ScreenMenu} that correspond to the given
 	 *         <code>kuixKeyCode</code>
 	 */
-	public ScreenMenu getScreenMenu(int kuixKeyCode) {
+	public Menu getScreenMenu(int kuixKeyCode) {
 		if (firstIsLeft && kuixKeyCode == KuixConstants.KUIX_KEY_SOFT_LEFT || !firstIsLeft && kuixKeyCode == KuixConstants.KUIX_KEY_SOFT_RIGHT) {
 			if (firstMenu != null && firstMenu.isVisible()) {
 				return firstMenu;
@@ -560,7 +560,7 @@ public class Screen extends Widget {
 	 * 
 	 * @return the internal firstMenu instance
 	 */
-	public ScreenMenu getFirstMenu() {
+	public Menu getFirstMenu() {
 		if (firstMenu == null) {
 			firstMenu = new ScreenMenu(KuixConstants.FIRST_MENU_WIDGET_TAG, new StaticLayoutData(firstIsLeft ? Alignment.LEFT : Alignment.RIGHT), false);
 			getBottomBar().add(firstMenu);
@@ -573,7 +573,7 @@ public class Screen extends Widget {
 	 * 
 	 * @return the internal secondMenu instance
 	 */
-	public ScreenMenu getSecondMenu() {
+	public Menu getSecondMenu() {
 		if (secondMenu == null) {
 			secondMenu = new ScreenMenu(KuixConstants.SECOND_MENU_WIDGET_TAG, new StaticLayoutData(firstIsLeft ? Alignment.RIGHT : Alignment.LEFT), false);
 			getBottomBar().add(secondMenu);

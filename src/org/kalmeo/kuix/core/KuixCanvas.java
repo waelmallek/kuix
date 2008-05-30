@@ -372,7 +372,7 @@ public final class KuixCanvas extends GameCanvas {
 	
 	/**
 	 * Revalidate (and repaint) the desktop as soon as possible. If the current
-	 * thread is the worker thread the task is done immédialty else it is
+	 * thread is the worker thread the task is done immï¿½dialty else it is
 	 * deferred to the next frame.
 	 */
 	public void revalidateAsSoonAsPossible() {
@@ -386,7 +386,7 @@ public final class KuixCanvas extends GameCanvas {
 	
 	/**
 	 * Repaint the desktop as soon as possible. If the current thread is the
-	 * worker thread the task is done immédialty else it is deferred to the next
+	 * worker thread the task is done immï¿½dialty else it is deferred to the next
 	 * frame.
 	 */
 	public void repaintAsSoonAsPossible() {
