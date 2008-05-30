@@ -110,7 +110,6 @@ public class TabFolder extends AbstractFocusableWidget {
 		public TabButton(TabItem tabItem) {
 			super(KuixConstants.TAB_BUTTON_WIDGET_TAG);
 			this.tabItem = tabItem;
-			
 			if (tabItem != null) {
 				setEnabled(tabItem.isEnabled());
 				if (tabItem.getIcon() != null) {
@@ -378,13 +377,27 @@ public class TabFolder extends AbstractFocusableWidget {
 	 * @see org.kalmeo.kuix.widget.Widget#processKeyEvent(byte, int)
 	 */
 	public boolean processKeyEvent(byte type, int kuixKeyCode) {
-		if (!processShortcutKeyEvent(type, kuixKeyCode)) {
-			if (currentTabItem != null) {
-				return currentTabItem.getFocusManager().processKeyEvent(type, kuixKeyCode);
+		if (currentTabItem != null) {
+			
+			// Tab navigation
+			if (type == KuixConstants.KEY_REPEATED_EVENT_TYPE) {
+				switch (kuixKeyCode) {
+					case KuixConstants.KUIX_KEY_LEFT: {
+						selectPreviousTab();
+						return true;
+					}
+					case KuixConstants.KUIX_KEY_RIGHT: {
+						selectNextTab();
+						return true;
+					}
+				}
 			}
-			return false;
+		
+			// Default key process
+			return currentTabItem.getFocusManager().processKeyEvent(type, kuixKeyCode);
+			
 		}
-		return true;
+		return false;
 	}
 
 	/* (non-Javadoc)
@@ -393,8 +406,8 @@ public class TabFolder extends AbstractFocusableWidget {
 	public boolean processShortcutKeyEvent(byte type, int kuixKeyCode) {
 		
 		if (currentTabItem != null
-				&& (type == KuixConstants.KEY_PRESSED_EVENT_TYPE	
-						|| type == KuixConstants.KEY_REPEATED_EVENT_TYPE)) {
+				&& (/*type == KuixConstants.KEY_PRESSED_EVENT_TYPE	
+						|| */type == KuixConstants.KEY_REPEATED_EVENT_TYPE)) {
 			
 			switch (kuixKeyCode) {
 				
@@ -431,13 +444,8 @@ public class TabFolder extends AbstractFocusableWidget {
 	protected void onAdded(Widget parent) {
 		FocusManager focusManager = getFocusManager();
 		if (focusManager != null) {
-			
 			// By default the TabFolder catch the focus if its parent has a focusManager
 			focusManager.requestFocus(this);
-			
-			// Define shortcut keys
-			setShortcutKeyCodes(KuixConstants.KUIX_KEY_LEFT | KuixConstants.KUIX_KEY_RIGHT, KuixConstants.KEY_PRESSED_EVENT_TYPE);
-			focusManager.addShortcutHandler(this);
 		}
 	}
 
