@@ -235,7 +235,7 @@ public abstract class AbstractFocusableWidget extends Widget {
 	}
 	
 	/**
-	 * GIve the focus to the nearest {@link AbstractFocusableWidget}.
+	 * Give the focus to the nearest {@link AbstractFocusableWidget}.
 	 */
 	private void giveFocusToNearestWidget() {
 		if (isFocused()) {

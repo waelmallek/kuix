@@ -140,7 +140,7 @@ public class KuixConverter {
 			return new TabItem();
 		}
 		if (KuixConstants.DEFAULT_TAB_ITEM_WIDGET_TAG.equals(tag)) {
-			return new TabItem(KuixConstants.DEFAULT_TAB_ITEM_WIDGET_TAG);
+			return new TabItem(KuixConstants.DEFAULT_TAB_ITEM_WIDGET_TAG, null);
 		}
 		if (KuixConstants.MENU_WIDGET_TAG.equals(tag)) {
 			return new Menu();
