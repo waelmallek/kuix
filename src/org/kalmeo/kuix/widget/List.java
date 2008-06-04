@@ -54,7 +54,7 @@ import org.kalmeo.util.LinkedList.LinkedListEnumeration;
  * 		<td> <code>No</code> </td>
  * 		<td> <code>Yes</code> </td>
  * 		<td> <code>No</code> </td>
- * 		<td> The default ListItem renderer. The value is an XML template. </td>
+ * 		<td> The default item widget renderer. The value is an XML template. </td>
  * 	</tr>
  * 	<tr class="TableRowColor">
  * 		<td> <code>items</code> </td>
@@ -129,10 +129,10 @@ public class List extends Widget {
 	private static final Alignment LIST_ALIGN = Alignment.FILL_TOP;
 	private static final Layout LIST_LAYOUT = new InlineLayout(false, Alignment.FILL);
 	
-	// Default listItem renderer
+	// Default item widget renderer
 	private ByteArrayInputStream renderer;
 	
-	// Represent the mapping between DataProviders and ListItems
+	// Represent the mapping between DataProviders and ItemWidgets
 	private final Hashtable dataProvidersMapping = new Hashtable();
 
 	/**
@@ -234,12 +234,22 @@ public class List extends Widget {
 	}
 
 	/**
+	 * Create and returns a new instance of an item {@link Widget}.
+	 * 
+	 * @param item
+	 * @return a new instance of {@link Widget}.
+	 */
+	protected Widget newItemWidgetInstance(DataProvider item) {
+		return new ListItem(item);
+	}
+	
+	/**
 	 * Add an item value
 	 * 
 	 * @param item
-	 * @return The added {@link ListItem} or <code>null</code> if no renderer is set on the list.
+	 * @return The added {@link Widget} or <code>null</code> if no renderer is set on the list.
 	 */
-	public ListItem addItem(DataProvider item) {
+	public Widget addItem(DataProvider item) {
 		return addItem(item, null, false);
 	}
 	
@@ -248,9 +258,9 @@ public class List extends Widget {
 	 * 
 	 * @param item
 	 * @param renderer
-	 * @return The added {@link ListItem}
+	 * @return The added {@link Widget}
 	 */
-	public ListItem addItem(DataProvider item, InputStream renderer) {
+	public Widget addItem(DataProvider item, InputStream renderer) {
 		return addItem(item, renderer, null, false);
 	}
 	
@@ -260,9 +270,9 @@ public class List extends Widget {
 	 * @param item
 	 * @param enabled
 	 * @param prepend
-	 * @return The added {@link ListItem} or <code>null</code> if no renderer is set on the list
+	 * @return The added {@link Widget} or <code>null</code> if no renderer is set on the list
 	 */
-	public ListItem addItem(DataProvider item, DataProvider referenceItem, boolean after) {
+	public Widget addItem(DataProvider item, DataProvider referenceItem, boolean after) {
 		if (renderer != null) {
 			renderer.reset();
 			return addItem(item, renderer, referenceItem, after);
@@ -277,41 +287,31 @@ public class List extends Widget {
 	 * @param renderer
 	 * @param referenceItem
 	 * @param after
-	 * @return The added {@link ListItem}
+	 * @return The added {@link Widget}
 	 */
-	public ListItem addItem(DataProvider item, InputStream renderer, DataProvider referenceItem, boolean after) {
-		return internalAddItem(item, renderer, referenceItem != null ? getListItem(referenceItem) : null, after);
+	public Widget addItem(DataProvider item, InputStream renderer, DataProvider referenceItem, boolean after) {
+		return internalAddItem(item, renderer, referenceItem != null ? getItemWidget(referenceItem) : null, after);
 	}
 	
 	/**
-	 * Add an item value near an other {@link ListItem}.
+	 * Add an item value near an other {@link Widget}.
 	 * 
 	 * @param item
 	 * @param renderer
-	 * @param referenceListItem
+	 * @param referenceWidget
 	 * @param after
-	 * @return The added {@link ListItem}
+	 * @return The added {@link Widget}
 	 */
-	private ListItem internalAddItem(DataProvider item, InputStream renderer, ListItem referenceListItem, boolean after) {
-		ListItem listItem = newListItemInstance(item);
-		if (referenceListItem != null) {
-			super.add(listItem, referenceListItem, after);
+	private Widget internalAddItem(DataProvider item, InputStream renderer, Widget referenceWidget, boolean after) {
+		Widget itemWidget = newItemWidgetInstance(item);
+		if (referenceWidget != null) {
+			add(itemWidget, referenceWidget, after);
 		} else {
-			super.add(listItem);
+			add(itemWidget);
 		}
-		Kuix.loadXml(listItem, renderer, item, true);
-		dataProvidersMapping.put(item, listItem);
-		return listItem;
-	}
-	
-	/**
-	 * Create and returns a new instance of a {@link ListItem}.
-	 * 
-	 * @param item
-	 * @return a new instance of {@link ListItem}.
-	 */
-	protected ListItem newListItemInstance(DataProvider item) {
-		return new ListItem(item);
+		Kuix.loadXml(itemWidget, renderer, item, true);
+		dataProvidersMapping.put(item, itemWidget);
+		return itemWidget;
 	}
 	
 	/**
@@ -319,24 +319,24 @@ public class List extends Widget {
 	 * 
 	 * @param item
 	 * @return <code>true</code> if the <code>item</code> is found and the
-	 *         associated {@link ListItem} removed
+	 *         associated item widget removed
 	 */
 	public boolean removeItem(DataProvider item) {
-		ListItem listItem = getListItem(item);
-		internalRemoveItem(listItem);
-		return listItem != null;
+		Widget itemWidget = getItemWidget(item);
+		internalRemoveItem(itemWidget);
+		return itemWidget != null;
 	}
 	
 	/**
-	 * @param listItem
-	 * @return <code>true</code> if the <code>listItem</code> is found and the
-	 *         associated {@link ListItem} removed
+	 * @param itemWidget
+	 * @return <code>true</code> if the <code>itemWidget</code> is found and the
+	 *         associated item widget removed
 	 */
-	private void internalRemoveItem(ListItem listItem) {
-		if (listItem != null) {
-			dataProvidersMapping.remove(listItem.getDataProvider());
-			listItem.cleanUp();
-			listItem.remove();
+	private void internalRemoveItem(Widget itemWidget) {
+		if (itemWidget != null) {
+			dataProvidersMapping.remove(itemWidget.getDataProvider());
+			itemWidget.cleanUp();
+			itemWidget.remove();
 		}
 	}
 	
@@ -351,37 +351,12 @@ public class List extends Widget {
 	
 	/**
 	 * @param item
-	 * @return The {@link ListItem} associated with the specified
+	 * @return The item {@link Widget} associated with the specified
 	 *         {@link DataProvider}. If no item is found <code>null</code> is
 	 *         returned
 	 */
-	public ListItem getListItem(DataProvider item) {
+	public Widget getItemWidget(DataProvider item) {
 		return (ListItem) dataProvidersMapping.get(item);
-	}
-	
-	/**
-	 * Returns the next (after <code>startWidget</code>) {@link ListItem}
-	 * child instance.
-	 * 
-	 * @param startWidget
-	 * @return a {@link ListItem} child instance.
-	 */
-	private ListItem getNextListItem(Widget startWidget) {
-		if (startWidget == null) {
-			startWidget = getChild();
-		} else {
-			startWidget = startWidget.next;
-		}
-		if (startWidget != null) {
-			Widget nextWidget = startWidget;
-			while (nextWidget != null) {
-				if (nextWidget instanceof ListItem) {
-					return (ListItem) nextWidget;
-				}
-				nextWidget = nextWidget.next;
-			}
-		}
-		return null;
 	}
 	
 	/* (non-Javadoc)
@@ -411,23 +386,23 @@ public class List extends Widget {
 
 						case DataProvider.SORT_MODEL_UPDATE_EVENT_TYPE: {
 							
-							// Reorder listItems
+							// Reorder item widgets
 							
-							ListItem previousListItem = null;
+							Widget previousItemWidget = null;
 							itemsEnumeration.reset();
 							if (itemsEnumeration.hasNextItems()) {
 								// Bring the first item to front
-								previousListItem = getListItem((DataProvider) itemsEnumeration.nextItem());
-								bringToFront(previousListItem);
+								previousItemWidget = getItemWidget((DataProvider) itemsEnumeration.nextItem());
+								bringToFront(previousItemWidget);
 							}
 							
 							// BringNear the orthers
-							ListItem listItem;
+							Widget itemWidget;
 							while (itemsEnumeration.hasNextItems()) {
-								listItem = getListItem((DataProvider) itemsEnumeration.nextItem());
-								if (listItem != null) {
-									bringNear(listItem, previousListItem, true);
-									previousListItem = listItem;
+								itemWidget = getItemWidget((DataProvider) itemsEnumeration.nextItem());
+								if (itemWidget != null) {
+									bringNear(itemWidget, previousItemWidget, true);
+									previousItemWidget = itemWidget;
 								}
 							}
 							return true;
@@ -440,36 +415,36 @@ public class List extends Widget {
 								
 								LinkedList items = itemsEnumeration.getList();
 								LinkedListItem linkedListItem = itemsEnumeration.nextItem();
-								ListItem listItem = getNextListItem(null);
+								Widget itemWidget = getChild();
 								
 								for (LinkedListItem currentItem = items.getFirst(); currentItem != null; currentItem = currentItem.getNext()) {
 									
 									boolean isEnumerationItem = currentItem.equals(linkedListItem);
-									boolean isListItemDataProvider = listItem != null && currentItem.equals(listItem.getDataProvider());
+									boolean isItemWidgetDataProvider = itemWidget != null && currentItem.equals(itemWidget.getDataProvider());
 									
-									// If listItem and linkedListItem are not in at least one of two list, continue
-									if (!isListItemDataProvider && !isEnumerationItem) {
+									// If itemWidget and linkedListItem are not in at least one of two list, continue
+									if (!isItemWidgetDataProvider && !isEnumerationItem) {
 										continue;
 									}
 									
-									// If listItem and linkedListItem are in both of two list, get next items and continue
-									if (isListItemDataProvider && isEnumerationItem) {
+									// If itemWidget and linkedListItem are in both of two list, get next items and continue
+									if (isItemWidgetDataProvider && isEnumerationItem) {
 										linkedListItem = null;
 										if (itemsEnumeration.hasNextItems()) {
 											linkedListItem = itemsEnumeration.nextItem();
 										}
 										
-										listItem = getNextListItem(listItem);
+										itemWidget = itemWidget.next;
 										continue;
 									}
 									
 									// If not in list but in enumeration, add in list
-									if (!isListItemDataProvider && isEnumerationItem) {
-										if (listItem != null) {
+									if (!isItemWidgetDataProvider && isEnumerationItem) {
+										if (itemWidget != null) {
 											if (renderer != null) {
 												renderer.reset();
 											}
-											internalAddItem((DataProvider) linkedListItem, renderer, listItem, false);
+											internalAddItem((DataProvider) linkedListItem, renderer, itemWidget, false);
 										} else {
 											addItem((DataProvider) linkedListItem);
 										}
@@ -481,14 +456,14 @@ public class List extends Widget {
 										}
 										
 									// If already in list but not in enumeration, remove it
-									} else if (isListItemDataProvider && !isEnumerationItem) {
-										ListItem nextListItem = (ListItem) listItem.next;
-										internalRemoveItem(listItem);
-										listItem = nextListItem;
+									} else if (isItemWidgetDataProvider && !isEnumerationItem) {
+										Widget nextItemWidget = itemWidget.next;
+										internalRemoveItem(itemWidget);
+										itemWidget = nextItemWidget;
 									}
 									
 									// All items are trailed in linkedList and list
-									if (linkedListItem == null && listItem == null) {
+									if (linkedListItem == null && itemWidget == null) {
 										break;
 									}
 								}

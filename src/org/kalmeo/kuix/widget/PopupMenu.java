@@ -131,9 +131,9 @@ public class PopupMenu extends List {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.List#newListItemInstance(org.kalmeo.kuix.core.model.DataProvider)
+	 * @see org.kalmeo.kuix.widget.List#newItemWidgetInstance(org.kalmeo.kuix.core.model.DataProvider)
 	 */
-	protected ListItem newListItemInstance(DataProvider item) {
+	protected Widget newItemWidgetInstance(DataProvider item) {
 		return new MenuItem(item);
 	}
 

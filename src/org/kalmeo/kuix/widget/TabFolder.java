@@ -23,6 +23,7 @@ package org.kalmeo.kuix.widget;
 
 import org.kalmeo.kuix.core.KuixConstants;
 import org.kalmeo.kuix.core.focus.FocusManager;
+import org.kalmeo.kuix.core.model.DataProvider;
 import org.kalmeo.kuix.layout.BorderLayout;
 import org.kalmeo.kuix.layout.BorderLayoutData;
 import org.kalmeo.kuix.layout.InlineLayout;
@@ -93,7 +94,7 @@ import org.kalmeo.kuix.util.Alignment;
  * 
  * @author bbeaulant
  */
-public class TabFolder extends AbstractFocusableWidget {
+public class TabFolder extends List {
 
 	/**
 	 * Represents a tab button
@@ -138,6 +139,8 @@ public class TabFolder extends AbstractFocusableWidget {
 		}
 		
 		/**
+		 * Set the label of this tab button.
+		 * 
 		 * @param label
 		 */
 		public void setLabel(String label) {
@@ -153,6 +156,8 @@ public class TabFolder extends AbstractFocusableWidget {
 		}
 		
 		/**
+		 * Set the icon of this tab button.
+		 * 
 		 * @param icon
 		 */
 		public void setIcon(String icon) {
@@ -177,7 +182,8 @@ public class TabFolder extends AbstractFocusableWidget {
 	private Widget tabItemContainer;
 	private TabItem currentTabItem;
 	
-	private Widget defaultTabItem;
+	// The default widget visible if there's no valid tabs
+	private TabItem defaultTabItem;
 
 	/**
 	 * Construct a {@link TabFolder}
@@ -221,6 +227,15 @@ public class TabFolder extends AbstractFocusableWidget {
 				return BorderLayoutData.instanceCenter;
 			}
 
+			/* (non-Javadoc)
+			 * @see org.kalmeo.kuix.widget.Widget#onChildRemoved(org.kalmeo.kuix.widget.Widget)
+			 */
+			protected void onChildRemoved(Widget widget) {
+				if (widget == currentTabItem) {
+					selectNextTab();
+				}
+			}
+			
 		};
 		super.add(tabItemContainer);
 	}
@@ -267,6 +282,41 @@ public class TabFolder extends AbstractFocusableWidget {
 	public Widget getDefaultTabItem() {
 		return defaultTabItem;
 	}
+	
+	/**
+	 * Set the current {@link TabItem} (only if this instance is a child of the
+	 * {@link TabFolder})
+	 * 
+	 * @param tabItem
+	 */
+	public void setCurrentTabItem(TabItem tabItem) {
+		if (tabItem != null && tabItem.parent != tabItemContainer) {
+			return;
+		}
+		if (currentTabItem != null) {
+			if (currentTabItem.tabButton != null) {
+				currentTabItem.tabButton.setSelected(false);
+			}
+			currentTabItem.setVisible(false);
+		}
+		currentTabItem = tabItem;
+		if (tabItem != null) {
+			if (tabItem.tabButton != null) {
+				tabItem.tabButton.setSelected(true);
+			}
+			tabItem.setVisible(true);
+		}
+		if (defaultTabItem != null) {
+			defaultTabItem.setVisible(currentTabItem == null);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.List#newItemWidgetInstance(org.kalmeo.kuix.core.model.DataProvider)
+	 */
+	protected Widget newItemWidgetInstance(DataProvider item) {
+		return new TabItem(item);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#add(org.kalmeo.kuix.widget.Widget)
@@ -306,71 +356,54 @@ public class TabFolder extends AbstractFocusableWidget {
 			
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#removeAll()
+	 */
+	public void removeAll() {
+		tabItemContainer.removeAll();
+		tabContainer.removeAll();
+		setDefaultTabItem(defaultTabItem);	// Reattribute the default tabItem
+		setCurrentTabItem(null);			// No tabItem : setCurrent to null
+	}
+	
+	/**
+	 * Select an other enabled tab.
+	 * 
+	 * @param forward
+	 */
+	private void selectOtherTab(boolean forward) {
+		Widget currentTab = currentTabItem != null ? currentTabItem.tabButton : (forward ? tabContainer.getChild() : tabContainer.getLastChild());
+		Widget tab = currentTab;
+		while (tab != null) {
+			tab = forward ? tab.next : tab.previous;
+			if (tab == null) {
+				tab = (forward ? tabContainer.getChild() : tabContainer.getLastChild());
+			}
+			if (tab != null) {
+				if (tab == currentTab) {
+					return;
+				}
+				if (((CheckBox) tab).isEnabled()) {
+					tab.processActionEvent();
+					return;
+				}
+			}
+		}
+	}
 
 	/**
-	 * Set the current {@link TabItem} (only if this instance is a child of the
-	 * {@link TabFolder})
-	 * 
-	 * @param tabItem
-	 */
-	public void setCurrentTabItem(TabItem tabItem) {
-		if (tabItem != null && tabItem.parent != tabItemContainer) {
-			return;
-		}
-		if (currentTabItem != null) {
-			if (currentTabItem.tabButton != null) {
-				currentTabItem.tabButton.setSelected(false);
-			}
-			currentTabItem.setVisible(false);
-		}
-		currentTabItem = tabItem;
-		if (tabItem != null) {
-			if (tabItem.tabButton != null) {
-				tabItem.tabButton.setSelected(true);
-			}
-			tabItem.setVisible(true);
-		}
-		if (defaultTabItem != null) {
-			defaultTabItem.setVisible(currentTabItem == null);
-		}
-	}
-	
-	/**
-	 * Select the previous enabled tab
+	 * Select the previous enabled tab.
 	 */
 	public void selectPreviousTab() {
-		Widget tab = currentTabItem.tabButton;
-		while (tab != null) {
-			tab = tab.previous;
-			if (tab == null) {
-				tab = currentTabItem.tabButton.parent.getLastChild();
-			}
-			if (tab != null && ((CheckBox) tab).isEnabled() || tab == currentTabItem.tabButton) {
-				break;
-			}
-		}
-		if (tab != null) {
-			tab.processActionEvent();
-		}
+		selectOtherTab(false);
 	}
 	
 	/**
-	 * Select the next enabled tab
+	 * Select the next enabled tab.
 	 */
 	public void selectNextTab() {
-		Widget tab = currentTabItem.tabButton;
-		while (tab != null) {
-			tab = tab.next;
-			if (tab == null) {
-				tab = currentTabItem.tabButton.parent.getChild();
-			}
-			if (tab != null && ((CheckBox) tab).isEnabled() || tab == currentTabItem.tabButton) {
-				break;
-			}
-		}
-		if (tab != null) {
-			tab.processActionEvent();
-		}
+		selectOtherTab(true);
 	}
 	
 	/* (non-Javadoc)

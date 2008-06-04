@@ -23,6 +23,7 @@ package org.kalmeo.kuix.widget;
 
 import org.kalmeo.kuix.core.KuixConstants;
 import org.kalmeo.kuix.core.focus.FocusManager;
+import org.kalmeo.kuix.core.model.DataProvider;
 import org.kalmeo.kuix.layout.GridLayout;
 import org.kalmeo.kuix.layout.Layout;
 import org.kalmeo.kuix.layout.LayoutData;
@@ -142,21 +143,31 @@ public class TabItem extends Widget {
 	 * Construct a {@link TabItem}
 	 */
 	public TabItem() {
-		this(KuixConstants.TAB_ITEM_WIDGET_TAG);
+		this(null);
 	}
 	
 	/**
 	 * Construct a {@link TabItem}
 	 *
+	 * @param dataProvider
+	 */
+	public TabItem(DataProvider dataProvider) {
+		this(KuixConstants.TAB_ITEM_WIDGET_TAG, null);
+	}
+
+	/**
+	 * Construct a {@link TabItem}
+	 *
 	 * @param tag
 	 */
-	public TabItem(String tag) {
+	public TabItem(String tag, DataProvider dataProvider) {
 		super(tag);
+		setDataProvider(dataProvider);
 		
 		// Init focusManagers
 		focusManager = new FocusManager(this, false);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#setAttribute(java.lang.String, java.lang.String)
 	 */

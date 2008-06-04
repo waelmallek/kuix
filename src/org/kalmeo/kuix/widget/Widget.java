@@ -1365,7 +1365,7 @@ public class Widget {
 				focusedWidget = focusManager.getFocusedWidget();
 			}
 			for (Widget widget = child; widget != null; widget = widget.next) {
-				widget.parent = null;
+				widget.next = widget.previous = widget.parent = null;
 				if (widget == focusedWidget) {
 					focusManager.requestFocus(null);
 				}

@@ -7,10 +7,16 @@
  
 - Add filter capabilities to DataProvider
 
-- Menu / PopupMenu changes : 
-  - PopupMenu now extends List, to be able to build PopupMenu content from a DataProvier like lists (create only MenuItem, not Menu).
-  - MenuItem now extends ListItem.
+- List changes :
   - Remove the ListItem restriction on List
+  - addItem, RemoveItem methods now returns Widget istead of ListItem
+
+- Menu / PopupMenu changes : 
+  - PopupMenu now extends List, to be able to build PopupMenu content from a DataProvider like lists (create only MenuItem, not Menu).
+  - MenuItem now extends ListItem.
+  
+- TabFolder changes :
+  - TabFolder now extends List, to be able to build child TabItem content from a DataProvider like lists.
 
 ##Version 1.0.0RC3 (2008-05-27)
 
