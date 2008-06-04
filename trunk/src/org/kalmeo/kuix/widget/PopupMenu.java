@@ -24,11 +24,9 @@ package org.kalmeo.kuix.widget;
 import org.kalmeo.kuix.core.KuixConstants;
 import org.kalmeo.kuix.core.focus.FocusManager;
 import org.kalmeo.kuix.core.focus.PopupMenuFocusManager;
-import org.kalmeo.kuix.layout.InlineLayout;
-import org.kalmeo.kuix.layout.Layout;
+import org.kalmeo.kuix.core.model.DataProvider;
 import org.kalmeo.kuix.layout.LayoutData;
 import org.kalmeo.kuix.layout.StaticLayoutData;
-import org.kalmeo.kuix.util.Alignment;
 import org.kalmeo.kuix.util.Metrics;
 
 /**
@@ -46,7 +44,7 @@ import org.kalmeo.kuix.util.Metrics;
  * 		<th> Description </th>
  *	</tr>
  * 	<tr class="TableRowColor">
- * 		<td colspan="5"> Inherited attributes : see {@link Widget} </td>
+ * 		<td colspan="5"> Inherited attributes : see {@link List} </td>
  * 	</tr>
  * </table>
  * <br>
@@ -61,19 +59,13 @@ import org.kalmeo.kuix.util.Metrics;
  * 		<th> Description </th>
  *	</tr>
  * 	<tr class="TableRowColor">
- * 		<td> <code>layout</code> </th>
- * 		<td> <code>inlinelayout(false,fill)</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> see {@link Widget} </td>
- *	</tr>
- * 	<tr class="TableRowColor">
  * 		<td> <code>layout-data</code> </th>
  * 		<td> <code>sld(null,-1,-1)</code> </td>
  * 		<td> <code>No</code> </td>
- * 		<td> <b>Uneditable</b>, see {@link Widget} </td>
+ * 		<td> <b>Uneditable</b>, see {@link List} </td>
  *	</tr>
  * 	<tr class="TableRowColor">
- * 		<td colspan="4"> Inherited style properties : see {@link Widget} </td>
+ * 		<td colspan="4"> Inherited style properties : see {@link List} </td>
  * 	</tr>
  * </table>
  * <br>
@@ -86,7 +78,7 @@ import org.kalmeo.kuix.util.Metrics;
  * 		<th> Description </th>
  *	</tr>
  * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited style pseudo-classes : see {@link Widget} </td>
+ * 		<td colspan="2"> Inherited style pseudo-classes : see {@link List} </td>
  * 	</tr>
  * </table>
  * <br>
@@ -99,16 +91,13 @@ import org.kalmeo.kuix.util.Metrics;
  * 		<th> Description </th>
  *	</tr>
  * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited internal widgets : see {@link Widget} </td>
+ * 		<td colspan="2"> Inherited internal widgets : see {@link List} </td>
  * 	</tr>
  * </table>
  * 
  * @author bbeaulant
  */
-public class PopupMenu extends Widget {
-
-	// Defaults
-	private static final Layout POPUP_MENU_DEFAULT_LAYOUT = new InlineLayout(false, Alignment.FILL);
+public class PopupMenu extends List {
 
 	// The associated PopupMenuFocusManager
 	private final PopupMenuFocusManager focusManager;
@@ -128,16 +117,6 @@ public class PopupMenu extends Widget {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.Widget#getDefaultStyleAttributeValue(java.lang.String)
-	 */
-	protected Object getDefaultStylePropertyValue(String name) {
-		if (KuixConstants.LAYOUT_STYLE_PROPERTY.equals(name)) {
-			return POPUP_MENU_DEFAULT_LAYOUT;
-		}
-		return super.getDefaultStylePropertyValue(name);
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#getFocusManager()
 	 */
 	public FocusManager getFocusManager() {
@@ -149,6 +128,13 @@ public class PopupMenu extends Widget {
 	 */
 	public LayoutData getLayoutData() {
 		return layoutData;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.List#newListItemInstance(org.kalmeo.kuix.core.model.DataProvider)
+	 */
+	protected ListItem newListItemInstance(DataProvider item) {
+		return new MenuItem(item);
 	}
 
 	/**

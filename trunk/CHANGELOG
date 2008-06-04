@@ -1,5 +1,17 @@
 # Kuix Changelog
 
+##Version 1.0.0 (2008-XX-XX)
+
+- Bug fix : avoid a NoClassDefFoundException on SonyEricsson
+- Bug fix : avoid a memory leak when displaying a lot of Screens that contain menus
+ 
+- Add filter capabilities to DataProvider
+
+- Menu / PopupMenu changes : 
+  - PopupMenu now extends List, to be able to build PopupMenu content from a DataProvier like lists (create only MenuItem, not Menu).
+  - MenuItem now extends ListItem.
+  - Remove the ListItem restriction on List
+
 ##Version 1.0.0RC3 (2008-05-27)
 
 - This release need **kutil 1.0.0**

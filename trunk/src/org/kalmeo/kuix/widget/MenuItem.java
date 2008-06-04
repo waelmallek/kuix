@@ -22,9 +22,7 @@
 package org.kalmeo.kuix.widget;
 
 import org.kalmeo.kuix.core.KuixConstants;
-import org.kalmeo.kuix.layout.InlineLayout;
-import org.kalmeo.kuix.layout.Layout;
-import org.kalmeo.kuix.util.Alignment;
+import org.kalmeo.kuix.core.model.DataProvider;
 
 /**
  * This class represent a menu item.
@@ -41,7 +39,7 @@ import org.kalmeo.kuix.util.Alignment;
  * 		<th> Description </th>
  *	</tr>
  * 	<tr class="TableRowColor">
- * 		<td colspan="5"> Inherited attributes : see {@link AbstractActionWidget} </td>
+ * 		<td colspan="5"> Inherited attributes : see {@link ListItem} </td>
  * 	</tr>
  * </table>
  * <br>
@@ -56,13 +54,7 @@ import org.kalmeo.kuix.util.Alignment;
  * 		<th> Description </th>
  *	</tr>
  * 	<tr class="TableRowColor">
- * 		<td> <code>layout</code> </th>
- * 		<td> <code>inlinelayout(true,left)</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> see {@link Widget} </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="4"> Inherited style properties : see {@link AbstractActionWidget} </td>
+ * 		<td colspan="4"> Inherited style properties : see {@link ListItem} </td>
  * 	</tr>
  * </table>
  * <br>
@@ -75,7 +67,7 @@ import org.kalmeo.kuix.util.Alignment;
  * 		<th> Description </th>
  *	</tr>
  * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited style pseudo-classes : see {@link AbstractActionWidget} </td>
+ * 		<td colspan="2"> Inherited style pseudo-classes : see {@link ListItem} </td>
  * 	</tr>
  * </table>
  * <br>
@@ -88,43 +80,40 @@ import org.kalmeo.kuix.util.Alignment;
  * 		<th> Description </th>
  *	</tr>
  * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited internal widgets : see {@link AbstractActionWidget} </td>
+ * 		<td colspan="2"> Inherited internal widgets : see {@link ListItem} </td>
  * 	</tr>
  * </table>
  * 
  * @author bbeaulant
  */
-public class MenuItem extends AbstractActionWidget {
-
-	// Defaults
-	private static final Layout MENU_ITEM_DEFAULT_LAYOUT = new InlineLayout(true, Alignment.LEFT);
+public class MenuItem extends ListItem {
 
 	/**
 	 * Construct a {@link MenuItem}
 	 */
 	public MenuItem() {
-		super(KuixConstants.MENU_ITEM_WIDGET_TAG);
+		this(null);
 	}
 	
 	/**
 	 * Construct a {@link MenuItem}
 	 *
+	 * @param dataProvider
+	 */
+	public MenuItem(DataProvider dataProvider) {
+		this(KuixConstants.MENU_ITEM_WIDGET_TAG, dataProvider);
+	}
+
+	/**
+	 * Construct a {@link MenuItem}
+	 *
 	 * @param tag
+	 * @param dataProvider
 	 */
-	public MenuItem(String tag) {
-		super(tag);
+	public MenuItem(String tag, DataProvider dataProvider) {
+		super(tag, dataProvider);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.Widget#getDefaultStyleAttributeValue(java.lang.String)
-	 */
-	protected Object getDefaultStylePropertyValue(String name) {
-		if (KuixConstants.LAYOUT_STYLE_PROPERTY.equals(name)) {
-			return MENU_ITEM_DEFAULT_LAYOUT;
-		}
-		return super.getDefaultStylePropertyValue(name);
-	}
-
+	
 	/**
 	 * Hide the menu tree
 	 */

@@ -67,7 +67,7 @@ public class DataProvider implements LinkedListItem {
 	 * @return the <code>property</code> value
 	 */
 	public Object getValue(String property) {
-		return enumerateItems(property);
+		return enumerateItems(property, true);
 	}
 
 	/**
@@ -217,17 +217,27 @@ public class DataProvider implements LinkedListItem {
 	
 	/**
 	 * Returns the {@link LinkedListEnumeration} instance or <code>null</code>
-	 * if no value is associated with this <code>property</code>.
+	 * if no value is associated with this <code>property</code>. If a filter
+	 * is associated with this <code>property</code> and
+	 * <code>useFilter</code> is set to <code>true</code>, the enumeration
+	 * use it.
 	 * 
 	 * @param property
+	 * @param useFilter
 	 * @return the {@link LinkedListEnumeration} instance or <code>null</code>
 	 *         if no value is associated with this <code>property</code>.
 	 */
-	public LinkedListEnumeration enumerateItems(String property) {
+	public LinkedListEnumeration enumerateItems(String property, boolean useFilter) {
 		LinkedList items = getItemsValue(property);
 		if (items != null) {
-			// TODO : use the filter
-			return items.enumerate(null);
+			Filter filter = null;
+			if (useFilter && itemsFilters != null) {
+				try {
+					filter = (Filter) itemsFilters.get(property);
+				} catch (NullPointerException e) {
+				}
+			}
+			return items.enumerate(filter);
 		}
 		return null;
 	}
@@ -348,11 +358,10 @@ public class DataProvider implements LinkedListItem {
 	 * @param flag
 	 */
 	public void sortItems(String property, int flag) {
-		// TODO check the enumerate interest
 		LinkedList items = getItemsValue(property);
 		if (items != null) {
 			items.sort(flag);
-			dispatchItemsUpdateEvent(SORT_MODEL_UPDATE_EVENT_TYPE, property, null, enumerateItems(property));
+			dispatchItemsUpdateEvent(SORT_MODEL_UPDATE_EVENT_TYPE, property, null, enumerateItems(property, true));
 		}
 	}
 	

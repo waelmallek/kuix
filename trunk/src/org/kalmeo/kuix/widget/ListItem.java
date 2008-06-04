@@ -106,15 +106,24 @@ public class ListItem extends AbstractActionWidget {
 	public ListItem() {
 		this(null);
 	}
+	
+	/**
+	 * Construct a {@link ListItem}
+	 *
+	 * @param dataProvider
+	 */
+	public ListItem(DataProvider dataProvider) {
+		this(KuixConstants.LIST_ITEM_WIDGET_TAG, dataProvider);
+	}
 
 	/**
 	 * Construct a {@link ListItem}
 	 *
-	 * @param value
+	 * @param dataProvider
 	 */
-	public ListItem(DataProvider value) {
-		super(KuixConstants.LIST_ITEM_WIDGET_TAG);
-		setDataProvider(value);
+	public ListItem(String tag, DataProvider dataProvider) {
+		super(tag);
+		setDataProvider(dataProvider);
 	}
 	
 	/* (non-Javadoc)

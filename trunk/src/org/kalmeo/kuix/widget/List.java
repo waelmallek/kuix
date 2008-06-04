@@ -139,7 +139,16 @@ public class List extends Widget {
 	 * Construct a {@link List}
 	 */
 	public List() {
-		super(KuixConstants.LIST_WIDGET_TAG);
+		this(KuixConstants.LIST_WIDGET_TAG);
+	}
+	
+	/**
+	 * Construct a {@link List}
+	 *
+	 * @param tag
+	 */
+	public List(String tag) {
+		super(tag);
 	}
 	
 	/* (non-Javadoc)
@@ -204,16 +213,6 @@ public class List extends Widget {
 		this.renderer = renderer;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.Widget#add(org.kalmeo.kuix.widget.Widget)
-	 */
-	public Widget add(Widget widget) {
-		if (widget instanceof ListItem) {
-			return super.add(widget);
-		}
-		return null;
-	}
-	
 	/**
 	 * Redifine all item values
 	 * 
@@ -294,7 +293,7 @@ public class List extends Widget {
 	 * @return The added {@link ListItem}
 	 */
 	private ListItem internalAddItem(DataProvider item, InputStream renderer, ListItem referenceListItem, boolean after) {
-		ListItem listItem = new ListItem(item);
+		ListItem listItem = newListItemInstance(item);
 		if (referenceListItem != null) {
 			super.add(listItem, referenceListItem, after);
 		} else {
@@ -303,6 +302,16 @@ public class List extends Widget {
 		Kuix.loadXml(listItem, renderer, item, true);
 		dataProvidersMapping.put(item, listItem);
 		return listItem;
+	}
+	
+	/**
+	 * Create and returns a new instance of a {@link ListItem}.
+	 * 
+	 * @param item
+	 * @return a new instance of {@link ListItem}.
+	 */
+	protected ListItem newListItemInstance(DataProvider item) {
+		return new ListItem(item);
 	}
 	
 	/**
@@ -348,6 +357,31 @@ public class List extends Widget {
 	 */
 	public ListItem getListItem(DataProvider item) {
 		return (ListItem) dataProvidersMapping.get(item);
+	}
+	
+	/**
+	 * Returns the next (after <code>startWidget</code>) {@link ListItem}
+	 * child instance.
+	 * 
+	 * @param startWidget
+	 * @return a {@link ListItem} child instance.
+	 */
+	private ListItem getNextListItem(Widget startWidget) {
+		if (startWidget == null) {
+			startWidget = getChild();
+		} else {
+			startWidget = startWidget.next;
+		}
+		if (startWidget != null) {
+			Widget nextWidget = startWidget;
+			while (nextWidget != null) {
+				if (nextWidget instanceof ListItem) {
+					return (ListItem) nextWidget;
+				}
+				nextWidget = nextWidget.next;
+			}
+		}
+		return null;
 	}
 	
 	/* (non-Javadoc)
@@ -406,7 +440,7 @@ public class List extends Widget {
 								
 								LinkedList items = itemsEnumeration.getList();
 								LinkedListItem linkedListItem = itemsEnumeration.nextItem();
-								ListItem listItem = (ListItem) getChild();
+								ListItem listItem = getNextListItem(null);
 								
 								for (LinkedListItem currentItem = items.getFirst(); currentItem != null; currentItem = currentItem.getNext()) {
 									
@@ -425,7 +459,7 @@ public class List extends Widget {
 											linkedListItem = itemsEnumeration.nextItem();
 										}
 										
-										listItem = (ListItem) listItem.next;
+										listItem = getNextListItem(listItem);
 										continue;
 									}
 									

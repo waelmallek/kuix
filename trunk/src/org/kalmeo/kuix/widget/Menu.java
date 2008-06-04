@@ -21,9 +21,9 @@
 
 package org.kalmeo.kuix.widget;
 
-import java.util.Vector;
-
 import org.kalmeo.kuix.core.KuixConstants;
+import org.kalmeo.kuix.core.KuixMIDlet;
+import org.kalmeo.kuix.core.model.DataProvider;
 
 /**
  * This class represent a menu.
@@ -89,9 +89,6 @@ import org.kalmeo.kuix.core.KuixConstants;
  */
 public class Menu extends MenuItem {
 
-	// The static menus list
-	private static final Vector menus = new Vector();
-	
 	// The associated popupMenu
 	protected PopupMenu popup;
 	
@@ -99,18 +96,26 @@ public class Menu extends MenuItem {
 	 * Construct a {@link Menu}
 	 */
 	public Menu() {
-		this(KuixConstants.MENU_WIDGET_TAG);
+		this(null);
+	}
+	
+	/**
+	 * Construct a {@link Menu}
+	 *
+	 * @param dataProvider
+	 */
+	public Menu(DataProvider dataProvider) {
+		this(KuixConstants.MENU_WIDGET_TAG, dataProvider);
 	}
 	
 	/**
 	 * Construct a {@link Menu}
 	 *
 	 * @param tag
+	 * @param dataProvider
 	 */
-	public Menu(String tag) {
-		super(tag);
-		// Add the menu to the static list
-		menus.addElement(this);
+	public Menu(String tag, DataProvider dataProvider) {
+		super(tag, dataProvider);
 	}
 	
 	/**
@@ -157,7 +162,9 @@ public class Menu extends MenuItem {
 	 * @param y
 	 */
 	public void showPopup(int x, int y) {
-		hideAllPopupMenu();
+		if (getDepth() == 0) {
+			hideAllPopupMenu();
+		}
 		if (popup != null) {
 			popup.show(Menu.this, x, y);
 		}
@@ -184,17 +191,10 @@ public class Menu extends MenuItem {
 	}
 
 	/**
-	 * Hide all popup for menu in the same group 
+	 * Hide all visible popupMenus
 	 */
-	protected void hideAllPopupMenu() {
-		int refLevel = getDepth();
-		Menu menu;
-		for (int i = menus.size() - 1; i>=0; --i) {
-			menu = ((Menu) menus.elementAt(i));
-			if (menu.getDepth() >= refLevel) {
-				menu.hidePopup();
-			}
-		}
+	protected static void hideAllPopupMenu() {
+		KuixMIDlet.getDefault().getCanvas().getDesktop().removeAllPopupInstanceOf(PopupMenu.class);
 	}
 	
 	/* (non-Javadoc)
@@ -206,7 +206,6 @@ public class Menu extends MenuItem {
 		if (popup != null) {
 			popup.cleanUp();
 		}
-		menus.removeElement(this);
 	}
 
 	/* (non-Javadoc)

@@ -380,7 +380,8 @@ public class TabFolder extends AbstractFocusableWidget {
 		if (currentTabItem != null) {
 			
 			// Tab navigation
-			if (type == KuixConstants.KEY_REPEATED_EVENT_TYPE) {
+			if (type == KuixConstants.KEY_PRESSED_EVENT_TYPE	
+					|| type == KuixConstants.KEY_REPEATED_EVENT_TYPE) {
 				switch (kuixKeyCode) {
 					case KuixConstants.KUIX_KEY_LEFT: {
 						selectPreviousTab();
@@ -400,33 +401,6 @@ public class TabFolder extends AbstractFocusableWidget {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.Widget#processShortcutKeyEvent(byte, int, int)
-	 */
-	public boolean processShortcutKeyEvent(byte type, int kuixKeyCode) {
-		
-		if (currentTabItem != null
-				&& (/*type == KuixConstants.KEY_PRESSED_EVENT_TYPE	
-						|| */type == KuixConstants.KEY_REPEATED_EVENT_TYPE)) {
-			
-			switch (kuixKeyCode) {
-				
-				case KuixConstants.KUIX_KEY_LEFT: {
-					selectPreviousTab();
-					return true;
-				}
-				
-				case KuixConstants.KUIX_KEY_RIGHT: {
-					selectNextTab();
-					return true;
-				}
-				
-			}
-			
-		}
-		return false;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#propagateFocusEvent(org.kalmeo.kuix.widget.Widget, boolean)
 	 */
