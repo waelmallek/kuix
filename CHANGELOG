@@ -16,7 +16,7 @@
   - MenuItem now extends ListItem.
   
 - TabFolder changes :
-  - TabFolder now extends List, to be able to build child TabItem content from a DataProvider like lists.
+  - TabFolder now extends List, to be able to build child TabItems from a DataProvider like lists.
 
 ##Version 1.0.0RC3 (2008-05-27)
 
