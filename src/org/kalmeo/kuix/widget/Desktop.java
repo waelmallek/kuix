@@ -336,6 +336,9 @@ public class Desktop extends Widget {
 			this.screen.remove();
 		}
 		
+		// Hide popupMenus
+		Menu.hideAllPopupMenu();
+		
 		// Check transition
 		Transition transition = screen.getTransition();
 		if (transition != null && this.screen != null) {
@@ -480,6 +483,24 @@ public class Desktop extends Widget {
 	 */
 	public void addPopup(Widget widget) {
 		popupContainer.add(widget);
+	}
+	
+	/**
+	 * Remove all popup widgets which are instance of <code>clazz</code>.
+	 * 
+	 * @param clazz
+	 */
+	public void removeAllPopupInstanceOf(Class clazz) {
+		Widget popup = popupContainer.getChild();
+		while (popup != null) {
+			if (popup.getClass() == clazz) {
+				Widget nextPopup = popup.next;
+				popup.remove();
+				popup = nextPopup;
+			} else {
+				popup = popup.next;
+			}
+		}
 	}
 	
 	/* (non-Javadoc)
