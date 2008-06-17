@@ -88,6 +88,9 @@ import org.kalmeo.kuix.core.model.DataProvider;
  * @author bbeaulant
  */
 public class Menu extends MenuItem {
+	
+	// Used as a workaround CLDC 1.0 limitation on PopupMenu.class
+	private static final Class POPUP_MENU_CLASS = new PopupMenu().getClass();
 
 	// The associated popupMenu
 	protected PopupMenu popup;
@@ -118,10 +121,24 @@ public class Menu extends MenuItem {
 		super(tag, dataProvider);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#getInternalChildInstance(java.lang.String)
+	 */
+	public Widget getInternalChildInstance(String tag) {
+		if (KuixConstants.POPUP_MENU_WIDGET_TAG.equals(tag)) {
+			return getPopup();
+		}
+		return super.getInternalChildInstance(tag);
+	}
+
 	/**
 	 * @return the popup
 	 */
 	public PopupMenu getPopup() {
+		if (popup == null) {
+			popup = new PopupMenu();
+			popup.menu = this;
+		}
 		return popup;
 	}
 
@@ -135,38 +152,25 @@ public class Menu extends MenuItem {
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.Widget#add(org.kalmeo.kuix.widget.Widget)
-	 */
-	public Widget add(Widget widget) {
-		if (widget instanceof PopupMenu) {
-			popup = (PopupMenu) widget;
-			popup.menu = this; // It's not possible to use parent here because the popup menu will be place in an other widget
-		} else {
-			super.add(widget);
-		}
-		return this;
-	}
-
 	/**
 	 * Open the popupMenu
 	 */
 	public void showPopup() {
-		showPopup(getWidth(), getHeight());
+		showPopup(getDisplayX() + getWidth(), getDisplayY() + getHeight());
 	}
 
 	/**
 	 * Open the popupMenu
 	 * 
-	 * @param x
-	 * @param y
+	 * @param displayX
+	 * @param displayY
 	 */
-	public void showPopup(int x, int y) {
+	public void showPopup(int displayX, int displayY) {
 		if (getDepth() == 0) {
 			hideAllPopupMenu();
 		}
 		if (popup != null) {
-			popup.show(Menu.this, x, y);
+			popup.show(getDesktop(), displayX, displayY);
 		}
 	}
 	
@@ -194,7 +198,7 @@ public class Menu extends MenuItem {
 	 * Hide all visible popupMenus
 	 */
 	protected static void hideAllPopupMenu() {
-		KuixMIDlet.getDefault().getCanvas().getDesktop().removeAllPopupInstanceOf(PopupMenu.class);
+		KuixMIDlet.getDefault().getCanvas().getDesktop().removeAllPopupInstanceOf(POPUP_MENU_CLASS);
 	}
 	
 	/* (non-Javadoc)

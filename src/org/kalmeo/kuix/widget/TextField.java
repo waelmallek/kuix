@@ -127,8 +127,8 @@ public class TextField extends Text {
 	 */
 	class SystemTextBox extends TextBox implements CommandListener {
 
-		private Command validateCommand = new Command(Kuix.getMessage("VALIDATE"), Command.OK, 0);
-		private Command cancelCommand = new Command(Kuix.getMessage("CANCEL"), Command.CANCEL, 0);
+		private Command validateCommand = new Command(Kuix.getMessage(KuixConstants.VALIDATE_I18N_KEY), Command.OK, 0);
+		private Command cancelCommand = new Command(Kuix.getMessage(KuixConstants.CANCEL_I18N_KEY), Command.CANCEL, 0);
 
 		/**
 		 * Construct a {@link SystemTextBox}

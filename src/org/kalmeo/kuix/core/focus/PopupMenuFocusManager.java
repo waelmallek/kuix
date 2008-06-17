@@ -57,7 +57,17 @@ public class PopupMenuFocusManager extends FocusManager {
 						return true;
 
 					case KuixConstants.KUIX_KEY_RIGHT:
-						for (Widget widget = focusedWidget; widget != null; widget = widget.next) {
+						Widget widget;
+						// Search forward first
+						for (widget = focusedWidget; widget != null; widget = widget.next) {
+							if (widget instanceof Menu) {
+								requestFocus(widget);
+								((Menu) widget).processActionEvent();
+								break;
+							}
+						}
+						// Search backward
+						for (widget = focusedWidget; widget != null; widget = widget.previous) {
 							if (widget instanceof Menu) {
 								requestFocus(widget);
 								((Menu) widget).processActionEvent();

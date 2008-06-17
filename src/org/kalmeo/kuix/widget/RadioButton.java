@@ -22,6 +22,7 @@
 package org.kalmeo.kuix.widget;
 
 import org.kalmeo.kuix.core.KuixConstants;
+import org.kalmeo.kuix.core.model.DataProvider;
 
 /**
  * This class represent a radio button.
@@ -101,7 +102,27 @@ public class RadioButton extends CheckBox {
 	 * Construct a {@link RadioButton}
 	 */
 	public RadioButton() {
-		super(KuixConstants.RADIO_BUTTON_WIDGET_TAG);
+		this(null);
+	}
+	
+	/**
+	 * Construct a {@link RadioButton}
+	 *
+	 * @param dataProvider
+	 */
+	public RadioButton(DataProvider dataProvider) {
+		this(KuixConstants.RADIO_BUTTON_WIDGET_TAG, dataProvider);
+	}
+	
+	/**
+	 * Construct a {@link RadioButton}
+	 *
+	 * @param tag
+	 * @param dataProvider
+	 */
+	public RadioButton(String tag, DataProvider dataProvider) {
+		super(tag);
+		setDataProvider(dataProvider);
 	}
 	
 	/* (non-Javadoc)

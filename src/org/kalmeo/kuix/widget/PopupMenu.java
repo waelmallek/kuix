@@ -102,7 +102,7 @@ public class PopupMenu extends List {
 	// The associated PopupMenuFocusManager
 	private final PopupMenuFocusManager focusManager;
 	
-	// The associated menu
+	// The associated parent menu
 	public Menu menu;
 	
 	// Instance of PopupMenu StaticLayoutData
@@ -140,24 +140,21 @@ public class PopupMenu extends List {
 	/**
 	 * Display the {@link PopupMenu}
 	 * 
-	 * @param invoker
-	 * @param x
-	 * @param y
+	 * @param desktop
+	 * @param displayX
+	 * @param displayY
 	 */
-	public void show(Widget invoker, int x, int y) {
-		
-		Desktop desktop = invoker.getDesktop();
+	public void show(Desktop desktop, int displayX, int displayY) {
 		if (desktop != null) {
+			
 			int desktopWidth = desktop.getWidth();
 			int desktopHeight = desktop.getHeight();
 			Metrics preferredSize = getPreferredSize(desktopWidth);
 			int width = preferredSize.width;
 			int height = Math.min(preferredSize.height, desktopHeight);
 			
-			for (Widget widget = invoker; widget != desktop; widget = widget.parent) {
-				x += widget.getX(); 
-				y += widget.getY();
-			}
+			int x = displayX;
+			int y = displayY;
 			
 			y -= height;
 			
@@ -170,7 +167,6 @@ public class PopupMenu extends List {
 			
 			desktop.addPopup(this);
 		}
-		
 	}
 	
 	/**

@@ -1004,8 +1004,8 @@ public class Widget {
 		if (this.id != null && this.id.equals(id)) {
 			return this;
 		}
-		for (Widget child = this.child; child != null; child = child.next) {
-			Widget widget = child.getWidget(id);
+		for (Widget childWidget = this.child; childWidget != null; childWidget = childWidget.next) {
+			Widget widget = childWidget.getWidget(id);
 			if (widget != null) {
 				return widget;
 			}
@@ -1025,7 +1025,8 @@ public class Widget {
 	}
 	
 	/**
-	 * Returns the child widget under mx, my point and specify the x, y, width and height of search
+	 * Returns the child widget under mx, my point and specify the x, y, width
+	 * and height of search.
 	 * 
 	 * @param mx
 	 * @param my
@@ -1039,7 +1040,10 @@ public class Widget {
 		// Do not use 'isVisible()' instead of 'visible' because of recurcive call of getWidgetAt. 
 		// But calling this method if widget's parent is not visible could return wrong.
 		if (visible && (mx >= x) && (my >= y) && (mx < x + width) && (my < y + height)) {
-			Widget inside = getWidgetAt(getChild(), mx - x, my - y);
+			if (child == null) {
+				return this;
+			}
+			Widget inside = getWidgetAt(child, mx - x, my - y);
 			return (inside != null) ? inside : this;
 		}
 		return null;
@@ -1176,22 +1180,22 @@ public class Widget {
 				after = true;
 			}
 			if (after) {
-				Widget next = referenceWidget.next;
+				Widget nextWidget = referenceWidget.next;
 				referenceWidget.next = widget;
 				widget.previous = referenceWidget;
-				widget.next = next;
-				if (next != null) {
-					next.previous = widget;
+				widget.next = nextWidget;
+				if (nextWidget != null) {
+					nextWidget.previous = widget;
 				} else {
 					lastChild = widget;
 				}
 			} else {
-				Widget previous = referenceWidget.previous;
+				Widget previousWidget = referenceWidget.previous;
 				referenceWidget.previous = widget;
-				widget.previous = previous;
+				widget.previous = previousWidget;
 				widget.next = referenceWidget;
-				if (previous != null) {
-					previous.next = widget;
+				if (previousWidget != null) {
+					previousWidget.next = widget;
 				} else {
 					child = widget;
 				}
@@ -1274,22 +1278,22 @@ public class Widget {
 		
 		// Add to new depth
 		if (after) {
-			Widget next = referenceWidget.next;
+			Widget nextWidget = referenceWidget.next;
 			referenceWidget.next = widget;
 			widget.previous = referenceWidget;
-			widget.next = next;
-			if (next != null) {
-				next.previous = widget;
+			widget.next = nextWidget;
+			if (nextWidget != null) {
+				nextWidget.previous = widget;
 			} else {
 				lastChild = widget;
 			}
 		} else {
-			Widget previous = referenceWidget.previous;
+			Widget previousWidget = referenceWidget.previous;
 			referenceWidget.previous = widget;
-			widget.previous = previous;
+			widget.previous = previousWidget;
 			widget.next = referenceWidget;
-			if (previous != null) {
-				previous.next = widget;
+			if (previousWidget != null) {
+				previousWidget.next = widget;
 			} else {
 				child = widget;
 			}
@@ -1297,6 +1301,29 @@ public class Widget {
 		invalidate();
 	}
 
+	/**
+	 * Catch all child widgets from <code>widget</code> to move them into
+	 * <code>this</code> widget.<br>
+	 * This method <b>do not</b> call <code>onChildAdd()</code>,
+	 * <code>onAdded()</code>, <code>onChildRemove()</code> and
+	 * <code>onRemoved()</code> methods.
+	 * 
+	 * @param widget
+	 */
+	public void catchChildrenFrom(Widget widget) {
+		if (widget != null) {
+			for (Widget childWidget = widget.child; childWidget != null; childWidget = childWidget.next) {
+				childWidget.parent = this;
+			}
+			child = widget.child;
+			lastChild = widget.lastChild;
+			widget.child = null;
+			widget.lastChild = null;
+			widget.invalidate();
+			invalidate();
+		}
+	}
+	
 	/**
 	 * Internal use only method.
 	 * 
@@ -1364,13 +1391,17 @@ public class Widget {
 			if (focusManager != null) {
 				focusedWidget = focusManager.getFocusedWidget();
 			}
-			for (Widget widget = child; widget != null; widget = widget.next) {
+			Widget widget = child;
+			Widget nextWidget = null;
+			while (widget != null) {
+				nextWidget = widget.next;
 				widget.next = widget.previous = widget.parent = null;
 				if (widget == focusedWidget) {
 					focusManager.requestFocus(null);
 				}
 				onChildRemoved(widget);
 				widget.onRemoved(this);
+				widget = nextWidget;
 			}
 			child = null;
 			lastChild = null;
@@ -1892,11 +1923,12 @@ public class Widget {
 				}
 			}
 			if (selector.hasClass()) {
-				String[] styleClasses = widget.getStyleClasses();
-				if (styleClasses != null) {
+				String[] widgetStyleClasses = widget.getStyleClasses();
+				if (widgetStyleClasses != null) {
 					boolean isCompatible = false;
-					for (int i = 0; i<styleClasses.length; ++i) {
-						if (selector.getStyleClass().equals(styleClasses[i])) {
+					int i = widgetStyleClasses.length - 1;
+					for (; i >= 0; --i) {
+						if (selector.getStyleClass().equals(widgetStyleClasses[i])) {
 							isCompatible = true;
 							break;
 						}
@@ -1911,7 +1943,7 @@ public class Widget {
 			if (selector.hasPseudoClass()) {
 				String[] pseudoClasses = selector.getPseudoClasses();
 				int i = pseudoClasses.length - 1;
-				for (; i>=0; --i) {
+				for (; i >= 0; --i) {
 					if (!widget.isPseudoClassCompatible(pseudoClasses[i])) {
 						break;
 					}

@@ -279,7 +279,7 @@ public class ScrollContainer extends Widget {
 	 */
 	public boolean setAttribute(String name, String value) {
 		if (KuixConstants.USE_MARKERS_ATTRIBUTE.equals(name)) {
-			useMarkers = BooleanUtil.parseBoolean(value);
+			setUseMarkers(BooleanUtil.parseBoolean(value));
 			return true;
 		}
 		return super.setAttribute(name, value);
@@ -299,6 +299,13 @@ public class ScrollContainer extends Widget {
 		return DEFAULT_PADDING;
 	}
 	
+	/**
+	 * @param useMarkers the useMarkers to set
+	 */
+	public void setUseMarkers(boolean useMarkers) {
+		this.useMarkers = useMarkers;
+	}
+
 	/**
 	 * @return <code>true</code> if the top and bottom markers are used
 	 */
@@ -367,7 +374,8 @@ public class ScrollContainer extends Widget {
 			container.add(new AbstractFocusableWidget() {});	// TopMarker
 			container.add(new AbstractFocusableWidget() {});	// BottomMarker
 		}
-		return container.add(widget, container.getLastChild(), !isUseMarkers());
+		container.add(widget, container.getLastChild(), !isUseMarkers());
+		return this;
 	}
 	
 	/* (non-Javadoc)

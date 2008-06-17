@@ -193,17 +193,16 @@ public class List extends Widget {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.Widget#getAlign()
+	 * @see org.kalmeo.kuix.widget.Widget#getDefaultStyleAttributeValue(java.lang.String)
 	 */
-	public Alignment getAlign() {
-		return LIST_ALIGN;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.Widget#getLayout()
-	 */
-	public Layout getLayout() {
-		return LIST_LAYOUT;
+	protected Object getDefaultStylePropertyValue(String name) {
+		if (KuixConstants.LAYOUT_STYLE_PROPERTY.equals(name)) {
+			return LIST_LAYOUT;
+		}
+		if (KuixConstants.ALIGN_STYLE_PROPERTY.equals(name)) {
+			return LIST_ALIGN;
+		}
+		return super.getDefaultStylePropertyValue(name);
 	}
 	
 	/**
@@ -356,7 +355,7 @@ public class List extends Widget {
 	 *         returned
 	 */
 	public Widget getItemWidget(DataProvider item) {
-		return (ListItem) dataProvidersMapping.get(item);
+		return (Widget) dataProvidersMapping.get(item);
 	}
 	
 	/* (non-Javadoc)

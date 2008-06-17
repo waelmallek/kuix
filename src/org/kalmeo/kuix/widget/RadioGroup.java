@@ -23,9 +23,7 @@ package org.kalmeo.kuix.widget;
 
 import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.kuix.core.KuixConstants;
-import org.kalmeo.kuix.layout.InlineLayout;
-import org.kalmeo.kuix.layout.Layout;
-import org.kalmeo.kuix.util.Alignment;
+import org.kalmeo.kuix.core.model.DataProvider;
 
 /**
  * This class represent a radio button group.
@@ -56,7 +54,7 @@ import org.kalmeo.kuix.util.Alignment;
  * 		<td> The change called method. </td>
  *	</tr>
  * 	<tr class="TableRowColor">
- * 		<td colspan="5"> Inherited attributes : see {@link Widget} </td>
+ * 		<td colspan="5"> Inherited attributes : see {@link List} </td>
  * 	</tr>
  * </table>
  * <br>
@@ -71,13 +69,7 @@ import org.kalmeo.kuix.util.Alignment;
  * 		<th> Description </th>
  *	</tr>
  * 	<tr class="TableRowColor">
- * 		<td> <code>layout</code> </th>
- * 		<td> <code>inlinelayout(false,fill)</code> </td>
- * 		<td> false </td>
- * 		<td> see {@link Widget} </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="4"> Inherited style properties : see {@link Widget} </td>
+ * 		<td colspan="4"> Inherited style properties : see {@link List} </td>
  * 	</tr>
  * </table>
  * <br>
@@ -90,7 +82,7 @@ import org.kalmeo.kuix.util.Alignment;
  * 		<th> Description </th>
  *	</tr>
  * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited style pseudo-classes : see {@link Widget} </td>
+ * 		<td colspan="2"> Inherited style pseudo-classes : see {@link List} </td>
  * 	</tr>
  * </table>
  * <br>
@@ -103,16 +95,13 @@ import org.kalmeo.kuix.util.Alignment;
  * 		<th> Description </th>
  *	</tr>
  * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited internal widgets : see {@link Widget} </td>
+ * 		<td colspan="2"> Inherited internal widgets : see {@link List} </td>
  * 	</tr>
  * </table>
  * 
  * @author bbeaulant
  */
-public class RadioGroup extends Widget {
-
-	// Defaults
-	private static final Layout RADIO_GROUP_DEFAULT_LAYOUT = new InlineLayout(false, Alignment.FILL);
+public class RadioGroup extends List {
 
 	// The selected RadioButton
 	private RadioButton selectedRadioButton = null;
@@ -217,13 +206,10 @@ public class RadioGroup extends Widget {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.Widget#getDefaultStylePropertyValue(java.lang.String)
+	 * @see org.kalmeo.kuix.widget.List#newItemWidgetInstance(org.kalmeo.kuix.core.model.DataProvider)
 	 */
-	protected Object getDefaultStylePropertyValue(String name) {
-		if (KuixConstants.LAYOUT_STYLE_PROPERTY.equals(name)) {
-			return RADIO_GROUP_DEFAULT_LAYOUT;
-		}
-		return super.getDefaultStylePropertyValue(name);
+	protected Widget newItemWidgetInstance(DataProvider item) {
+		return new RadioButton(item);
 	}
 
 	/* (non-Javadoc)
@@ -244,12 +230,19 @@ public class RadioGroup extends Widget {
 	 * @see org.kalmeo.kuix.widget.Widget#cleanUp()
 	 */
 	public void cleanUp() {
-		
-		// Remove the button from its RadioGroup
 		selectedRadioButton = null;
-		
 		super.cleanUp();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#onChildRemoved(org.kalmeo.kuix.widget.Widget)
+	 */
+	protected void onChildRemoved(Widget widget) {
+		if (widget == selectedRadioButton) {
+			setSelectedRadioButton(null);
+		}
+		super.onChildRemoved(widget);
+	}
+	
 }
 

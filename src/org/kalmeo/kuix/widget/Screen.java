@@ -302,31 +302,17 @@ public class Screen extends Widget {
 		 * @see org.kalmeo.kuix.widget.Menu#showPopup()
 		 */
 		public void showPopup() {
-			showPopup(0, 0);
+			showPopup(getDisplayX(), getDisplayY());
 		}
 
 		/* (non-Javadoc)
 		 * @see org.kalmeo.kuix.widget.Menu#processActionEvent()
 		 */
 		public boolean processActionEvent() {
-			if (internal) {
-				boolean switchToDefaultMenu = true;
-				if (this == firstInternalMenu) {
-					FocusManager focusManager = getDesktop().getCurrentFocusManager();
-					if (focusManager != null) {
-						switchToDefaultMenu = focusManager.processKeyEvent(KuixConstants.KEY_PRESSED_EVENT_TYPE, KuixConstants.KUIX_KEY_FIRE) && !(focusManager.getFocusedWidget() instanceof Menu);
-					}
-				} else {
-					hideAllPopupMenu();
-				}
-				if (switchToDefaultMenu) {
-					switchToDefaultMenus();
-				}
-				return true;
-			} else if (popup != null) {
-				switchToInternalMenus();
+			if (!processMenuAction(this, internal, internal && this == firstInternalMenu || !internal && this == firstMenu)) {
+				return super.processActionEvent();
 			}
-			return super.processActionEvent();
+			return true;
 		}
 		
 	}
@@ -480,13 +466,6 @@ public class Screen extends Widget {
 		return super.getDefaultStylePropertyValue(name);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.AbstractActionWidget#isFocusable()
-	 */
-	public boolean isFocusable() {
-		return false;
-	}
-
 	/**
 	 * Define the desktop title
 	 * 
@@ -586,10 +565,10 @@ public class Screen extends Widget {
 	 * 
 	 * @return the internal firstMenu instance
 	 */
-	private ScreenMenu getFirstInternalMenu() {
+	protected ScreenMenu getFirstInternalMenu() {
 		if (firstInternalMenu == null) {
 			firstInternalMenu = new ScreenMenu(KuixConstants.FIRST_MENU_WIDGET_TAG, new StaticLayoutData(firstIsLeft ? Alignment.LEFT : Alignment.RIGHT), true);
-			firstInternalMenu.add(new Text().setText(Kuix.getMessage("SELECT")));
+			firstInternalMenu.add(new Text().setText(Kuix.getMessage(KuixConstants.SELECT_I18N_KEY)));
 			getBottomBar().add(firstInternalMenu);
 		}
 		return firstInternalMenu;
@@ -600,10 +579,10 @@ public class Screen extends Widget {
 	 * 
 	 * @return the internal secondMenu instance
 	 */
-	private ScreenMenu getSecondInternalMenu() {
+	protected ScreenMenu getSecondInternalMenu() {
 		if (secondInternalMenu == null) {
 			secondInternalMenu = new ScreenMenu(KuixConstants.SECOND_MENU_WIDGET_TAG, new StaticLayoutData(firstIsLeft ? Alignment.RIGHT : Alignment.LEFT), true);
-			secondInternalMenu.add(new Text().setText(Kuix.getMessage("CANCEL")));
+			secondInternalMenu.add(new Text().setText(Kuix.getMessage(KuixConstants.CANCEL_I18N_KEY)));
 			getBottomBar().add(secondInternalMenu);
 		}
 		return secondInternalMenu;
@@ -612,7 +591,7 @@ public class Screen extends Widget {
 	/**
 	 * Switch menu display from defaults menus to internal menus
 	 */
-	private void switchToInternalMenus() {
+	protected void switchToInternalMenus() {
 		if (firstMenu != null) {
 			firstMenu.setVisible(false);
 		}
@@ -626,7 +605,7 @@ public class Screen extends Widget {
 	/**
 	 * Switch menu display from internal menus to default menus
 	 */
-	private void switchToDefaultMenus() {
+	protected void switchToDefaultMenus() {
 		if (firstInternalMenu != null) {
 			firstInternalMenu.setVisible(false);
 		}
@@ -670,6 +649,35 @@ public class Screen extends Widget {
 	 */
 	public boolean processPointerEvent(byte type, int x, int y) {
 		// Does nothing on pointer events
+		return false;
+	}
+	
+	/**
+	 * Process an internal or default menu action.
+	 * 
+	 * @param menu
+	 * @param internal
+	 * @param isFirst
+	 * @return <code>true</code> if the event is treated by the widget
+	 */
+	protected boolean processMenuAction(Menu menu, boolean internal, boolean isFirst) {
+		if (internal) {
+			boolean switchToDefaultMenu = true;
+			if (isFirst) {
+				FocusManager focusManager = getDesktop().getCurrentFocusManager();
+				if (focusManager != null) {
+					switchToDefaultMenu = focusManager.processKeyEvent(KuixConstants.KEY_PRESSED_EVENT_TYPE, KuixConstants.KUIX_KEY_FIRE) && !(focusManager.getFocusedWidget() instanceof Menu);
+				}
+			} else {
+				Menu.hideAllPopupMenu();
+			}
+			if (switchToDefaultMenu) {
+				switchToDefaultMenus();
+			}
+			return true;
+		} else if (menu.popup != null) {
+			switchToInternalMenus();
+		}
 		return false;
 	}
 
