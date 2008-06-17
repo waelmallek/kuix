@@ -99,24 +99,17 @@ public final class Kuix {
 	}
 	
 	/**
-	 * Load a {@link Screen} widget for a XML file. If <code>xmlFilePath</code>
+	 * Load a {@link Screen} widget from a XML file. If <code>xmlFilePath</code>
 	 * is a relative path (i.e: <code>myScreen.xml</code>) the default xml
 	 * folder location is automaticaly added and the path become :
 	 * <code>/xml/myScreen.xml</code>. Absolute paths are kept.
 	 * 
 	 * @param xmlFilePath
 	 * @param dataProvider
-	 * @return The loaded {@link Screen} widget
+	 * @return The loaded {@link Screen} widget instance
 	 */
 	public static Screen loadScreen(String xmlFilePath, DataProvider dataProvider) {
-		if (xmlFilePath != null) {
-			if (!xmlFilePath.startsWith("/")) {
-				xmlFilePath = new StringBuffer(KuixConstants.DEFAULT_XML_RES_FOLDER).append(xmlFilePath).toString();
-			}
-			// Use frameHandler.getClass() because of a Object.class bug
-			return loadScreen(frameHandler.getClass().getResourceAsStream(xmlFilePath), dataProvider);
-		}
-		throw new IllegalArgumentException();
+		return loadScreen(getXmlResourceInputStream(xmlFilePath), dataProvider);
 	}
 	
 	/**
@@ -124,14 +117,46 @@ public final class Kuix {
 	 * 
 	 * @param inputStream
 	 * @param dataProvider
-	 * @return The loaded {@link Screen} widget
+	 * @return The loaded {@link Screen} widget instance
 	 */
 	public static Screen loadScreen(InputStream inputStream, DataProvider dataProvider) {
 		Screen screen = new Screen();
 		loadXml(screen, inputStream, dataProvider, true);
 		return screen;
 	}
-
+	
+	/**
+	 * Load a {@link Widget}, exactly a container (tag =
+	 * KuixConstants.CONTAINER_WIDGET_TAG), from a XML file. If
+	 * <code>xmlFilePath</code> is a relative path (i.e:
+	 * <code>myWidget.xml</code>) the default xml folder location is
+	 * automaticaly added and the path become : <code>/xml/myWidget.xml</code>.
+	 * Absolute paths are kept.
+	 * 
+	 * @param xmlFilePath
+	 * @param dataProvider
+	 * @return The loaded {@link Widget} instance
+	 */
+	public static Widget loadWidget(String xmlFilePath, DataProvider dataProvider) {
+		return loadWidget(getXmlResourceInputStream(xmlFilePath), dataProvider);
+	}
+	
+	/**
+	 * Load a {@link Widget}, exactly a container (tag =
+	 * KuixConstants.CONTAINER_WIDGET_TAG), from an XML {@link InputStream}.<br>
+	 * The <code>desiredWidgetClass</code> need to extends {@link Widget} and
+	 * correspond to the root xml widget tag.
+	 * 
+	 * @param inputStream
+	 * @param dataProvider
+	 * @return The loaded {@link Widget} instance
+	 */
+	public static Widget loadWidget(InputStream inputStream, DataProvider dataProvider) {
+		Widget widget = new Widget(KuixConstants.CONTAINER_WIDGET_TAG);
+		loadXml(widget, inputStream, dataProvider, true);
+		return widget;
+	}
+	
 	/**
 	 * Parse and load an XML ui definition and place the content as child of
 	 * <code>widget</code>
@@ -217,6 +242,28 @@ public final class Kuix {
 		if (method != null) {
 			frameHandler.processMessage(method.getName(), method.getArguments());
 		}
+	}
+
+	/**
+	 * Returns a new {@link InputStream} relative to the desired
+	 * <code>xmlFilePath</code>.<br>
+	 * If <code>xmlFilePath</code> is a relative path (i.e:
+	 * <code>myResource.xml</code>) the default xml folder location is
+	 * automaticaly added and the path become : <code>/xml/myResource.xml</code>.
+	 * Absolute paths are kept.
+	 * 
+	 * @param xmlFilePath
+	 * @return a new {@link InputStream} relative to the desired xml resource
+	 */
+	public static InputStream getXmlResourceInputStream(String xmlFilePath) {
+		if (xmlFilePath != null) {
+			if (!xmlFilePath.startsWith("/")) {
+				xmlFilePath = new StringBuffer(KuixConstants.DEFAULT_XML_RES_FOLDER).append(xmlFilePath).toString();
+			}
+			// Use frameHandler.getClass() because of a Object.class bug
+			return frameHandler.getClass().getResourceAsStream(xmlFilePath);
+		}
+		return null;
 	}
 
 	/**
@@ -588,14 +635,10 @@ public final class Kuix {
 						}
 					} else {
 	
-						if (c == '/') {
-							reader.mark(1);
+						if (c == '/') {	// Caution that all '/' character ar ignored
 							if ((c = reader.read()) == '*') {
 								commentCapture = true;
 								c = reader.read();
-							} else {
-								reader.reset();
-								c = '/';
 							}
 						}
 	
@@ -637,6 +680,7 @@ public final class Kuix {
 				return;
 				
 			} catch (IOException e) {
+				e.printStackTrace();
 			} finally {
 				if (reader != null) {
 					try {
@@ -837,14 +881,17 @@ public final class Kuix {
 							}
 							
 							// Class
-							if (!isCompatible && styleSelector.hasClass() && currentWidget.getStyleClasses() != null) {
+							if (!isCompatible && styleSelector.hasClass()) {
 								String[] styleClasses = currentWidget.getStyleClasses();
-								for (int i = 0; i<styleClasses.length; ++i) {
-									String styleClass = styleClasses[i];
-									if (styleClass != null && styleClass.equals(styleSelector.getStyleClass())) {
-										isCompatible = true;
-										score += 100;
-										break;
+								if (styleClasses != null) {
+									int i = styleClasses.length - 1;
+									for (; i >= 0; --i) {
+										String styleClass = styleClasses[i];
+										if (styleClass != null && styleClass.equals(styleSelector.getStyleClass())) {
+											isCompatible = true;
+											score += 100;
+											break;
+										}
 									}
 								}
 							}

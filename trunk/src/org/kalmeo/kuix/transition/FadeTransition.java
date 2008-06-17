@@ -34,23 +34,27 @@ import org.kalmeo.util.worker.Worker;
  */
 public class FadeTransition implements Transition {
 
+	private int duration;
+	private long startTime = -1;
+
 	private int alphaIncrement;
 	private int argbIncrement;
-	
+
 	private Image newImage;
-	
+
 	private int[] oldRgb;
 	private int oldImageWidth;
 	private int oldImageHeight;
-	
+
 	private int frameIndex = 0;
-	
+
 	/**
 	 * Construct a {@link FadeTransition}
-	 *
+	 * 
 	 * @param duration the transition duraction in milliseconds
 	 */
 	public FadeTransition(int duration) {
+		this.duration = duration;
 		int frameDuration = Worker.instance.getFrameDuration();
 		alphaIncrement = 0xFF / (duration / frameDuration);
 		argbIncrement = alphaIncrement << 24;
@@ -60,15 +64,17 @@ public class FadeTransition implements Transition {
 	 * @see org.kalmeo.kuix.transition.Transition#init(javax.microedition.lcdui.Image, javax.microedition.lcdui.Image)
 	 */
 	public void init(Image oldImage, Image newImage) {
+
+		startTime = -1;
 		
 		oldImageWidth = oldImage.getWidth();
 		oldImageHeight = oldImage.getHeight();
 		oldRgb = new int[oldImageWidth * oldImageHeight];
 		oldImage.getRGB(oldRgb, 0, oldImageWidth, 0, 0, oldImageWidth, oldImageHeight);
-		
+
 		// Save images
 		this.newImage = newImage;
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -76,13 +82,18 @@ public class FadeTransition implements Transition {
 	 */
 	public boolean process(Graphics g) {
 		g.drawImage(newImage, 0, 0, 0);
-		if (oldRgb.length != 0 && ((oldRgb[0] >> 24) & 0xFF) >= alphaIncrement) {
-			int parity = frameIndex++ % 2;
-			for (int i = oldRgb.length - 1 - parity; i>=0; i -= 2) {
-				oldRgb[i] -= argbIncrement;
+		if (startTime == -1) {
+			startTime = System.currentTimeMillis();
+		}
+		if (System.currentTimeMillis() - startTime <= duration) {
+			if (oldRgb.length != 0 && ((oldRgb[0] >> 24) & 0xFF) >= alphaIncrement) {
+				int parity = frameIndex++ % 2;
+				for (int i = oldRgb.length - 1 - parity; i >= 0; i -= 2) {
+					oldRgb[i] -= argbIncrement;
+				}
+				g.drawRGB(oldRgb, 0, oldImageWidth, 0, 0, oldImageWidth, oldImageHeight, true);
+				return false;
 			}
-			g.drawRGB(oldRgb, 0, oldImageWidth, 0, 0, oldImageWidth, oldImageHeight, true);
-			return false;
 		}
 		return true;
 	}

@@ -61,6 +61,17 @@ public interface KuixConstants {
 	public static final short ALERT_CANCEL									= 1 << 8;
 	
 	/////////////////////////////////////////////////////////////////////////////////////////
+	// Default i18n keys
+	
+	public static final String SELECT_I18N_KEY								= "SELECT";
+	public static final String PLEASE_SELECT_I18N_KEY						= "PLEASE_SELECT";
+	public static final String VALIDATE_I18N_KEY							= "VALIDATE";
+	public static final String CANCEL_I18N_KEY								= "CANCEL";
+	public static final String OK_I18N_KEY									= "OK";
+	public static final String YES_I18N_KEY									= "YES";
+	public static final String NO_I18N_KEY									= "NO";
+	
+	/////////////////////////////////////////////////////////////////////////////////////////
 	// JAD app properties
 	
 	public static final String KUIX_LOCALE_APP_PROPERTY						= "KUIX-Locale";
@@ -222,6 +233,7 @@ public interface KuixConstants {
 	public static final String TEXT_FIELD_WIDGET_TAG 						= "textfield";
 	public static final String TOP_BAR_WIDGET_TAG 							= "topbar";
 	public static final String BOTTOM_BAR_WIDGET_TAG 						= "bottombar";
+	public static final String CHOICE_WIDGET_TAG 							= "choice";
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Constants for platforms  names
@@ -232,7 +244,7 @@ public interface KuixConstants {
 	public static final String PLATFORM_SONY_ERICSSON 						= "sonyericsson";
 	public static final String PLATFORM_SIEMENS 							= "siemens";
 	public static final String PLATFORM_SAMSUNG 							= "samsung";
-	public static final String PLATFORM_LG 									= "LG";
+	public static final String PLATFORM_LG 									= "lg";
 	public static final String PLATFORM_INTENT 								= "intent";	// Windows mobile
 	public static final String PLATFORM_NOT_DEFINED 						= "NA";
 

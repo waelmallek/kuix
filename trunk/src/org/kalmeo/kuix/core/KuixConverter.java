@@ -50,6 +50,7 @@ import org.kalmeo.kuix.util.Span;
 import org.kalmeo.kuix.util.Weight;
 import org.kalmeo.kuix.widget.Button;
 import org.kalmeo.kuix.widget.CheckBox;
+import org.kalmeo.kuix.widget.Choice;
 import org.kalmeo.kuix.widget.DragAndDropContainer;
 import org.kalmeo.kuix.widget.Gauge;
 import org.kalmeo.kuix.widget.List;
@@ -153,6 +154,9 @@ public class KuixConverter {
 		}
 		if (KuixConstants.SCROLL_BAR_WIDGET_TAG.equals(tag)) {
 			return new ScrollBar();
+		}
+		if (KuixConstants.CHOICE_WIDGET_TAG.equals(tag)) {
+			return new Choice();
 		}
 		return null;
 	}

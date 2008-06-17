@@ -259,22 +259,22 @@ public abstract class KuixMIDlet extends MIDlet {
 		String[] buttonsOnActions = new String[numButtons];
 		i = 0;
 		if (buttons[0]) {
-			buttonTexts[i] = Kuix.getMessage("OK");
+			buttonTexts[i] = Kuix.getMessage(KuixConstants.OK_I18N_KEY);
 			buttonShortcutKeyCodes[i] = KuixConstants.KUIX_KEY_FIRE;
 			buttonsOnActions[i++] = okAction;
 		}
 		if (buttons[1]) {
-			buttonTexts[i] = Kuix.getMessage("YES");
+			buttonTexts[i] = Kuix.getMessage(KuixConstants.YES_I18N_KEY);
 			buttonShortcutKeyCodes[i] = KuixConstants.KUIX_KEY_SOFT_LEFT | KuixConstants.KUIX_KEY_FIRE;
 			buttonsOnActions[i++] = yesAction;
 		}
 		if (buttons[2]) {
-			buttonTexts[i] = Kuix.getMessage("NO");
+			buttonTexts[i] = Kuix.getMessage(KuixConstants.NO_I18N_KEY);
 			buttonShortcutKeyCodes[i] = KuixConstants.KUIX_KEY_SOFT_RIGHT | KuixConstants.KUIX_KEY_BACK;
 			buttonsOnActions[i++] = noAction;
 		}
 		if (buttons[3]) {
-			buttonTexts[i] = Kuix.getMessage("CANCEL");
+			buttonTexts[i] = Kuix.getMessage(KuixConstants.CANCEL_I18N_KEY);
 			buttonShortcutKeyCodes[i] = KuixConstants.KUIX_KEY_SOFT_RIGHT | KuixConstants.KUIX_KEY_BACK;
 			buttonsOnActions[i] = cancelAction;
 		}

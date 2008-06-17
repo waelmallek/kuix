@@ -301,9 +301,10 @@ public class DataProvider implements LinkedListItem {
 		if (item != null && itemsValues != null) {
 			LinkedList items = getItemsValue(property);
 			if (items != null) {
+				int itemsLength = items.getLength();
 				items.remove(item);
 				dispatchItemsUpdateEvent(REMOVE_MODEL_UPDATE_EVENT_TYPE, property, item, null);
-				return items.getLength();
+				return items.getLength() < itemsLength ? itemsLength - 1 : -1;
 			}
 		}
 		return -1;

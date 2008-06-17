@@ -172,6 +172,13 @@ public class TabFolder extends List {
 			iconWidget.setSource(icon);
 		}
 		
+		/* (non-Javadoc)
+		 * @see org.kalmeo.kuix.widget.Widget#onRemoved(org.kalmeo.kuix.widget.Widget)
+		 */
+		protected void onRemoved(Widget parent) {
+			tabItem = null;
+		}
+		
 	}
 	
 	// Defaults
@@ -232,7 +239,7 @@ public class TabFolder extends List {
 			 */
 			protected void onChildRemoved(Widget widget) {
 				if (widget == currentTabItem) {
-					selectNextTab();
+					selectOtherTab(true, true);
 				}
 			}
 			
@@ -362,7 +369,6 @@ public class TabFolder extends List {
 	 */
 	public void removeAll() {
 		tabItemContainer.removeAll();
-		tabContainer.removeAll();
 		setDefaultTabItem(defaultTabItem);	// Reattribute the default tabItem
 		setCurrentTabItem(null);			// No tabItem : setCurrent to null
 	}
@@ -371,8 +377,9 @@ public class TabFolder extends List {
 	 * Select an other enabled tab.
 	 * 
 	 * @param forward
+	 * @param unselectIfNoOther
 	 */
-	private void selectOtherTab(boolean forward) {
+	private void selectOtherTab(boolean forward, boolean unselectIfNoOther) {
 		Widget currentTab = currentTabItem != null ? currentTabItem.tabButton : (forward ? tabContainer.getChild() : tabContainer.getLastChild());
 		Widget tab = currentTab;
 		while (tab != null) {
@@ -382,7 +389,7 @@ public class TabFolder extends List {
 			}
 			if (tab != null) {
 				if (tab == currentTab) {
-					return;
+					break;
 				}
 				if (((CheckBox) tab).isEnabled()) {
 					tab.processActionEvent();
@@ -390,20 +397,23 @@ public class TabFolder extends List {
 				}
 			}
 		}
+		if (unselectIfNoOther) {
+			setCurrentTabItem(null);
+		}
 	}
 
 	/**
 	 * Select the previous enabled tab.
 	 */
 	public void selectPreviousTab() {
-		selectOtherTab(false);
+		selectOtherTab(false, false);
 	}
 	
 	/**
 	 * Select the next enabled tab.
 	 */
 	public void selectNextTab() {
-		selectOtherTab(true);
+		selectOtherTab(true, false);
 	}
 	
 	/* (non-Javadoc)

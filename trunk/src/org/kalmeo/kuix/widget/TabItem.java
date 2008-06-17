@@ -152,7 +152,7 @@ public class TabItem extends Widget {
 	 * @param dataProvider
 	 */
 	public TabItem(DataProvider dataProvider) {
-		this(KuixConstants.TAB_ITEM_WIDGET_TAG, null);
+		this(KuixConstants.TAB_ITEM_WIDGET_TAG, dataProvider);
 	}
 
 	/**
@@ -287,6 +287,10 @@ public class TabItem extends Widget {
 	 * @see org.kalmeo.kuix.widget.Widget#onRemoved(org.kalmeo.kuix.widget.Widget)
 	 */
 	protected void onRemoved(Widget parent) {
+		if (tabButton != null) {
+			tabButton.remove();
+			tabButton = null;
+		}
 		tabFolder = null;
 	}
 

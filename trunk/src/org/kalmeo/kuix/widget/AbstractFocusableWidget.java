@@ -264,13 +264,15 @@ public abstract class AbstractFocusableWidget extends Widget {
 	 * @see org.kalmeo.kuix.widget.Widget#requestFocus()
 	 */
 	public void requestFocus() {
-		FocusManager focusManager = getFocusManager();
-		if (focusManager != null) {
-			ScrollContainer scrollContainer = focusManager.findFirstScrollContainerParent(this);
-			if (scrollContainer != null) {
-				scrollContainer.bestScrollToChild(this, false);
+		if (isFocusable()) {
+			FocusManager focusManager = getFocusManager();
+			if (focusManager != null) {
+				ScrollContainer scrollContainer = focusManager.findFirstScrollContainerParent(this);
+				if (scrollContainer != null) {
+					scrollContainer.bestScrollToChild(this, false);
+				}
+				focusManager.requestFocus(this);
 			}
-			focusManager.requestFocus(this);
 		}
 	}
 	
@@ -303,11 +305,9 @@ public abstract class AbstractFocusableWidget extends Widget {
 	 * @see org.kalmeo.kuix.widget.Widget#processPointerEvent(byte, int, int)
 	 */
 	public boolean processPointerEvent(byte type, int x, int y) {
-		if (type == KuixConstants.POINTER_RELEASED_EVENT_TYPE) {
-			if (isFocusable()) {
-				requestFocus();
-				return true;
-			}
+		if (isFocusable() && type == KuixConstants.POINTER_RELEASED_EVENT_TYPE) {
+			requestFocus();
+			return true;
 		}
 		return super.processPointerEvent(type, x, y);
 	}
