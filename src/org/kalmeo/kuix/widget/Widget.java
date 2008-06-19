@@ -1897,7 +1897,7 @@ public class Widget {
 	private boolean checkStyleCompatibility(Style style) {
 		Widget widget = this;
 		for (StyleSelector selector = style.getSelector(); selector != null; selector = selector.parent) {
-			widget = getCompatibleWidget(selector, widget);
+			widget = getCompatibleWidget(selector, widget, widget != this);
 			if (widget == null) {
 				return false;
 			}
@@ -1910,8 +1910,8 @@ public class Widget {
 	 * @param widget
 	 * @return The parent compatible widget with the style selector
 	 */
-	private Widget getCompatibleWidget(StyleSelector selector, Widget widget) {
-		for (; widget != null; widget = widget.parent) {
+	private Widget getCompatibleWidget(StyleSelector selector, Widget widget, boolean checkParents) {
+		for (; widget != null; widget = checkParents ? widget.parent : null) {
 			if (selector.hasTag()) {
 				if (!selector.getTag().equals(widget.getTag())) {
 					continue;
@@ -2111,7 +2111,7 @@ public class Widget {
 					String action = new String(shortcutActions, index, actionLength);
 					if (keyCode == kuixKeyCode) {
 						// Action found, execute
-						Kuix.callActionMethod(Kuix.parseMethod(action, this, getDesktop()));
+						Kuix.callActionMethod(Kuix.parseMethod(action, this));
 						return true;
 					}
 					index += actionLength;

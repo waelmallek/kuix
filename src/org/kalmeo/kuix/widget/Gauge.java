@@ -217,7 +217,7 @@ public class Gauge extends AbstractFocusableWidget {
 				this.value = value;
 				invalidate();
 				if (isFocusable() && onChange != null) {	// Enable and focusable
-					Kuix.callActionMethod(Kuix.parseMethod(onChange, this, getDesktop()));
+					Kuix.callActionMethod(Kuix.parseMethod(onChange, this));
 				}
 			}
 			

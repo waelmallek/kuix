@@ -38,7 +38,6 @@ import org.kalmeo.kuix.core.style.StyleProperty;
 import org.kalmeo.kuix.core.style.StyleSelector;
 import org.kalmeo.kuix.util.Method;
 import org.kalmeo.kuix.widget.AbstractTextWidget;
-import org.kalmeo.kuix.widget.Desktop;
 import org.kalmeo.kuix.widget.Picture;
 import org.kalmeo.kuix.widget.Screen;
 import org.kalmeo.kuix.widget.Text;
@@ -754,14 +753,13 @@ public final class Kuix {
 	}
 
 	/**
-	 * Returns the parsed {@link Method}, or null if no method could be extract
+	 * Returns the parsed {@link Method}, or null if no method could be extract.
 	 * 
 	 * @param data
 	 * @param owner
-	 * @param canvas
 	 * @return The parsed {@link Method}
 	 */
-	public static Method parseMethod(String data, Widget owner, Desktop desktop) {
+	public static Method parseMethod(String data, Widget owner) {
 		if (data.length() == 0) {
 			return null;
 		}
@@ -793,8 +791,8 @@ public final class Kuix {
 				Widget widget = null;
 				if ("this".equals(widgetId)) {
 					widget = owner;
-				} else if (desktop != null && widgetId != null && widgetId.startsWith("#")) {
-					widget = desktop.getWidget(widgetId.substring(1));
+				} else if (widgetId != null && widgetId.startsWith("#")) {
+					widget = KuixMIDlet.getDefault().getCanvas().getDesktop().getWidget(widgetId.substring(1));
 				}
 
 				if (widget != null) {

@@ -179,7 +179,7 @@ public abstract class AbstractActionWidget extends AbstractFocusableWidget {
 	 */
 	public boolean processActionEvent() {
 		if (onAction != null) {
-			Kuix.callActionMethod(Kuix.parseMethod(onAction, this, getDesktop()));
+			Kuix.callActionMethod(Kuix.parseMethod(onAction, this));
 			return true;
 		}
 		return false;
