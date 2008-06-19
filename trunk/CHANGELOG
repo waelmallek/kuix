@@ -25,6 +25,8 @@
   
 - TabFolder changes :
   - TabFolder now extends List, to be able to build child TabItems from a DataProvider like lists (with renderer).
+  - Change TabFolder's defaultTabItem as an internal widget. The XML syntax doesn't change.
+  - Use TabItem.setSelected(boolean) to select a tabItem on widget loading.
 
 - RadioGroup changes :
   - RadioGroup now extends List, to be able to build child RadioButtons from a DataProvider like lists (with renderer).
