@@ -1897,7 +1897,7 @@ public class Widget {
 	private boolean checkStyleCompatibility(Style style) {
 		Widget widget = this;
 		for (StyleSelector selector = style.getSelector(); selector != null; selector = selector.parent) {
-			widget = getCompatibleWidget(selector, widget, widget != this);
+			widget = getCompatibleWidget(selector, widget, selector != style.getSelector());
 			if (widget == null) {
 				return false;
 			}
@@ -1911,7 +1911,7 @@ public class Widget {
 	 * @return The parent compatible widget with the style selector
 	 */
 	private Widget getCompatibleWidget(StyleSelector selector, Widget widget, boolean checkParents) {
-		for (; widget != null; widget = checkParents ? widget.parent : null) {
+		for (; widget != null; widget = checkParents ? widget.parent: null) {
 			if (selector.hasTag()) {
 				if (!selector.getTag().equals(widget.getTag())) {
 					continue;

@@ -88,6 +88,18 @@ import org.kalmeo.kuix.util.Alignment;
  * 		<th> Description </th>
  *	</tr>
  * 	<tr class="TableRowColor">
+ * 		<td> <code>defaulttabitem</code> </th>
+ * 		<td> The default {@link TabItem} displayed if the {@link TabFolder} contains no tab or all are disabled. </td>
+ *	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<td> <code>tabbuttonscontainer</code> </th>
+ * 		<td> The widget that contains TabButtons. </td>
+ *	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<td> <code>tabitemscontainer</code> </th>
+ * 		<td> The widget that contains TabItems. </td>
+ *	</tr>
+ * 	<tr class="TableRowColor">
  * 		<td colspan="2"> Inherited internal widgets : see {@link AbstractFocusableWidget} </td>
  * 	</tr>
  * </table>
@@ -185,8 +197,8 @@ public class TabFolder extends List {
 	private static final Layout DEFAULT_TAB_BUTTON_CONTAINER_LAYOUT = new InlineLayout(true, Alignment.FILL);
 
 	// Internal widgets
-	private Widget tabContainer;
-	private Widget tabItemContainer;
+	private final Widget tabButtonsContainer;
+	private final Widget tabItemContainer;
 	private TabItem currentTabItem;
 	
 	// The default widget visible if there's no valid tabs
@@ -197,7 +209,7 @@ public class TabFolder extends List {
 	 */
 	public TabFolder() {
 		super(KuixConstants.TAB_FOLDER_WIDGET_TAG);
-		tabContainer = new Widget(KuixConstants.TAB_BUTTONS_CONTAINER_WIDGET_TAG) {
+		tabButtonsContainer = new Widget(KuixConstants.TAB_BUTTONS_CONTAINER_WIDGET_TAG) {
 
 			/* (non-Javadoc)
 			 * @see org.kalmeo.kuix.widget.Widget#getDefaultStyleAttributeValue(java.lang.String)
@@ -217,7 +229,7 @@ public class TabFolder extends List {
 			}
 
 		};
-		super.add(tabContainer);
+		super.add(tabButtonsContainer);
 		tabItemContainer = new Widget(KuixConstants.TAB_ITEM_CONTAINER_WIDGET_TAG) {
 
 			/* (non-Javadoc)
@@ -261,33 +273,38 @@ public class TabFolder extends List {
 		return BorderLayout.instance;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#getInternalChildInstance(java.lang.String)
+	 */
+	public Widget getInternalChildInstance(String tag) {
+		if (KuixConstants.DEFAULT_TAB_ITEM_WIDGET_TAG.equals(tag)) {
+			return getDefaultTabItem();
+		}
+		if (KuixConstants.TAB_BUTTONS_CONTAINER_WIDGET_TAG.equals(tag)) {
+			return tabButtonsContainer;
+		}
+		if (KuixConstants.TAB_ITEM_CONTAINER_WIDGET_TAG.equals(tag)) {
+			return tabItemContainer;
+		}
+		return super.getInternalChildInstance(tag);
+	}
+
+	/**
+	 * @return the defaultTabItem
+	 */
+	public Widget getDefaultTabItem() {
+		if (defaultTabItem == null) {
+			defaultTabItem = new TabItem();
+			initDefaultTabItem();
+		}
+		return defaultTabItem;
+	}
+	
 	/**
 	 * @return the currentTabItem
 	 */
 	public TabItem getCurrentTabItem() {
 		return currentTabItem;
-	}
-	
-	/**
-	 * @param defaultTabItem the defaultTabItem to set
-	 */
-	public void setDefaultTabItem(TabItem defaultTabItem) {
-		if (this.defaultTabItem != null) {
-			this.defaultTabItem.cleanUp();
-			this.defaultTabItem.remove();
-		}
-		this.defaultTabItem = defaultTabItem;
-		if (defaultTabItem != null) {
-			tabItemContainer.add(defaultTabItem);
-			defaultTabItem.setVisible(currentTabItem == null);
-		}
-	}
-	
-	/**
-	 * @return the defaultTabItem
-	 */
-	public Widget getDefaultTabItem() {
-		return defaultTabItem;
 	}
 	
 	/**
@@ -304,6 +321,7 @@ public class TabFolder extends List {
 			if (currentTabItem.tabButton != null) {
 				currentTabItem.tabButton.setSelected(false);
 			}
+			currentTabItem.selected = false;
 			currentTabItem.setVisible(false);
 		}
 		currentTabItem = tabItem;
@@ -311,9 +329,20 @@ public class TabFolder extends List {
 			if (tabItem.tabButton != null) {
 				tabItem.tabButton.setSelected(true);
 			}
+			tabItem.selected = true;
 			tabItem.setVisible(true);
 		}
 		if (defaultTabItem != null) {
+			defaultTabItem.setVisible(currentTabItem == null);
+		}
+	}
+	
+	/**
+	 * Initialize the defaultTabItem
+	 */
+	private void initDefaultTabItem() {
+		if (defaultTabItem != null) {
+			tabItemContainer.add(defaultTabItem);
 			defaultTabItem.setVisible(currentTabItem == null);
 		}
 	}
@@ -330,11 +359,7 @@ public class TabFolder extends List {
 	 */
 	public Widget add(Widget widget) {
 		if (widget instanceof TabItem) {
-			if (KuixConstants.TAB_ITEM_WIDGET_TAG.equals(widget.getTag())) {
-				addTabItem((TabItem) widget);
-			} else {
-				setDefaultTabItem((TabItem) widget);
-			}
+			addTabItem((TabItem) widget);
 		}
 		return this;
 	}
@@ -346,16 +371,16 @@ public class TabFolder extends List {
 	 * @return This {@link TabFolder}
 	 */
 	public void addTabItem(final TabItem tabItem) {
-		if (tabItem != null) {
+		if (tabItem != null && tabItem.parent != tabItemContainer) {
 			
 			// Create the tabButton
 			TabButton tabButton = new TabButton(tabItem);
 			tabItem.tabButton = tabButton;
-			tabContainer.add(tabButton);
+			tabButtonsContainer.add(tabButton);
 			
 			// Add tabItem
 			tabItemContainer.add(tabItem);
-			if (currentTabItem == null && tabItem.isEnabled()) {
+			if ((currentTabItem == null || tabItem.isSelected()) && tabItem.isEnabled()) {
 				setCurrentTabItem(tabItem);
 			} else {
 				tabItem.setVisible(false);
@@ -369,7 +394,7 @@ public class TabFolder extends List {
 	 */
 	public void removeAll() {
 		tabItemContainer.removeAll();
-		setDefaultTabItem(defaultTabItem);	// Reattribute the default tabItem
+		initDefaultTabItem();
 		setCurrentTabItem(null);			// No tabItem : setCurrent to null
 	}
 	
@@ -379,13 +404,13 @@ public class TabFolder extends List {
 	 * @param forward
 	 * @param unselectIfNoOther
 	 */
-	private void selectOtherTab(boolean forward, boolean unselectIfNoOther) {
-		Widget currentTab = currentTabItem != null ? currentTabItem.tabButton : (forward ? tabContainer.getChild() : tabContainer.getLastChild());
+	protected void selectOtherTab(boolean forward, boolean unselectIfNoOther) {
+		Widget currentTab = currentTabItem != null ? currentTabItem.tabButton : (forward ? tabButtonsContainer.getChild() : tabButtonsContainer.getLastChild());
 		Widget tab = currentTab;
 		while (tab != null) {
 			tab = forward ? tab.next : tab.previous;
 			if (tab == null) {
-				tab = (forward ? tabContainer.getChild() : tabContainer.getLastChild());
+				tab = (forward ? tabButtonsContainer.getChild() : tabButtonsContainer.getLastChild());
 			}
 			if (tab != null) {
 				if (tab == currentTab) {

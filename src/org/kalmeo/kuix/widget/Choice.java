@@ -23,6 +23,7 @@ package org.kalmeo.kuix.widget;
 
 import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.kuix.core.KuixConstants;
+import org.kalmeo.kuix.core.KuixMIDlet;
 import org.kalmeo.kuix.core.focus.FocusManager;
 import org.kalmeo.kuix.layout.GridLayout;
 import org.kalmeo.kuix.layout.Layout;
@@ -184,7 +185,7 @@ public class Choice extends AbstractActionWidget {
 						return true;
 					}
 				}
-				restoreOwnerScreen(getDesktop());
+				restoreOwnerScreen();
 				return true;
 			}
 			
@@ -219,7 +220,7 @@ public class Choice extends AbstractActionWidget {
 				choiceContainer.invalidate();
 				
 				// Restore the owner screen if not current
-				restoreOwnerScreen(getDesktop());
+				restoreOwnerScreen();
 				
 				super.setSelectedRadioButton(radioButton);
 			}
@@ -290,13 +291,11 @@ public class Choice extends AbstractActionWidget {
 	
 	/**
 	 * Restore the owner screen.
-	 * 
-	 * @param desktop
 	 */
-	private void restoreOwnerScreen(Desktop desktop) {
-		if (ownerScreen != null && desktop != null) {
+	private void restoreOwnerScreen() {
+		if (ownerScreen != null) {
 			
-			desktop.setCurrentScreen(ownerScreen);
+			ownerScreen.setCurrent();
 			
 			// Restore the cleanUpWhenRemoved property
 			ownerScreen.cleanUpWhenRemoved = ownerScreenCleanUpWhenRemoved;
@@ -309,7 +308,7 @@ public class Choice extends AbstractActionWidget {
 	 * @see org.kalmeo.kuix.widget.AbstractActionWidget#processActionEvent()
 	 */
 	public boolean processActionEvent() {
-		Desktop desktop = getDesktop();
+		Desktop desktop = KuixMIDlet.getDefault().getCanvas().getDesktop();
 		if (desktop != null) {
 			
 			if (lastSelectedRadioButton != null) {

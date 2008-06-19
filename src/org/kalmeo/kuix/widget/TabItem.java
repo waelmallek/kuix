@@ -129,6 +129,7 @@ public class TabItem extends Widget {
 	private String label;
 	private String icon;
 	private boolean enabled = true;
+	protected boolean selected = false;
 	
 	// The associated tabFolder
 	private TabFolder tabFolder;
@@ -182,6 +183,10 @@ public class TabItem extends Widget {
 		}
 		if (KuixConstants.ENABLED_ATTRIBUTE.equals(name)) {
 			setEnabled(BooleanUtil.parseBoolean(value));
+			return true;
+		}
+		if (KuixConstants.SELECTED_ATTRIBUTE.equals(name)) {
+			setSelected(BooleanUtil.parseBoolean(value));
 			return true;
 		}
 		return super.setAttribute(name, value);
@@ -274,6 +279,27 @@ public class TabItem extends Widget {
 		this.enabled = enabled;
 	}
 	
+	/**
+	 * @return the selected
+	 */
+	public boolean isSelected() {
+		return selected;
+	}
+
+	/**
+	 * @param selected the selected to set
+	 */
+	public void setSelected(boolean selected) {
+		if (tabFolder != null) {
+			if (selected) {
+				tabFolder.setCurrentTabItem(this);
+			} else {
+				tabFolder.selectOtherTab(true, true);
+			}
+		}
+		this.selected = selected;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#onAdded(org.kalmeo.kuix.widget.Widget)
 	 */
