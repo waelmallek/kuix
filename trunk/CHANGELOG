@@ -5,11 +5,14 @@
 - Bug fix : avoid a NoClassDefFoundException on SonyEricsson
 - Bug fix : avoid an exception when loading a CCS file with comment on SonyEricsson
 - Bug fix : avoid a memory leak when displaying a lot of Screens that contain menus
+- Bug fix : avoid a style inheritance bug when a widget was included in a same tag widget.
  
 - Add a new **Choice** widget (it extends the RadioGroup capabilities to be able to use it as comboBox)
   - Usage : &lt;choice&gt;&lt;radioGroup&gt;&lt;radioButton&gt;Choice1&lt;/radioButton&gt;&lt;radioButton&gt;Choice2&lt;/radioButton&gt;&lt;/radioButton&gt;&lt;/choice&gt;
 - Add filter capabilities to DataProvider
 - Add a Kuix.loadWidget(String, Class, DataProvider) method
+
+- Change Kuix.parseMethod signature from Kuix.parseMethod(String data, Widget owner, Desktop desktop) to Kuix.parseMethod(String data, Widget owner)
 
 - List changes :
   - Remove the ListItem restriction on List

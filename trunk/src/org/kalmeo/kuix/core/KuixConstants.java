@@ -234,6 +234,7 @@ public interface KuixConstants {
 	public static final String TOP_BAR_WIDGET_TAG 							= "topbar";
 	public static final String BOTTOM_BAR_WIDGET_TAG 						= "bottombar";
 	public static final String CHOICE_WIDGET_TAG 							= "choice";
+	public static final String CHOICE_CONTAINER_WIDGET_TAG 					= "choicecontainer";
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Constants for platforms  names

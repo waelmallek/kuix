@@ -329,10 +329,10 @@ public class Screen extends Widget {
 	private Text title;
 	
 	// Used to determine if this screen call its cleanUp method when removed from its parent
-	private boolean cleanUpWhenRemoved = false;
+	public boolean cleanUpWhenRemoved = false;
 	
 	// Used to determine if firstMenu is on the left and then the secondMenu onthe right
-	private boolean firstIsLeft = true;
+	public boolean firstIsLeft = true;
 	
 	// Menus 
 	private ScreenMenu firstMenu;

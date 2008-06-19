@@ -30,10 +30,82 @@ import org.kalmeo.kuix.util.Alignment;
 import org.kalmeo.kuix.util.Gap;
 
 /**
- * TODO
- * - retrieve value on comboBox
- * - caution to screen auto cleanup
- * - permit style like (choice radiogroup ...)
+ * This class represent a choice.
+ * 
+ * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
+ * 	<tr class="TableHeadingColor">
+ * 		<th align="left" colspan="5"><font size="+2"> Attributes </font></th>
+ * 	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<th width="1%"> Attribute </th>
+ * 		<th width="1%"> Object </th>
+ * 		<th width="1%"> Set </th>
+ * 		<th width="1%"> Get </th>
+ * 		<th> Description </th>
+ *	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<td colspan="5"> Inherited attributes : see {@link AbstractActionWidget} </td>
+ * 	</tr>
+ * </table>
+ * <br>
+ * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
+ * 	<tr class="TableHeadingColor">
+ * 		<th align="left" colspan="4"> <font size="+2"> Style properties </font> </th>
+ * 	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<th width="1%"> Property </th>
+ * 		<th width="1%"> Default </th>
+ * 		<th width="1%"> Inherit </th>
+ * 		<th> Description </th>
+ *	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<td> <code>layout</code> </th>
+ * 		<td> <code>gridlayout(1,1)</code> </td>
+ * 		<td> false </td>
+ * 		<td> see {@link Widget} </td>
+ *	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<td colspan="4"> Inherited style properties : see {@link AbstractActionWidget} </td>
+ * 	</tr>
+ * </table>
+ * <br>
+ * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
+ * 	<tr class="TableHeadingColor">
+ * 		<th align="left" colspan="2"> <font size="+2"> Available style pseudo-classes </font> </th>
+ * 	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<th width="1%"> Pseudo-class </th>
+ * 		<th> Description </th>
+ *	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<td colspan="2"> Inherited style pseudo-classes : see {@link AbstractActionWidget} </td>
+ * 	</tr>
+ * </table>
+ * <br>
+ * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
+ * 	<tr class="TableHeadingColor">
+ * 		<th align="left" colspan="2"> <font size="+2"> Available internal widgets </font> </th>
+ * 	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<th width="1%"> internal widget </th>
+ * 		<th> Description </th>
+ *	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<td> <code>choicecontainer</code> </th>
+ * 		<td> The inner <code>container</code> widget used to hold the selected <code>radiobutton</code> content in the <code>choice</code> widget. </td>
+ *	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<td> <code>screen</code> </th>
+ * 		<td> The inner <code>screen</code> widget used to hold radiogroup. </td>
+ *	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<td> <code>radiogroup</code> </th>
+ * 		<td> The inner <code>radiogroup</code> widget used to hold choice values. </td>
+ *	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<td colspan="2"> Inherited internal widgets : see {@link AbstractActionWidget} </td>
+ * 	</tr>
+ * </table>
  * 
  * @author bbeaulant
  */
@@ -48,7 +120,9 @@ public class Choice extends AbstractActionWidget {
 
 	// The screen where this choice is attached
 	private Screen ownerScreen;
+	private boolean ownerScreenCleanUpWhenRemoved = false;
 	
+	// Keep there the lastest selected radio button (for internal use)
 	private RadioButton lastSelectedRadioButton = null;
 
 	/**
@@ -58,7 +132,7 @@ public class Choice extends AbstractActionWidget {
 		super(KuixConstants.CHOICE_WIDGET_TAG);
 
 		// Create the inner comb container
-		choiceContainer = new Widget(KuixConstants.CONTAINER_WIDGET_TAG) {
+		choiceContainer = new Widget(KuixConstants.CHOICE_CONTAINER_WIDGET_TAG) {
 
 			/* (non-Javadoc)
 			 * @see org.kalmeo.kuix.widget.Widget#getAlign()
@@ -159,10 +233,30 @@ public class Choice extends AbstractActionWidget {
 	 * @see org.kalmeo.kuix.widget.Widget#getInternalChildInstance(java.lang.String)
 	 */
 	public Widget getInternalChildInstance(String tag) {
+		if (KuixConstants.CHOICE_CONTAINER_WIDGET_TAG.equals(tag)) {
+			return getScreen();
+		}
+		if (KuixConstants.SCREEN_WIDGET_TAG.equals(tag)) {
+			return getScreen();
+		}
 		if (KuixConstants.RADIO_GROUP_WIDGET_TAG.equals(tag)) {
-			return radioGroup;
+			return getRadioGroup();
 		}
 		return super.getInternalChildInstance(tag);
+	}
+	
+	/**
+	 * @return the choiceContainer
+	 */
+	public Widget getChoiceContainer() {
+		return choiceContainer;
+	}
+
+	/**
+	 * @return the screen
+	 */
+	public Screen getScreen() {
+		return screen;
 	}
 
 	/**
@@ -201,8 +295,13 @@ public class Choice extends AbstractActionWidget {
 	 */
 	private void restoreOwnerScreen(Desktop desktop) {
 		if (ownerScreen != null && desktop != null) {
+			
 			desktop.setCurrentScreen(ownerScreen);
+			
+			// Restore the cleanUpWhenRemoved property
+			ownerScreen.cleanUpWhenRemoved = ownerScreenCleanUpWhenRemoved;
 			ownerScreen = null;
+			
 		}
 	}
 	
@@ -217,8 +316,15 @@ public class Choice extends AbstractActionWidget {
 				lastSelectedRadioButton.catchChildrenFrom(choiceContainer);
 			}
 			
+			// Retrieve the owner screen instance
 			ownerScreen = desktop.getCurrentScreen();
+			
+			// Keep the cleanUpWhenRemoved property value
+			ownerScreenCleanUpWhenRemoved = ownerScreen.cleanUpWhenRemoved;
+			ownerScreen.cleanUpWhenRemoved = false;
+			
 			desktop.setCurrentScreen(screen);
+			
 		}
 		return super.processActionEvent();
 	}

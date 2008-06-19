@@ -284,7 +284,7 @@ public abstract class AbstractFocusableWidget extends Widget {
 			case KuixConstants.FOCUS_GAINED_EVENT_TYPE: {
 				focused = true;
 				if (onFocus != null) {
-					Kuix.callActionMethod(Kuix.parseMethod(onFocus, this, getDesktop()));
+					Kuix.callActionMethod(Kuix.parseMethod(onFocus, this));
 				}
 				propagateFocusEvent(this, false);
 				return true;
@@ -292,7 +292,7 @@ public abstract class AbstractFocusableWidget extends Widget {
 			case KuixConstants.FOCUS_LOST_EVENT_TYPE: {
 				focused = false;
 				if (onLostFocus != null) {
-					Kuix.callActionMethod(Kuix.parseMethod(onLostFocus, this, getDesktop()));
+					Kuix.callActionMethod(Kuix.parseMethod(onLostFocus, this));
 				}
 				propagateFocusEvent(this, true);
 				return true;

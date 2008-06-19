@@ -144,7 +144,6 @@ public class TextField extends Text {
 		 * @see javax.microedition.lcdui.CommandListener#commandAction(javax.microedition.lcdui.Command, javax.microedition.lcdui.Displayable)
 		 */
 		public void commandAction(Command command, Displayable displayable) {
-			final Desktop desktop = getDesktop();
 			if (command == validateCommand) {
 				hideTooltip();
 				boolean changed = getString() != null && !getString().equals(getText());
@@ -153,14 +152,14 @@ public class TextField extends Text {
 					Worker.instance.pushTask(new WorkerTask() {
 
 						public boolean run() {
-							Kuix.callActionMethod(Kuix.parseMethod(onChange, TextField.this, desktop));
+							Kuix.callActionMethod(Kuix.parseMethod(onChange, TextField.this));
 							return true;
 						}
 						
 					});
 				}
 			}
-			KuixCanvas canvas = desktop.getCanvas();
+			KuixCanvas canvas = getDesktop().getCanvas();
 			Display display = canvas.getMidlet().getDisplay();
 			if (display != null) {
 				display.setCurrent(canvas);

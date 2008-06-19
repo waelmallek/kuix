@@ -201,7 +201,7 @@ public class RadioGroup extends List {
 			radioButton.setSelected(true);
 		}
 		if (changed && onChange != null) {
-			Kuix.callActionMethod(Kuix.parseMethod(onChange, this, getDesktop()));
+			Kuix.callActionMethod(Kuix.parseMethod(onChange, this));
 		}
 	}
 	
