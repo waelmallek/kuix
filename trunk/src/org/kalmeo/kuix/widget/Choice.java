@@ -202,9 +202,9 @@ public class Choice extends AbstractActionWidget {
 		radioGroup = new RadioGroup() {
 
 			/* (non-Javadoc)
-			 * @see org.kalmeo.kuix.widget.RadioGroup#setSelectedRadioButton(org.kalmeo.kuix.widget.RadioButton)
+			 * @see org.kalmeo.kuix.widget.RadioGroup#setSelectedRadioButton(org.kalmeo.kuix.widget.RadioButton, boolean)
 			 */
-			public void setSelectedRadioButton(RadioButton radioButton) {
+			public void setSelectedRadioButton(RadioButton radioButton, boolean propagateChangeEvent) {
 				// Check if selection has changed
 				if (radioButton != lastSelectedRadioButton) {
 					
@@ -222,12 +222,12 @@ public class Choice extends AbstractActionWidget {
 				// Restore the owner screen if not current
 				restoreOwnerScreen();
 				
-				super.setSelectedRadioButton(radioButton);
+				super.setSelectedRadioButton(radioButton, propagateChangeEvent);
 			}
 
 		};
 		scrollContainer.add(radioGroup);
-
+		
 	}
 
 	/* (non-Javadoc)
@@ -272,6 +272,17 @@ public class Choice extends AbstractActionWidget {
 	 */
 	public Layout getLayout() {
 		return GridLayout.instanceOneByOne;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#getWidget(java.lang.String)
+	 */
+	public Widget getWidget(String id) {
+		Widget widget = screen.getWidget(id);
+		if (widget == null) {
+			return super.getWidget(id);
+		}
+		return widget;
 	}
 
 	/* (non-Javadoc)

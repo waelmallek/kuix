@@ -51,7 +51,7 @@ import org.kalmeo.kuix.core.model.DataProvider;
  * 		<td> <code>No</code> </td>
  * 		<td> <code>Yes</code> </td>
  * 		<td> <code>No</code> </td>
- * 		<td> The change called method. </td>
+ * 		<td> The change called method. This method is called only if the value change is due to a user action. </td>
  *	</tr>
  * 	<tr class="TableRowColor">
  * 		<td colspan="5"> Inherited attributes : see {@link List} </td>
@@ -167,13 +167,13 @@ public class RadioGroup extends List {
 				if (widget instanceof RadioButton) {
 					radioButton = (RadioButton) widget;
 					if (value.equals(radioButton.getValue())) {
-						setSelectedRadioButton(radioButton);
+						setSelectedRadioButton(radioButton, false);
 						return;
 					}
 				}
 			}
 		}
-		setSelectedRadioButton(null);
+		setSelectedRadioButton(null, false);
 		wantedValue = value;
 	}
 	
@@ -185,23 +185,27 @@ public class RadioGroup extends List {
 	}
 
 	/**
+	 * Set the current selected {@link RadioButton}.
+	 * 
 	 * @param radioButton the selectedButton to set
+	 * @param propagateChangeEvent if <code>true</code> the onChange event could be propagated
 	 */
-	public void setSelectedRadioButton(RadioButton radioButton) {
+	public void setSelectedRadioButton(RadioButton radioButton, boolean propagateChangeEvent) {
 		wantedValue = null;
 		if (radioButton != null && radioButton.parent != this) {
 			return;
 		}
-		if (selectedRadioButton != null) {
-			selectedRadioButton.setSelected(false);
-		}
-		boolean changed = selectedRadioButton != radioButton;
-		selectedRadioButton = radioButton;
-		if (radioButton != null) {
-			radioButton.setSelected(true);
-		}
-		if (changed && onChange != null) {
-			Kuix.callActionMethod(Kuix.parseMethod(onChange, this));
+		if (selectedRadioButton != radioButton) {
+			if (selectedRadioButton != null) {
+				selectedRadioButton.setSelected(false);
+			}
+			selectedRadioButton = radioButton;
+			if (radioButton != null) {
+				radioButton.setSelected(true);
+			}
+			if (propagateChangeEvent && onChange != null) {
+				Kuix.callActionMethod(Kuix.parseMethod(onChange, this));
+			}
 		}
 	}
 	
@@ -220,7 +224,7 @@ public class RadioGroup extends List {
 		if (widget instanceof RadioButton) {
 			RadioButton radioButton = (RadioButton) widget;
 			if (radioButton.isSelected() || (wantedValue != null && wantedValue.equals(radioButton.getValue()))) {
-				setSelectedRadioButton(radioButton);
+				setSelectedRadioButton(radioButton, false);
 			}
 		}
 		return this;
@@ -239,7 +243,7 @@ public class RadioGroup extends List {
 	 */
 	protected void onChildRemoved(Widget widget) {
 		if (widget == selectedRadioButton) {
-			setSelectedRadioButton(null);
+			setSelectedRadioButton(null, false);
 		}
 		super.onChildRemoved(widget);
 	}

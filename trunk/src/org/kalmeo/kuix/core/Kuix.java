@@ -414,6 +414,34 @@ public final class Kuix {
 							String usedAttribute = attribute;
 							Widget usedWidget = widget;
 							
+							// Check #include statment
+							if (characters.startsWith(KuixConstants.INCLUDE_KEYWORD_PATTERN)) {
+								String fileName = characters.substring(KuixConstants.INCLUDE_KEYWORD_PATTERN.length()).trim();
+								InputStream inputStream = getClass().getResourceAsStream(fileName);
+								if (inputStream != null) {
+									try {
+										if (usedAttribute != null) {
+											
+											// Attribute value, then the file content is returned as a String
+											byte[] rawData = new byte[inputStream.available()];
+											inputStream.read(rawData);
+											characters = new String(rawData);
+											
+										} else {
+											
+											// Default include: file content is parsed and added to current widget
+											parseXml(tagConverter, widget, inputStream, dataProvider);
+											return;
+											
+										}
+									} catch (IOException e) {
+										throw new IllegalArgumentException("Invalid include file : " + fileName);
+									}
+								} else {
+									throw new IllegalArgumentException("Include file not found : " + fileName);
+								}
+							}
+							
 							// If no attribute is defined
 							if (usedAttribute == null) {
 								if (widget instanceof AbstractTextWidget) {

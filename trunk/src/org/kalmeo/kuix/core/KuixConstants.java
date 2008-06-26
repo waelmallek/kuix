@@ -40,6 +40,8 @@ public interface KuixConstants {
 	public static final String DEFAULT_I18N_MESSAGES_BUNDLE					= DEFAULT_I18N_RES_FOLDER + "messages.properties";
 	public static final String DEFAULT_UNKNOWN_I18N_MESSAGE					= "???";
 	
+	public static final String INCLUDE_KEYWORD_PATTERN						= "#include ";
+	
 	public static final String PARSE_PROPERTY_START_PATTERN					= "${";
 	public static final String BIND_PROPERTY_START_PATTERN					= "@{";
 	public static final String PROPERTY_END_PATTERN							= "}";
