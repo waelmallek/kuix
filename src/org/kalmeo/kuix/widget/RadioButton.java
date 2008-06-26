@@ -176,20 +176,9 @@ public class RadioButton extends CheckBox {
 	public void select() {
 		RadioGroup group = getRadioGroup();
 		if (group != null) {
-			group.setSelectedRadioButton(this);
+			group.setSelectedRadioButton(this, true);
 		}
 		super.setSelected(true);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.CheckBox#processActionEvent()
-	 */
-	public boolean processActionEvent() {
-		if (isSelected()) {
-			return false;
-		}
-		super.processActionEvent();
-		return true;
 	}
 
 	/* (non-Javadoc)

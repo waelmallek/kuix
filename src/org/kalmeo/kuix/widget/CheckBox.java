@@ -42,7 +42,7 @@ import org.kalmeo.util.BooleanUtil;
  * 		<td> selected </th>
  * 		<td> <code>No</code> </th>
  * 		<td> <code>Yes</code> </th>
- * 		<td> <code>No</code> </th>
+ * 		<td> <code>Yes</code> </th>
  * 		<td> Define the checkBox selection state </td>
  *	</tr>
  * 	<tr class="TableRowColor">
@@ -133,6 +133,16 @@ public class CheckBox extends AbstractActionWidget {
 		return super.setAttribute(name, value);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#getAttribute(java.lang.String)
+	 */
+	public Object getAttribute(String name) {
+		if (KuixConstants.SELECTED_ATTRIBUTE.equals(name)) {
+			return BooleanUtil.toString(isSelected());
+		}
+		return super.getAttribute(name);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.AbstractFocusableWidget#isPseudoClassCompatible(java.lang.String)
 	 */
