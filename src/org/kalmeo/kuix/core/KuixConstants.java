@@ -40,7 +40,7 @@ public interface KuixConstants {
 	public static final String DEFAULT_I18N_MESSAGES_BUNDLE					= DEFAULT_I18N_RES_FOLDER + "messages.properties";
 	public static final String DEFAULT_UNKNOWN_I18N_MESSAGE					= "???";
 	
-	public static final String INCLUDE_KEYWORD_PATTERN						= "#include ";
+	public static final String INCLUDE_KEYWORD_PATTERN						= "#inc";
 	
 	public static final String PARSE_PROPERTY_START_PATTERN					= "${";
 	public static final String BIND_PROPERTY_START_PATTERN					= "@{";
@@ -115,7 +115,9 @@ public interface KuixConstants {
 	public static final String TOOLTIP_ATTRIBUTE 							= "tooltip";
 	public static final String STYLED_ATTRIBUTE 							= "styled";
 	public static final String CONSTRAINTS_ATTRIBUTE 						= "constraints";
+	public static final String MAX_SIZE_ATTRIBUTE 							= "maxsize";
 	public static final String FOCUSABLE_ATTRIBUTE 							= "focusable";
+	public static final String FOCUSED			 							= "focused";
 	public static final String TITLE_ATTRIBUTE 								= "title";
 	public static final String GROUP_ATTRIBUTE 								= "group";
 	public static final String LABEL_ATTRIBUTE 								= "label";

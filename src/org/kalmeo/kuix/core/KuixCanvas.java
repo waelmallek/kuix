@@ -582,7 +582,7 @@ public final class KuixCanvas extends GameCanvas {
 	 * @see javax.microedition.lcdui.Canvas#pointerDragged(int, int)
 	 */
 	protected void pointerDragged(int x, int y) {
-		if (pointerDragged || Math.abs(x - pointerPressedX) > 2 || Math.abs(y - pointerPressedY) > 2) {
+		if (pointerDragged || Math.abs(x - pointerPressedX) > 5 || Math.abs(y - pointerPressedY) > 5) {
 			pointerDragged = true;
 			processPointerEvent(KuixConstants.POINTER_DRAGGED_EVENT_TYPE, x, y);
 		}

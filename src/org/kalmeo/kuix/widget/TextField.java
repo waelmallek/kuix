@@ -23,14 +23,13 @@ package org.kalmeo.kuix.widget;
 
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
-import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.TextBox;
 
 import org.kalmeo.kuix.core.Kuix;
-import org.kalmeo.kuix.core.KuixCanvas;
 import org.kalmeo.kuix.core.KuixConstants;
+import org.kalmeo.kuix.core.KuixMIDlet;
 import org.kalmeo.kuix.util.Alignment;
 import org.kalmeo.kuix.util.Metrics;
 import org.kalmeo.util.StringTokenizer;
@@ -52,6 +51,27 @@ import org.kalmeo.util.worker.WorkerTask;
  * 		<th> Description </th>
  *	</tr>
  * 	<tr class="TableRowColor">
+ * 		<td> <code>title</code> </th>
+ * 		<td> <code>No</code> </td>
+ * 		<td> <code>Yes</code> </td>
+ * 		<td> <code>No</code> </td>
+ * 		<td> Define the textbox title. The default value is <code>null</code>. </td>
+ *	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<td> <code>maxsize</code> </th>
+ * 		<td> <code>No</code> </td>
+ * 		<td> <code>Yes</code> </td>
+ * 		<td> <code>No</code> </td>
+ * 		<td> Define the maximum number of characters. The default value is <code>1000</code>. </td>
+ *	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<td> <code>constraints</code> </th>
+ * 		<td> <code>No</code> </td>
+ * 		<td> <code>Yes</code> </td>
+ * 		<td> <code>No</code> </td>
+ * 		<td> Define the textbox edit constraints. The value is a string representing the constraints ( <code>any, emailaddr, numeric, phonenumber, url, decimal, password, sensitive, non_predictive, initial_caps_work, initial_caps_sentence</code> ). The default value is <code>any</code>. </td>
+ *	</tr>
+ * 	<tr class="TableRowColor">
  * 		<td> <code>tooltip</code> </th>
  * 		<td> <code>No</code> </td>
  * 		<td> <code>Yes</code> </td>
@@ -64,13 +84,6 @@ import org.kalmeo.util.worker.WorkerTask;
  * 		<td> <code>Yes</code> </td>
  * 		<td> <code>No</code> </td>
  * 		<td> The change called method. </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>constraints</code> </th>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the textbox edit constraints. The value is a string representing the constraints ( <code>any, emailaddr, numeric, phonenumber, url, decimal, password, sensitive, non_predictive, initial_caps_work, initial_caps_sentence</code> ). The default value is <code>any</code>. </td>
  *	</tr>
  * 	<tr class="TableRowColor">
  * 		<td colspan="5"> Inherited attributes : see {@link Text} </td>
@@ -120,67 +133,37 @@ import org.kalmeo.util.worker.WorkerTask;
  * 
  * @author bbeaulant
  */
-public class TextField extends Text {
+public class TextField extends Text implements CommandListener {
 
-	/**
-	 * System text box used to enter text
-	 */
-	class SystemTextBox extends TextBox implements CommandListener {
-
-		private Command validateCommand = new Command(Kuix.getMessage(KuixConstants.VALIDATE_I18N_KEY), Command.OK, 0);
-		private Command cancelCommand = new Command(Kuix.getMessage(KuixConstants.CANCEL_I18N_KEY), Command.CANCEL, 0);
-
-		/**
-		 * Construct a {@link SystemTextBox}
-		 */
-		public SystemTextBox() {
-			super("", "", 1000, javax.microedition.lcdui.TextField.ANY);
-			addCommand(validateCommand);
-			addCommand(cancelCommand);
-			setCommandListener(this);
-		}
-
-		/* (non-Javadoc)
-		 * @see javax.microedition.lcdui.CommandListener#commandAction(javax.microedition.lcdui.Command, javax.microedition.lcdui.Displayable)
-		 */
-		public void commandAction(Command command, Displayable displayable) {
-			if (command == validateCommand) {
-				hideTooltip();
-				boolean changed = getString() != null && !getString().equals(getText());
-				setText(getString());
-				if (changed && onChange != null) {
-					Worker.instance.pushTask(new WorkerTask() {
-
-						public boolean run() {
-							Kuix.callActionMethod(Kuix.parseMethod(onChange, TextField.this));
-							return true;
-						}
-						
-					});
-				}
-			}
-			KuixCanvas canvas = getDesktop().getCanvas();
-			Display display = canvas.getMidlet().getDisplay();
-			if (display != null) {
-				display.setCurrent(canvas);
-			}
-		}
-	}
-
+	// TextBox command
+	private static final Command validateCommand = new Command(Kuix.getMessage(KuixConstants.VALIDATE_I18N_KEY), Command.OK, 1);
+	private static final Command cancelCommand = new Command(Kuix.getMessage(KuixConstants.CANCEL_I18N_KEY), Command.BACK, 0);
+	
 	// Allowed constraints
 	public static final String ANY = "any";
 	public static final String EMAILADDR = "emailaddr";
 	public static final String NUMERIC = "numeric";
 	public static final String PHONENUMBER = "phonenumber";
-	public static final String URL = "url";
 	public static final String DECIMAL = "decimal";
+	public static final String URL = "url";
+	
 	public static final String PASSWORD = "password";
+	
 	public static final String SENSITIVE = "sensitive";
 	public static final String NON_PREDICTIVE = "non_predictive";
 	public static final String INITIAL_CAPS_WORD = "initial_caps_word";
 	public static final String INITIAL_CAPS_SENTENCE = "initial_caps_sentence";
+	
+	// The associated textBox
+	private TextBox textBox;
+	
+	// TextBox's title
+	private String title = null;
+	
+	// TextBox's maxSize
+	private int maxSize = 1000;
 
-	// TextBox constraints
+	// TextBox's constraints
 	private int constraints = javax.microedition.lcdui.TextField.ANY;
 
 	// Tooltip
@@ -218,6 +201,14 @@ public class TextField extends Text {
 			onChange = value;
 			return true;
 		}
+		if (KuixConstants.TITLE_ATTRIBUTE.equals(name)) {
+			setText(value);
+			return true;
+		}
+		if (KuixConstants.MAX_SIZE_ATTRIBUTE.equals(name)) {
+			setMaxSize(Integer.parseInt(value));
+			return true;
+		}
 		if (KuixConstants.CONSTRAINTS_ATTRIBUTE.equals(name)) {
 			constraints = javax.microedition.lcdui.TextField.ANY;
 			StringTokenizer st = new StringTokenizer(value, ", ");
@@ -250,6 +241,51 @@ public class TextField extends Text {
 		return super.setAttribute(name, value);
 	}
 	
+	/**
+	 * @return the title
+	 */
+	public String getTitle() {
+		return title;
+	}
+
+	/**
+	 * @param title the title to set
+	 */
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	/**
+	 * @return the maxSize
+	 */
+	public int getMaxSize() {
+		return maxSize;
+	}
+
+	/**
+	 * @param maxSize the maxSize to set
+	 */
+	public void setMaxSize(int maxSize) {
+		this.maxSize = Math.max(1, maxSize);
+		if (text != null && text.length() > maxSize) {
+			setText(text);
+		}
+	}
+
+	/**
+	 * @return the constraints
+	 */
+	public int getConstraints() {
+		return constraints;
+	}
+
+	/**
+	 * @param constraints the constraints to set
+	 */
+	public void setConstraints(int constraints) {
+		this.constraints = constraints;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.FocusableWidget#isFocusable()
 	 */
@@ -262,7 +298,7 @@ public class TextField extends Text {
 	 */
 	public AbstractTextWidget setText(String text) {
 		displayedText = null;
-		return super.setText(text);
+		return super.setText(text != null ? text.substring(0, Math.min(text.length(), maxSize)) : null);
 	}
 
 	/* (non-Javadoc)
@@ -318,6 +354,29 @@ public class TextField extends Text {
 	}
 
 	/* (non-Javadoc)
+	 * @see javax.microedition.lcdui.CommandListener#commandAction(javax.microedition.lcdui.Command, javax.microedition.lcdui.Displayable)
+	 */
+	public void commandAction(Command command, Displayable displayable) {
+		if (command == validateCommand) {
+			String textBoxString = textBox.getString();
+			hideTooltip();
+			boolean changed = textBoxString != null && !textBoxString.equals(getText());
+			setText(textBoxString);
+			if (changed && onChange != null) {
+				Worker.instance.pushTask(new WorkerTask() {
+
+					public boolean run() {
+						Kuix.callActionMethod(Kuix.parseMethod(onChange, TextField.this));
+						return true;
+					}
+					
+				});
+			}
+		}
+		KuixMIDlet.getDefault().getDisplay().setCurrent(KuixMIDlet.getDefault().getCanvas());
+	}
+
+	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.AbstractFocusableWidget#processPointerEvent(byte, int, int)
 	 */
 	public boolean processPointerEvent(byte type, int x, int y) {
@@ -355,25 +414,17 @@ public class TextField extends Text {
 	 * @see org.kalmeo.kuix.widget.Widget#processActionEvent()
 	 */
 	public boolean processActionEvent() {
-		Desktop desktop = getDesktop();
-		if (desktop != null) {
-			Display display = desktop.getCanvas().getMidlet().getDisplay();
-			if (display != null) {
-	
-				// Setup TextBox properties
-				SystemTextBox systemTextBox = new SystemTextBox();
-				systemTextBox.setConstraints(constraints);
-				if (text != null) {
-					systemTextBox.setString(text);
-				}
-	
-				// Show TextBox
-				display.setCurrent(systemTextBox);
-	
-			}
-			return true;
-		}
-		return false;
+
+		// Setup TextBox properties
+		textBox = new TextBox(title == null ? "" : title, text == null ? "" : text, maxSize, constraints);
+		textBox.addCommand(validateCommand);
+		textBox.addCommand(cancelCommand);
+		textBox.setCommandListener(this);
+
+		// Show TextBox
+		KuixMIDlet.getDefault().getDisplay().setCurrent(textBox);
+
+		return true;
 	}
 
 	/**
