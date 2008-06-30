@@ -55,6 +55,13 @@ import org.kalmeo.util.BooleanUtil;
  * 		<td> Define if the widget is focusable. </td>
  * 	</tr>
  * 	<tr class="TableRowColor">
+ * 		<td> <code>focused</code> </td>
+ * 		<td> <code>No</code> </td>
+ * 		<td> <code>Yes</code> </td>
+ * 		<td> <code>Yes</code> </td>
+ * 		<td> Request the focus for this widget. </td>
+ * 	</tr>
+ * 	<tr class="TableRowColor">
  * 		<td> <code>onfocus</code> </td>
  * 		<td> <code>No</code> </td>
  * 		<td> <code>Yes</code> </td>
@@ -137,6 +144,9 @@ public abstract class AbstractFocusableWidget extends Widget {
 	// Define the action widget state
 	protected boolean enabled = true;
 	
+	// Internal properties
+	private boolean requestFocusOnAdded = false;
+	
 	/**
 	 * Construct a {@link AbstractFocusableWidget}
 	 */
@@ -173,7 +183,23 @@ public abstract class AbstractFocusableWidget extends Widget {
 			setFocusable(BooleanUtil.parseBoolean(value));
 			return true;
 		}
+		if (KuixConstants.FOCUSED.equals(name)) {
+			if (BooleanUtil.parseBoolean(value)) {
+				requestFocus();
+			}
+			return true;
+		}
 		return super.setAttribute(name, value);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#getAttribute(java.lang.String)
+	 */
+	public Object getAttribute(String name) {
+		if (KuixConstants.FOCUSED.equals(name)) {
+			return BooleanUtil.toString(isFocused());
+		}
+		return super.getAttribute(name);
 	}
 
 	/**
@@ -272,6 +298,8 @@ public abstract class AbstractFocusableWidget extends Widget {
 					scrollContainer.bestScrollToChild(this, false);
 				}
 				focusManager.requestFocus(this);
+			} else {
+				requestFocusOnAdded = true;
 			}
 		}
 	}
@@ -310,6 +338,16 @@ public abstract class AbstractFocusableWidget extends Widget {
 			return true;
 		}
 		return super.processPointerEvent(type, x, y);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#onAdded(org.kalmeo.kuix.widget.Widget)
+	 */
+	protected void onAdded(Widget parent) {
+		if (requestFocusOnAdded) {
+			requestFocus();
+			requestFocusOnAdded = false;
+		}
 	}
 	
 }

@@ -414,31 +414,62 @@ public final class Kuix {
 							String usedAttribute = attribute;
 							Widget usedWidget = widget;
 							
-							// Check #include statment
+							// Check #inc statment
 							if (characters.startsWith(KuixConstants.INCLUDE_KEYWORD_PATTERN)) {
-								String fileName = characters.substring(KuixConstants.INCLUDE_KEYWORD_PATTERN.length()).trim();
-								InputStream inputStream = getClass().getResourceAsStream(fileName);
-								if (inputStream != null) {
-									try {
-										if (usedAttribute != null) {
-											
-											// Attribute value, then the file content is returned as a String
-											byte[] rawData = new byte[inputStream.available()];
-											inputStream.read(rawData);
-											characters = new String(rawData);
-											
-										} else {
-											
-											// Default include: file content is parsed and added to current widget
-											parseXml(tagConverter, widget, inputStream, dataProvider);
-											return;
-											
+								String fileName = null;
+								String dataProviderProperty = null;
+								String rawParams = KuixConverter.extractRawParams(KuixConstants.INCLUDE_KEYWORD_PATTERN, characters);
+								if (rawParams != null) {
+									StringTokenizer st = new StringTokenizer(rawParams, ", ");
+									if (st.hasMoreElements()) {
+										fileName = st.nextToken();
+										if (st.countTokens() >= 2) {
+											dataProviderProperty = st.nextToken().trim();
 										}
-									} catch (IOException e) {
-										throw new IllegalArgumentException("Invalid include file : " + fileName);
+										if (fileName != null) {
+											// File names accept parse properties
+											fileName = convertParsePropertyStringValues(fileName.trim());
+										}
+										InputStream inputStream = getClass().getResourceAsStream(fileName);
+										if (inputStream != null) {
+											try {
+												if (usedAttribute != null) {
+													
+													// Attribute value, then the file content is returned as a String
+													byte[] rawData = new byte[inputStream.available()];
+													inputStream.read(rawData);
+													characters = new String(rawData);
+													
+												} else {
+													
+													// Parse property variable ?
+													DataProvider includeDataProvider = dataProvider;
+													if (dataProviderProperty != null && dataProvider != null) {
+														if (dataProviderProperty.startsWith(KuixConstants.PARSE_PROPERTY_START_PATTERN)) {
+															String property = dataProviderProperty.substring(KuixConstants.PARSE_PROPERTY_START_PATTERN.length(), dataProviderProperty.length() - KuixConstants.PROPERTY_END_PATTERN.length());
+															Object value = dataProvider.getValue(property);
+															if (value instanceof DataProvider) {
+																includeDataProvider = (DataProvider) value;
+															} else {
+																throw new IllegalArgumentException("#inc accept only DataProvider property value");
+															}
+														} else {
+															throw new IllegalArgumentException("#inc accept only parse property");
+														}
+													}
+													
+													// Default include: file content is parsed and added to current widget
+													parseXml(tagConverter, widget, inputStream, includeDataProvider);
+													return;
+													
+												}
+											} catch (IOException e) {
+												throw new IllegalArgumentException("Invalid include file : " + fileName);
+											}
+										} else {
+											throw new IllegalArgumentException("Include file not found : " + fileName);
+										}
 									}
-								} else {
-									throw new IllegalArgumentException("Include file not found : " + fileName);
 								}
 							}
 							

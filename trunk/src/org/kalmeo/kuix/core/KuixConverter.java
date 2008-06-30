@@ -404,7 +404,11 @@ public class KuixConverter {
 		}
 		int[] intValues = convertIntArray(rawData, 2, StringTokenizer.DEFAULT_DELIM);
 		if (intValues != null) {
-			return new Gap(intValues[0], intValues[1]);
+			if (intValues.length == 1) {
+				return new Gap(intValues[0], intValues[0]);
+			} else {
+				return new Gap(intValues[0], intValues[1]);
+			}
 		}
 		throw new IllegalArgumentException("Bad gap value");
 	}
@@ -790,7 +794,7 @@ public class KuixConverter {
 	 * @param rawData
 	 * @return The paramters full string
 	 */
-	public String extractRawParams(String prefix, String rawData) {
+	public static String extractRawParams(String prefix, String rawData) {
 		if (rawData.startsWith(prefix)) {
 			int posStart = rawData.indexOf(prefix + "(");
 			int posEnd = rawData.indexOf(")");

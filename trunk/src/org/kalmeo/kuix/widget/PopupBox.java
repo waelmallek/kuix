@@ -164,7 +164,7 @@ public class PopupBox extends AbstractActionWidget {
 		// Create FocusManager
 		focusManager = new FocusManager(this, false);
 		
-		// Define popupBax close shortcut key
+		// Define popupBox close shortcut key
 		setShortcutKeyCodes(KuixConstants.KUIX_KEY_BACK, KuixConstants.KEY_PRESSED_EVENT_TYPE);
 		focusManager.addShortcutHandler(this);
 		
