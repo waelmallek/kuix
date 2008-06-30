@@ -402,7 +402,7 @@ public class KuixConverter {
 		if (isNone(rawData)) {
 			return null;
 		}
-		int[] intValues = convertIntArray(rawData, 2, StringTokenizer.DEFAULT_DELIM);
+		int[] intValues = convertIntArray(rawData, 1, StringTokenizer.DEFAULT_DELIM);
 		if (intValues != null) {
 			if (intValues.length == 1) {
 				return new Gap(intValues[0], intValues[0]);
@@ -807,13 +807,13 @@ public class KuixConverter {
 
 	/**
 	 * @param rawData
-	 * @param wantedSize
+	 * @param wantedMinSize
 	 * @param delim
 	 * @return The converted int[]
 	 */
-	public int[] convertIntArray(String rawData, int wantedSize, String delim) {
+	public int[] convertIntArray(String rawData, int wantedMinSize, String delim) {
 		StringTokenizer values = new StringTokenizer(rawData, delim);
-		if (values.countTokens() >= wantedSize) {
+		if (values.countTokens() >= wantedMinSize) {
 			int[] intValues = new int[values.countTokens()];
 			for (int i = 0; values.hasMoreTokens(); ++i) {
 				try {

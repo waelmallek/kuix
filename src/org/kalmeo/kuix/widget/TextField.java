@@ -202,7 +202,7 @@ public class TextField extends Text implements CommandListener {
 			return true;
 		}
 		if (KuixConstants.TITLE_ATTRIBUTE.equals(name)) {
-			setText(value);
+			setTitle(value);
 			return true;
 		}
 		if (KuixConstants.MAX_SIZE_ATTRIBUTE.equals(name)) {
