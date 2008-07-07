@@ -111,7 +111,7 @@ public class FocusManager {
 	}
 	
 	/**
-	 * Add a shortct key event handler to shortcuts list
+	 * Add a shortcut key event handler to shortcuts list
 	 * 
 	 * @param widget the widget that handle the shortcut key event
 	 */
@@ -122,6 +122,19 @@ public class FocusManager {
 			}
 			if (!shortcuts.contains(widget)) {
 				shortcuts.addElement(widget);
+			}
+		}
+	}
+	
+	/**
+	 * Remove a shortcut key event handler to shortcuts list
+	 * 
+	 * @param widget the widget that handle the shortcut key event
+	 */
+	public void removeShortcutHandler(Widget widget) {
+		if (widget != null && shortcuts != null) {
+			if (shortcuts.contains(widget)) {
+				shortcuts.removeElement(widget);
 			}
 		}
 	}

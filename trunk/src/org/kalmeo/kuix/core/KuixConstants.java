@@ -154,6 +154,7 @@ public interface KuixConstants {
 	public static final String BACKGROUND_REPEAT_STYLE_PROPERTY 			= "bg-repeat";
 	public static final String BORDER_COLOR_STYLE_PROPERTY 					= "border-color";
 	public static final String BORDER_IMAGES_STYLE_PROPERTY 				= "border-images";
+	public static final String BORDER_ALIGN_STYLE_PROPERTY 					= "border-align";
 	public static final String BORDER_STROKE_STYLE_PROPERTY 				= "border-stroke";
 
 	public static final String LAYOUT_STYLE_PROPERTY 						= "layout";
@@ -181,6 +182,8 @@ public interface KuixConstants {
 	public static final String ALERT_WARNING_STYLE_CLASS					= "alertwarning";
 	public static final String ALERT_ERROR_STYLE_CLASS						= "alerterror";
 	public static final String ALERT_QUESTION_STYLE_CLASS					= "alertquestion";
+	
+	public static final String CHOICE_SCREEN_STYLE_CLASS					= "choicescreen";
 	
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Styled TextArea tags

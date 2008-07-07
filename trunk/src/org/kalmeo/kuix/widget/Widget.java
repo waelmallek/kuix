@@ -793,20 +793,12 @@ public class Widget {
 	}
 	
 	/**
-	 * Define the widget's associated shortcuts. A shortcut could be a couple of
-	 * <code>kuixKeyCode</code> and <code>action</code>, or simply a
-	 * <code>kuixKeyCode</code>. Multiple shortcuts could be assigned to one
-	 * widget. This method do not accept directly <code>kuixKeyCode</code> but
-	 * only kuix key representation like <code>left</code>, <code>*</code>,
-	 * <code>1</code>.
+	 * Internal method to set shortcuts.
 	 * 
-	 * @param rawShortcuts a string that contains keys and / or action.
-	 * @param eventType the event type. <code>KuixConstants.KEY_PRESSED_EVENT_TYPE,
-	 *            KuixConstants.KEY_REPEATED_EVENT_TYPE or
-	 *            KuixConstants.KEY_RELEASED_EVENT_TYPE</code>
+	 * @param shortcuts
+	 * @param eventType
 	 */
-	public void setShortcuts(String rawShortcuts, byte eventType) {
-		byte[] shortcuts = KuixConverter.convertShortcuts(rawShortcuts);
+	private void internalSetShortcuts(byte[] shortcuts, byte eventType) {
 		switch (eventType) {
 			case KuixConstants.KEY_PRESSED_EVENT_TYPE:
 				pressedShortcutActions = shortcuts;
@@ -818,6 +810,33 @@ public class Widget {
 				releasedShortcutActions = shortcuts;
 				break;
 		}
+		FocusManager focusManager = getFocusManager();
+		if (focusManager != null) {
+			if (hasShortcuts()) {
+				focusManager.addShortcutHandler(this);
+			} else {
+				focusManager.removeShortcutHandler(this);
+			}
+		}
+	}
+	
+	/**
+	 * Define the widget's associated shortcuts. A shortcut could be a couple of
+	 * <code>kuixKeyCode</code> and <code>action</code>, or simply a
+	 * <code>kuixKeyCode</code>. Multiple shortcuts could be assigned to one
+	 * widget. This method do not accept directly <code>kuixKeyCode</code> but
+	 * only kuix key representation like <code>left</code>, <code>*</code>,
+	 * <code>1</code>.
+	 * 
+	 * @param rawShortcuts a string that contains keys and / or action.
+	 * @param eventType the event type.
+	 *            <code>KuixConstants.KEY_PRESSED_EVENT_TYPE,
+	 *            KuixConstants.KEY_REPEATED_EVENT_TYPE or
+	 *            KuixConstants.KEY_RELEASED_EVENT_TYPE</code>
+	 */
+	public void setShortcuts(String rawShortcuts, byte eventType) {
+		byte[] shortcuts = KuixConverter.convertShortcuts(rawShortcuts);
+		internalSetShortcuts(shortcuts, eventType);
 	}
 	
 	/**
@@ -831,17 +850,7 @@ public class Widget {
 	 *            KuixConstants.KEY_RELEASED_EVENT_TYPE</code>
 	 */
 	public void setShortcutKeyCodes(int shortcutKeyCodes, byte eventType) {
-		switch (eventType) {
-			case KuixConstants.KEY_PRESSED_EVENT_TYPE:
-				pressedShortcutActions = NumberUtil.toBytes(shortcutKeyCodes);
-				break;
-			case KuixConstants.KEY_REPEATED_EVENT_TYPE:
-				repeatedShortcutActions = NumberUtil.toBytes(shortcutKeyCodes);
-				break;
-			case KuixConstants.KEY_RELEASED_EVENT_TYPE:
-				releasedShortcutActions = NumberUtil.toBytes(shortcutKeyCodes);
-				break;
-		}
+		internalSetShortcuts(NumberUtil.toBytes(shortcutKeyCodes), eventType);
 	}
 
 	/**
@@ -1611,48 +1620,70 @@ public class Widget {
 			Insets border = getBorder();
 			Image[] images = (Image[]) borderImagesValue;
 			
+			Object borderAlignValue = getStylePropertyValue(KuixConstants.BORDER_ALIGN_STYLE_PROPERTY, false);
+			Alignment[] alignments = null;
+			if (borderAlignValue != null) {
+				alignments = (Alignment[]) borderAlignValue;
+			}
+			
 			// Top
 			if (images[0] != null) {
-				paintMosaicImage(g, images[0], x + border.left, y, width - border.left - border.right, border.top);
+				paintMosaicImage(g, images[0], x + border.left, y, width - border.left - border.right, border.top, extractBorderAlignment(0, alignments));
 			}
 			
 			// Top right
 			if (images[1] != null) {
-				paintMosaicImage(g, images[1], x + width - border.right, y, border.right, border.top);
+				paintMosaicImage(g, images[1], x + width - border.right, y, border.right, border.top, extractBorderAlignment(1, alignments));
 			}
 			
 			// Right
 			if (images[2] != null) {
-				paintMosaicImage(g, images[2], x + width - border.right, y + border.top, border.right, height - border.top - border.bottom);
+				paintMosaicImage(g, images[2], x + width - border.right, y + border.top, border.right, height - border.top - border.bottom, extractBorderAlignment(2, alignments));
 			}
 			
 			// Bottom right
 			if (images[3] != null) {
-				paintMosaicImage(g, images[3], x + width - border.right, y + height - border.bottom, border.right, border.bottom);
+				paintMosaicImage(g, images[3], x + width - border.right, y + height - border.bottom, border.right, border.bottom, extractBorderAlignment(3, alignments));
 			}
 			
 			// Bottom
 			if (images[4] != null) {
-				paintMosaicImage(g, images[4], x + border.left, y + height - border.bottom, width - border.left - border.right, border.bottom);
+				paintMosaicImage(g, images[4], x + border.left, y + height - border.bottom, width - border.left - border.right, border.bottom, extractBorderAlignment(4, alignments));
 			}
 			
 			// Bottom left
 			if (images[5] != null) {
-				paintMosaicImage(g, images[5], x, y + height - border.bottom, border.left, border.bottom);
+				paintMosaicImage(g, images[5], x, y + height - border.bottom, border.left, border.bottom, extractBorderAlignment(5, alignments));
 			}
 			
 			// Left
 			if (images[6] != null) {
-				paintMosaicImage(g, images[6], x, y + border.top, border.left, height - border.top - border.bottom);
+				paintMosaicImage(g, images[6], x, y + border.top, border.left, height - border.top - border.bottom, extractBorderAlignment(6, alignments));
 			}
 			
 			// Top left
 			if (images[7] != null) {
-				paintMosaicImage(g, images[7], x, y, border.left, border.top);
+				paintMosaicImage(g, images[7], x, y, border.left, border.top, extractBorderAlignment(7, alignments));
 			}
 			
 		}
 		
+	}
+	
+	/**
+	 * @param borderIndex
+	 * @param alignments
+	 * @return the extracted {@link Alignment}
+	 */
+	private Alignment extractBorderAlignment(int borderIndex, Alignment[] alignments) {
+		Alignment alignment = null;
+		if (alignments != null) {
+			alignment = alignments[borderIndex];
+		}
+		if (alignment != null) {
+			return alignment;
+		}
+		return Alignment.TOP_LEFT;
 	}
 	
 	/**
@@ -1667,6 +1698,21 @@ public class Widget {
 	 */
 	protected void paintMosaicImage(Graphics g, Image image, int x, int y, int width, int height) {
 		paintMosaicImage(g, image, x, y, width, height, Alignment.TOP_LEFT, Integer.MAX_VALUE, Integer.MAX_VALUE);
+	}
+	
+	/**
+	 * Paint a cliped zone with mosaic image
+	 * 
+	 * @param g
+	 * @param image
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param alignment
+	 */
+	protected void paintMosaicImage(Graphics g, Image image, int x, int y, int width, int height, Alignment alignment) {
+		paintMosaicImage(g, image, x, y, width, height, alignment, Integer.MAX_VALUE, Integer.MAX_VALUE);
 	}
 	
 	/**

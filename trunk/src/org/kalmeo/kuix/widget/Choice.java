@@ -190,6 +190,7 @@ public class Choice extends AbstractActionWidget {
 			}
 			
 		};
+		screen.setStyleClass(KuixConstants.CHOICE_SCREEN_STYLE_CLASS);
 		screen.switchToInternalMenus();
 		screen.setTitle(Kuix.getMessage(KuixConstants.PLEASE_SELECT_I18N_KEY));
 		

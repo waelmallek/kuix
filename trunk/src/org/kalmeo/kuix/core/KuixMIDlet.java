@@ -246,6 +246,12 @@ public abstract class KuixMIDlet extends MIDlet {
 												(options & KuixConstants.ALERT_NO) == KuixConstants.ALERT_NO,
 												(options & KuixConstants.ALERT_CANCEL) == KuixConstants.ALERT_CANCEL
 											};
+		
+		// If no button : add default OK button
+		if (!buttons[0] && !buttons[1] && !buttons[2] && !buttons[3]) {
+			buttons[0] = true;
+		}
+		
 		int numButtons = 0;
 		int i = 0;
 		for (; i < 4; ++i) {
@@ -298,9 +304,6 @@ public abstract class KuixMIDlet extends MIDlet {
 	 * @return The {@link PopupBox} instance
 	 */
 	public PopupBox alert(String message, int options) {
-		if (options == KuixConstants.ALERT_DEFAULT) {
-			options = KuixConstants.ALERT_OK;
-		}
 		return alert(	message, 
 						options, 
 						null,
@@ -346,7 +349,7 @@ public abstract class KuixMIDlet extends MIDlet {
 		// Print stack trace for debug
 		throwable.printStackTrace();
 		
-		return alert(buffer.toString(), KuixConstants.ALERT_ERROR);
+		return alert(buffer.toString(), KuixConstants.ALERT_ERROR | KuixConstants.ALERT_OK);
 	}
 	
 	/**
