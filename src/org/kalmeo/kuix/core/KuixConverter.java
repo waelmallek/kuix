@@ -29,6 +29,7 @@ import java.util.Hashtable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
+import javax.microedition.lcdui.game.Sprite;
 
 import org.kalmeo.kuix.layout.BorderLayout;
 import org.kalmeo.kuix.layout.BorderLayoutData;
@@ -165,90 +166,93 @@ public class KuixConverter {
 	 * Convert a property raw data string into a specific object instance.
 	 * 
 	 * @param name
-	 * @param rawValue
+	 * @param rawData
 	 * @return a specific object instance.
 	 */
-	public Object convertStyleProperty(String name, String rawValue) throws IllegalArgumentException {
+	public Object convertStyleProperty(String name, String rawData) throws IllegalArgumentException {
 
 		// Color
 		if (KuixConstants.COLOR_STYLE_PROPERTY.equals(name) 
 				|| KuixConstants.BACKGROUND_COLOR_STYLE_PROPERTY.equals(name) 
 				|| KuixConstants.BORDER_COLOR_STYLE_PROPERTY.equals(name)) {
-			return convertColor(rawValue);
+			return convertColor(rawData);
 		}
 
 		// Font face
 		if (KuixConstants.FONT_FACE_STYLE_PROPERTY.equals(name)) {
-			return convertFontFace(rawValue);
+			return convertFontFace(rawData);
 		}
 		
 		// Font style
 		if (KuixConstants.FONT_STYLE_STYLE_PROPERTY.equals(name)) {
-			return convertFontStyle(rawValue);
+			return convertFontStyle(rawData);
 		}
 		
 		// Font size
 		if (KuixConstants.FONT_SIZE_STYLE_PROPERTY.equals(name)) {
-			return convertFontSize(rawValue);
+			return convertFontSize(rawData);
 		}
 		
 		// Stroke
 		if (KuixConstants.BORDER_STROKE_STYLE_PROPERTY.equals(name)) {
-			return convertStroke(rawValue);
+			return convertStroke(rawData);
 		}
 		
 		// Inset
 		if (KuixConstants.MARGIN_STYLE_PROPERTY.equals(name) 
 				|| KuixConstants.BORDER_STYLE_PROPERTY.equals(name) 
 				|| KuixConstants.PADDING_STYLE_PROPERTY.equals(name)) {
-			return convertInset(rawValue);
+			return convertInset(rawData);
 		}
 
 		// Gap
 		if (KuixConstants.GAP_STYLE_PROPERTY.equals(name)) {
-			return convertGap(rawValue);
+			return convertGap(rawData);
 		}
 
 		// Span
 		if (KuixConstants.SPAN_STYLE_PROPERTY.equals(name)) {
-			return convertSpan(rawValue);
+			return convertSpan(rawData);
 		}
 
 		// Weight
 		if (KuixConstants.WEIGHT_STYLE_PROPERTY.equals(name)) {
-			return convertWeight(rawValue);
+			return convertWeight(rawData);
 		}
 
 		// Align
 		if (KuixConstants.ALIGN_STYLE_PROPERTY.equals(name)
 				|| KuixConstants.BACKGROUND_ALIGN_STYLE_PROPERTY.equals(name)) {
-			return convertAlignment(rawValue);
+			return convertAlignment(rawData);
+		}
+		if (KuixConstants.BORDER_ALIGN_STYLE_PROPERTY.equals(name)) {
+			return convertAlignmentArray(rawData, 8);
 		}
 
 		// Image
 		if (KuixConstants.BACKGROUND_IMAGE_STYLE_PROPERTY.equals(name)) {
-			return convertImage(rawValue);
+			return convertImage(rawData);
 		}
 		if (KuixConstants.BORDER_IMAGES_STYLE_PROPERTY.equals(name)) {
-			return convertImageArray(rawValue, 8);
+			return convertImageArray(rawData, 8);
 		}
 		
 		// Layout
 		if (KuixConstants.LAYOUT_STYLE_PROPERTY.equals(name)) {
-			return convertLayout(rawValue);
+			return convertLayout(rawData);
 		}
 		if (KuixConstants.LAYOUT_DATA_STYLE_PROPERTY.equals(name)) {
-			return convertLayoutData(rawValue);
+			return convertLayoutData(rawData);
 		}
 		
 		// Background repeat
 		if (KuixConstants.BACKGROUND_REPEAT_STYLE_PROPERTY.equals(name)) {
-			return convertIntArray(rawValue, 2, " ");
+			return convertIntArray(rawData, 2, " ");
 		}
 		
 		// Transition
 		if (KuixConstants.TRANSITION_STYLE_PROPERTY.equals(name)) {
-			return convertTransition(rawValue);
+			return convertTransition(rawData);
 		}
 		
 		throw new IllegalArgumentException("Unknow style name " + name);
@@ -493,6 +497,31 @@ public class KuixConverter {
 
 	/**
 	 * @param rawData
+	 * @param wantedSize
+	 * @return The converted Alignment[]
+	 */
+	protected Alignment[] convertAlignmentArray(String rawData, int wantedSize) {
+		if (isNone(rawData)) {
+			return null;
+		}
+		StringTokenizer values = new StringTokenizer(rawData);
+		if (values.countTokens() >= wantedSize) {
+			Alignment[] alignments = new Alignment[values.countTokens()];
+			for (int i = 0; values.hasMoreTokens(); ++i) {
+				try {
+					alignments[i] = convertAlignment((String) values.nextElement());
+					continue;
+				} catch (Exception e) {
+					return null;
+				}
+			}
+			return alignments;
+		}
+		throw new IllegalArgumentException("Bad alignments value");
+	}
+	
+	/**
+	 * @param rawData
 	 * @return The converted {@link Image}
 	 */
 	protected Image convertImage(String rawData) {
@@ -514,14 +543,38 @@ public class KuixConverter {
 					fullImage = Image.createImage(imgSrc);
 				} catch (IOException e) {
 					System.err.println("Error loading : " + imgSrc);
-					e.printStackTrace();
 				}
-				if (numTokens == 5) {
+				if (numTokens >= 5) {
 					int x = Integer.parseInt(st.nextToken());
 					int y = Integer.parseInt(st.nextToken());
 					int width = Integer.parseInt(st.nextToken());
 					int height = Integer.parseInt(st.nextToken());
-					return Image.createImage(fullImage, x, y, width, height, 0);
+					int transform = Sprite.TRANS_NONE;
+					if (numTokens == 6) {
+						String transformStr = st.nextToken();
+						if (transformStr != null) {
+							if (transformStr.equals("mirror")) {
+								transform = Sprite.TRANS_MIRROR;
+							} else if (transformStr.equals("mirror_rot270")) {
+								transform = Sprite.TRANS_MIRROR_ROT270;
+							} else if (transformStr.equals("mirror_rot180")) {
+								transform = Sprite.TRANS_MIRROR_ROT180;
+							} else if (transformStr.equals("mirror_rot90")) {
+								transform = Sprite.TRANS_MIRROR_ROT90;
+							} else if (transformStr.equals("rot270")) {
+								transform = Sprite.TRANS_ROT270;
+							} else if (transformStr.equals("rot180")) {
+								transform = Sprite.TRANS_ROT180;
+							} else if (transformStr.equals("rot90")) {
+								transform = Sprite.TRANS_ROT90;
+							}
+						}
+					}
+					try {
+						return Image.createImage(fullImage, x, y, width, height, transform);
+					} catch (Exception e) {
+						System.err.println("Error loading custom : " + imgSrc);
+					}
 				} else {
 					return fullImage;
 				}

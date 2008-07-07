@@ -7,6 +7,7 @@
 - Bug fix : avoid TextFiled with password contraints edition crash
 - Bug fix : avoid a memory leak when displaying a lot of Screens that contain menus
 - Bug fix : avoid a style inheritance bug when a widget was included in a same tag widget.
+- Bug fix : avoid invisible button bug on Error alert
 
 - Add #inc (include) statement capabilities in XML files.
   - syntax : #inc(&lt;absolute file path&gt;) 
@@ -19,6 +20,8 @@
 - Add a getter on the CheckBox's selected attribute. Caution, a boolean string representation is returned and not a real boolean. Use org.kalmeo.util.BooleanUtil.parseBoolean(String) method to convert it.
 - Add a *focused* attribute on AbstractFocusableWidget 
 - Add *title* and *maxsize* attribute on TextField
+- Add FocusManager.removeShortcutHandler(Widget widget) method
+- Add a *border-align* style property
 
 - Change Kuix.parseMethod signature from Kuix.parseMethod(String data, Widget owner, Desktop desktop) to Kuix.parseMethod(String data, Widget owner)
 
