@@ -26,11 +26,9 @@ import org.kalmeo.kuix.core.focus.FocusManager;
 import org.kalmeo.kuix.core.model.DataProvider;
 import org.kalmeo.kuix.layout.BorderLayout;
 import org.kalmeo.kuix.layout.BorderLayoutData;
-import org.kalmeo.kuix.layout.InlineLayout;
 import org.kalmeo.kuix.layout.Layout;
 import org.kalmeo.kuix.layout.LayoutData;
 import org.kalmeo.kuix.layout.StaticLayout;
-import org.kalmeo.kuix.util.Alignment;
 
 /**
  * This class represent a tab folder.
@@ -193,11 +191,8 @@ public class TabFolder extends List {
 		
 	}
 	
-	// Defaults
-	private static final Layout DEFAULT_TAB_BUTTON_CONTAINER_LAYOUT = new InlineLayout(true, Alignment.FILL);
-
 	// Internal widgets
-	private final Widget tabButtonsContainer;
+	private final ScrollContainer tabButtonsContainer;
 	private final Widget tabItemContainer;
 	private TabItem currentTabItem;
 	
@@ -209,17 +204,7 @@ public class TabFolder extends List {
 	 */
 	public TabFolder() {
 		super(KuixConstants.TAB_FOLDER_WIDGET_TAG);
-		tabButtonsContainer = new Widget(KuixConstants.TAB_BUTTONS_CONTAINER_WIDGET_TAG) {
-
-			/* (non-Javadoc)
-			 * @see org.kalmeo.kuix.widget.Widget#getDefaultStyleAttributeValue(java.lang.String)
-			 */
-			protected Object getDefaultStylePropertyValue(String name) {
-				if (KuixConstants.LAYOUT_STYLE_PROPERTY.equals(name)) {
-					return DEFAULT_TAB_BUTTON_CONTAINER_LAYOUT;
-				}
-				return super.getDefaultStylePropertyValue(name);
-			}
+		tabButtonsContainer = new ScrollContainer(KuixConstants.TAB_BUTTONS_CONTAINER_WIDGET_TAG) {
 
 			/* (non-Javadoc)
 			 * @see org.kalmeo.kuix.widget.Widget#getLayoutData()
@@ -229,6 +214,9 @@ public class TabFolder extends List {
 			}
 
 		};
+		tabButtonsContainer.setHorizontal(true);
+		tabButtonsContainer.setShowScrollBar(false);
+		tabButtonsContainer.setUseMarkers(false);
 		super.add(tabButtonsContainer);
 		tabItemContainer = new Widget(KuixConstants.TAB_ITEM_CONTAINER_WIDGET_TAG) {
 
@@ -331,6 +319,7 @@ public class TabFolder extends List {
 			}
 			tabItem.selected = true;
 			tabItem.setVisible(true);
+			tabButtonsContainer.bestScrollToChild(tabItem.tabButton, false);
 		}
 		if (defaultTabItem != null) {
 			defaultTabItem.setVisible(currentTabItem == null);
@@ -405,12 +394,12 @@ public class TabFolder extends List {
 	 * @param unselectIfNoOther
 	 */
 	protected void selectOtherTab(boolean forward, boolean unselectIfNoOther) {
-		Widget currentTab = currentTabItem != null ? currentTabItem.tabButton : (forward ? tabButtonsContainer.getChild() : tabButtonsContainer.getLastChild());
+		Widget currentTab = currentTabItem != null ? currentTabItem.tabButton : (forward ? tabButtonsContainer.getContainer().getChild() : tabButtonsContainer.getContainer().getLastChild());
 		Widget tab = currentTab;
 		while (tab != null) {
 			tab = forward ? tab.next : tab.previous;
 			if (tab == null) {
-				tab = (forward ? tabButtonsContainer.getChild() : tabButtonsContainer.getLastChild());
+				tab = (forward ? tabButtonsContainer.getContainer().getChild() : tabButtonsContainer.getContainer().getLastChild());
 			}
 			if (tab != null) {
 				if (tab == currentTab) {

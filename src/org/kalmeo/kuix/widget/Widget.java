@@ -182,6 +182,12 @@ import org.kalmeo.util.LinkedList.LinkedListEnumeration;
  * 		<td> Define the border images. <code>Syntax : url(&lt;top&gt;) url(&lt;top-right&gt;) url(&lt;right&gt;) url(&lt;bottom-right&gt;) url(&lt;bottom&gt;) url(&lt;bottom-left&gt;) url(&lt;left&gt;) url(&lt;top-left&gt;)</code>. </td>
  * 	</tr>
  * 	<tr class="TableRowColor">
+ * 		<td> <code>border-align</code> </td>
+ * 		<td> <code>-</code> </td>
+ * 		<td> <code>No</code> </td>
+ * 		<td> Define the border images alignment. <code>Syntax : &lt;align top&gt; &lt;align top-right&gt; &lt;align right&gt; &lt;align bottom-right&gt; &lt;align bottom&gt; &lt;align bottom-left&gt; &lt;align left&gt; &lt;align top-left&gt;</code>. </td>
+ * 	</tr>
+ * 	<tr class="TableRowColor">
  * 		<td> <code>color</code> </td>
  * 		<td> <code>#000000</code> </td>
  * 		<td> <code>Yes</code> </td>
@@ -410,22 +416,18 @@ public class Widget {
 	private Widget child;
 	private Widget lastChild;
 
-	// The x position of the widget
+	// The position of the widget
 	private int x;
-
-	// The y position of the widget
 	private int y;
 
-	// The width of the widget
+	// The size of the widget
 	private int width;
-
-	// The height of the widget
 	private int height;
 	
 	// Used for focus navigation
 	private int visualCenterX;
 	private int visualCenterY;
-
+	
 	// The widget style defined by the xml author
 	private Style authorStyle;
 	
@@ -687,7 +689,29 @@ public class Widget {
 	public int getHeight() {
 		return height;
 	}
+	
+	/**
+	 * Return the inner width of this widget (exluding margin, border and padding).
+	 * 
+	 * @return the innerWidth
+	 */
+	public int getInnerWidth() {
+		// TODO : Add a cache system
+		Insets insets = getInsets();
+		return width - insets.left - insets.right;
+	}
 
+	/**
+	 * Return the inner height of this widget (exluding margin, border and padding).
+	 * 
+	 * @return the innerHeight
+	 */
+	public int getInnerHeight() {
+		// TODO : Add a cache system
+		Insets insets = getInsets();
+		return height - insets.top - insets.bottom;
+	}
+	
 	/**
 	 * Set the widget's bounds
 	 * 

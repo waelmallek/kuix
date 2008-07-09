@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with org.kalmeo.kuix.  If not, see <http://www.gnu.org/licenses/>.
  *  
- * Creation date : 5 d�c. 07
+ * Creation date : 5 dec. 07
  * Copyright (c) Kalmeo 2007-2008. All rights reserved.
  * http://www.kalmeo.org
  */
@@ -25,7 +25,6 @@ import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.kuix.core.KuixConstants;
 import org.kalmeo.kuix.core.KuixMIDlet;
 import org.kalmeo.kuix.core.focus.FocusManager;
-import org.kalmeo.kuix.core.focus.ScreenFocusManager;
 import org.kalmeo.kuix.layout.BorderLayout;
 import org.kalmeo.kuix.layout.BorderLayoutData;
 import org.kalmeo.kuix.layout.GridLayout;
@@ -166,62 +165,6 @@ import org.kalmeo.util.BooleanUtil;
 public class Screen extends Widget {
 
 	/**
-	 * This class represents the screen content container
-	 */
-	private class ScreenContainer extends Widget {
-
-		/* (non-Javadoc)
-		 * @see org.kalmeo.kuix.widget.Widget#getLayout()
-		 */
-		public Layout getLayout() {
-			return (Layout) Screen.this.getStylePropertyValue(KuixConstants.LAYOUT_STYLE_PROPERTY, false);
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.kalmeo.kuix.widget.Widget#getLayoutData()
-		 */
-		public LayoutData getLayoutData() {
-			return BorderLayoutData.instanceCenter;
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.kalmeo.kuix.widget.Widget#getMargin()
-		 */
-		public Insets getMargin() {
-			return (Insets) Screen.this.getStylePropertyValue(KuixConstants.MARGIN_STYLE_PROPERTY, false);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.kalmeo.kuix.widget.Widget#getBorder()
-		 */
-		public Insets getBorder() {
-			return (Insets) Screen.this.getStylePropertyValue(KuixConstants.BORDER_STYLE_PROPERTY, false);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.kalmeo.kuix.widget.Widget#getPadding()
-		 */
-		public Insets getPadding() {
-			return (Insets) Screen.this.getStylePropertyValue(KuixConstants.PADDING_STYLE_PROPERTY, false);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.kalmeo.kuix.widget.Widget#getAlign()
-		 */
-		public Alignment getAlign() {
-			return (Alignment) Screen.this.getStylePropertyValue(KuixConstants.ALIGN_STYLE_PROPERTY, false);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.kalmeo.kuix.widget.Widget#getGap()
-		 */
-		public Gap getGap() {
-			return (Gap) Screen.this.getStylePropertyValue(KuixConstants.GAP_STYLE_PROPERTY, false);
-		}
-		
-	}
-	
-	/**
 	 * This class represents a screen top or bottom bar (used for title and/or menu)
 	 */
 	public class ScreenBar extends Widget {
@@ -318,10 +261,10 @@ public class Screen extends Widget {
 	}
 	
 	// FocusManager
-	private final ScreenFocusManager focusManager;
+	private final FocusManager focusManager;
 
 	// The content's widgets
-	private final ScreenContainer container;
+	private final Widget container;
 	private ScreenBar topBar;
 	private ScreenBar bottomBar;
 	
@@ -347,11 +290,75 @@ public class Screen extends Widget {
 		super(KuixConstants.SCREEN_WIDGET_TAG);
 		
 		// Init content's widgets
-		container = new ScreenContainer();
+		container = new Widget() {
+
+			/* (non-Javadoc)
+			 * @see org.kalmeo.kuix.widget.Widget#getLayout()
+			 */
+			public Layout getLayout() {
+				return (Layout) Screen.this.getStylePropertyValue(KuixConstants.LAYOUT_STYLE_PROPERTY, false);
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.kalmeo.kuix.widget.Widget#getLayoutData()
+			 */
+			public LayoutData getLayoutData() {
+				return BorderLayoutData.instanceCenter;
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.kalmeo.kuix.widget.Widget#getMargin()
+			 */
+			public Insets getMargin() {
+				return (Insets) Screen.this.getStylePropertyValue(KuixConstants.MARGIN_STYLE_PROPERTY, false);
+			}
+
+			/* (non-Javadoc)
+			 * @see org.kalmeo.kuix.widget.Widget#getBorder()
+			 */
+			public Insets getBorder() {
+				return (Insets) Screen.this.getStylePropertyValue(KuixConstants.BORDER_STYLE_PROPERTY, false);
+			}
+
+			/* (non-Javadoc)
+			 * @see org.kalmeo.kuix.widget.Widget#getPadding()
+			 */
+			public Insets getPadding() {
+				return (Insets) Screen.this.getStylePropertyValue(KuixConstants.PADDING_STYLE_PROPERTY, false);
+			}
+
+			/* (non-Javadoc)
+			 * @see org.kalmeo.kuix.widget.Widget#getAlign()
+			 */
+			public Alignment getAlign() {
+				return (Alignment) Screen.this.getStylePropertyValue(KuixConstants.ALIGN_STYLE_PROPERTY, false);
+			}
+
+			/* (non-Javadoc)
+			 * @see org.kalmeo.kuix.widget.Widget#getGap()
+			 */
+			public Gap getGap() {
+				return (Gap) Screen.this.getStylePropertyValue(KuixConstants.GAP_STYLE_PROPERTY, false);
+			}
+			
+		};
 		super.add(container);
 		
 		// Init focusManagers
-		focusManager = new ScreenFocusManager(this, false);
+		focusManager = new FocusManager(this, false) {
+			
+			/* (non-Javadoc)
+			 * @see org.kalmeo.kuix.core.focus.FocusManager#processKeyEvent(byte, int)
+			 */
+			public boolean processKeyEvent(byte type, int kuixKeyCode) {
+				if (!super.processKeyEvent(type, kuixKeyCode)) {
+					return processSoftKeyEvent(type, kuixKeyCode);
+				}
+				return true;	
+			}
+
+		};
+		
 	}
 	
 	/* (non-Javadoc)

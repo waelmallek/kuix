@@ -128,7 +128,9 @@ public interface KuixConstants {
 	public static final String PRESSED_SHORTCUTS_ATTRIBUTE 					= "pressedshortcuts";
 	public static final String REPEATED_SHORTCUTS_ATTRIBUTE 				= "repeatedshortcuts";
 	public static final String RELEASED_SHORTCUTS_ATTRIBUTE 				= "releasedshortcuts";
+	public static final String HORIZONTAL_ATTRIBUTE 						= "horizontal";
 	public static final String USE_MARKERS_ATTRIBUTE 						= "usemarkers";
+	public static final String SHOW_SCROLL_BAR_ATTRIBUTE 					= "showscrollbar";
 	public static final String RENDERER_ATTRIBUTE 							= "renderer";
 	public static final String ITEMS_ATTRIBUTE 								= "items";
 	public static final String DATAPROVIDER_ATTRIBUTE 						= "dataprovider";

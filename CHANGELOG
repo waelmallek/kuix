@@ -38,9 +38,14 @@
   - TabFolder now extends List, to be able to build child TabItems from a DataProvider like lists (with renderer).
   - Change TabFolder's defaultTabItem as an internal widget. The XML syntax doesn't change.
   - Use TabItem.setSelected(boolean) to select a tabItem on widget loading.
+  - TabButtonsContainer now extends an horizontal scrollContainer
 
 - RadioGroup changes :
   - RadioGroup now extends List, to be able to build child RadioButtons from a DataProvider like lists (with renderer).
+  
+- ScrollContainer changes :
+  - ScrollContainer can be horizontal
+  - You can hide scrollBar through the *showScrollBar* attribute
 
 ##Version 1.0.0RC3 (2008-05-27)
 

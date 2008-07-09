@@ -43,7 +43,7 @@ import org.kalmeo.kuix.core.KuixConstants;
  * 		<td> <code>text</code> </th>
  * 		<td> <code>No</code> </td>
  * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
+ * 		<td> <code>Yes</code> </td>
  * 		<td> Define the text value. </td>
  *	</tr>
  * 	<tr class="TableRowColor">

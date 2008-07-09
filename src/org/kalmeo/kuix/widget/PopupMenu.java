@@ -23,7 +23,6 @@ package org.kalmeo.kuix.widget;
 
 import org.kalmeo.kuix.core.KuixConstants;
 import org.kalmeo.kuix.core.focus.FocusManager;
-import org.kalmeo.kuix.core.focus.PopupMenuFocusManager;
 import org.kalmeo.kuix.core.model.DataProvider;
 import org.kalmeo.kuix.layout.LayoutData;
 import org.kalmeo.kuix.layout.StaticLayoutData;
@@ -100,7 +99,7 @@ import org.kalmeo.kuix.util.Metrics;
 public class PopupMenu extends List {
 
 	// The associated PopupMenuFocusManager
-	private final PopupMenuFocusManager focusManager;
+	private final FocusManager focusManager;
 	
 	// The associated parent menu
 	public Menu menu;
@@ -113,7 +112,81 @@ public class PopupMenu extends List {
 	 */
 	public PopupMenu() {
 		super(KuixConstants.POPUP_MENU_WIDGET_TAG);
-		focusManager = new PopupMenuFocusManager(this);
+		focusManager = new FocusManager(this, true) {
+
+			/* (non-Javadoc)
+			 * @see org.kalmeo.kuix.core.focus.FocusManager#processKeyEvent(byte, int)
+			 */
+			public boolean processKeyEvent(byte type, int kuixKeyCode) {
+				switch (type) {
+
+					case KuixConstants.KEY_PRESSED_EVENT_TYPE:
+					case KuixConstants.KEY_REPEATED_EVENT_TYPE: {
+
+						switch (kuixKeyCode) {
+							
+							case KuixConstants.KUIX_KEY_BACK:
+							case KuixConstants.KUIX_KEY_LEFT:
+								hidePopupMenu();
+								return true;
+
+							case KuixConstants.KUIX_KEY_RIGHT:
+								Widget widget;
+								// Search forward first
+								for (widget = focusedWidget; widget != null; widget = widget.next) {
+									if (widget instanceof Menu) {
+										requestFocus(widget);
+										((Menu) widget).processActionEvent();
+										break;
+									}
+								}
+								// Search backward
+								for (widget = focusedWidget; widget != null; widget = widget.previous) {
+									if (widget instanceof Menu) {
+										requestFocus(widget);
+										((Menu) widget).processActionEvent();
+										break;
+									}
+								}
+								return true;
+
+						}
+					}
+				}
+				if (!super.processKeyEvent(type, kuixKeyCode)) {
+					return processSoftKeyEvent(type, kuixKeyCode);
+				}
+				return true;
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.kalmeo.kuix.core.focus.FocusManager#processPointerEvent(byte, int, int)
+			 */
+			public boolean processPointerEvent(byte type, int x, int y) {
+				boolean superProcess = super.processPointerEvent(type, x, y);
+				if (type == KuixConstants.POINTER_RELEASED_EVENT_TYPE) {
+					if (!superProcess) {
+						hidePopupMenu();
+						return true;
+					}
+				}
+				return superProcess;
+			}	
+			
+			/**
+			 * Hide the associated {@link PopupMenu}
+			 */
+			private void hidePopupMenu() {
+				PopupMenu popupMenu = ((PopupMenu) rootWidget);
+				if (popupMenu.menu != null && !(popupMenu.menu.parent instanceof PopupMenu)) {
+					popupMenu.menu.hideMenuTree();
+				} else {
+					popupMenu.hide();
+				}
+			}
+			
+		};
+
 	}
 
 	/* (non-Javadoc)

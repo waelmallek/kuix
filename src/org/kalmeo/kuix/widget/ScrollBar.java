@@ -28,6 +28,8 @@ import org.kalmeo.kuix.layout.Layout;
 import org.kalmeo.kuix.layout.LayoutData;
 import org.kalmeo.kuix.layout.StaticLayout;
 import org.kalmeo.kuix.layout.StaticLayoutData;
+import org.kalmeo.kuix.util.Insets;
+import org.kalmeo.util.BooleanUtil;
 import org.kalmeo.util.MathFP;
 
 /**
@@ -57,6 +59,13 @@ import org.kalmeo.util.MathFP;
  * 		<td> <code>Yes</code> </td>
  * 		<td> <code>No</code> </td>
  * 		<td> Define the scroll bar selection. The value is decimal (fixed point integer) and between 0 and 1. </td>
+ *	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<td> <code>horizontal</code> </th>
+ * 		<td> <code>No</code> </td>
+ * 		<td> <code>Yes</code> </td>
+ * 		<td> <code>No</code> </td>
+ * 		<td> Define if this scrollBar is horizontal. Default value is <code>false</code>. </td>
  *	</tr>
  * 	<tr class="TableRowColor">
  * 		<td colspan="5"> Inherited attributes : see {@link Widget} </td>
@@ -122,6 +131,14 @@ public class ScrollBar extends Widget {
 	private int selection;
 	private int value;
 	
+	// ScrollBar direction
+	private boolean horizontal = false;
+	
+	// Internal use
+	private int pressedX = 0;
+	private int pressedY = 0;
+	private int pressedValue = 0;
+	
 	/**
 	 * Construct a {@link ScrollBar}
 	 */
@@ -153,6 +170,10 @@ public class ScrollBar extends Widget {
 			setSelection(MathFP.toFP(value));
 			return true;
 		}
+		if (KuixConstants.HORIZONTAL_ATTRIBUTE.equals(name)) {
+			setHorizontal(BooleanUtil.parseBoolean(value));
+			return true;
+		}
 		return super.setAttribute(name, value);
 	}
 
@@ -172,9 +193,15 @@ public class ScrollBar extends Widget {
 	 */
 	public void setSelection(int selection) {
 		this.selection = Math.min(MathFP.ONE, Math.max(0, selection));
-		barLayoutData.height = this.selection;
-		bar.setVisible(this.selection != MathFP.ONE);
-		doLayout();
+		if (horizontal) {
+			barLayoutData.width = this.selection;
+			barLayoutData.height = -1;
+		} else {
+			barLayoutData.width = -1;
+			barLayoutData.height = this.selection;
+		}
+		bar.setVisible(this.selection != MathFP.ONE || this.selection != 0);
+		bar.invalidate();
 	}
 
 	/**
@@ -192,24 +219,85 @@ public class ScrollBar extends Widget {
 	 * @param value a fixed-point integer representing the value
 	 */
 	public void setValue(int value) {
+		int lastValue = this.value;
 		this.value = Math.min(MathFP.ONE, Math.max(0, value));
+		if (this.value != lastValue) {
+			invalidate();
+		}
 	}
 	
+	/**
+	 * @return the horizontal
+	 */
+	public boolean isHorizontal() {
+		return horizontal;
+	}
+
+	/**
+	 * @param horizontal the horizontal to set
+	 */
+	public void setHorizontal(boolean horizontal) {
+		this.horizontal = horizontal;
+		setSelection(selection);	// Reapply the selection to switch direction
+	}
+
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#getLayout()
 	 */
 	public Layout getLayout() {
 		return StaticLayout.instance;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#paintChildrenImpl(javax.microedition.lcdui.Graphics)
 	 */
 	protected void paintChildrenImpl(Graphics g) {
-		int yOffset = MathFP.mul(value, getHeight());
-		g.translate(0, yOffset);
+		int xOffset = horizontal ? MathFP.mul(value, MathFP.mul(getInnerWidth(), MathFP.ONE - selection)) : 0;
+		int yOffset = horizontal ? 0 : MathFP.mul(value, MathFP.mul(getInnerHeight(), MathFP.ONE - selection));
+		g.translate(xOffset, yOffset);
 		super.paintChildrenImpl(g);
-		g.translate(0, -yOffset);
+		g.translate(-xOffset, -yOffset);
 	}
 
+	/**
+	 * Process a value change event produce by a UI action.
+	 */
+	protected void processChangeEvent() {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#processPointerEvent(byte, int, int)
+	 */
+	public boolean processPointerEvent(byte type, int x, int y) {
+		switch (type) {
+			
+			case KuixConstants.POINTER_PRESSED_EVENT_TYPE: {
+				pressedX = x;
+				pressedY = y;
+				pressedValue = value;
+				return true;
+			}
+			
+			case KuixConstants.POINTER_DRAGGED_EVENT_TYPE: {
+				Insets insets = getInsets();
+				if (horizontal) {
+					int innerWidth = getWidth() - insets.left - insets.right;
+					if (innerWidth != 0) {
+						setValue(pressedValue + MathFP.div(x - pressedX, MathFP.mul(innerWidth, MathFP.ONE - selection)));
+						processChangeEvent();
+					}
+				} else {
+					int innerHeight = getHeight() - insets.top - insets.bottom;
+					if (innerHeight != 0) {
+						setValue(pressedValue + MathFP.div(y - pressedY, MathFP.mul(innerHeight, MathFP.ONE - selection)));
+						processChangeEvent();
+					}
+				}
+				return true;
+			}
+			
+		}
+		return super.processPointerEvent(type, x, y);
+	}
+	
 }
