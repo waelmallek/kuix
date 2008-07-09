@@ -21,9 +21,6 @@
 
 package org.kalmeo.kuix.widget;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
@@ -32,6 +29,7 @@ import org.kalmeo.kuix.layout.Layout;
 import org.kalmeo.kuix.util.Alignment;
 import org.kalmeo.kuix.util.Insets;
 import org.kalmeo.kuix.util.Metrics;
+import org.kalmeo.util.resource.ImageManager;
 
 /**
  * This class represent a picture.
@@ -199,22 +197,7 @@ public class Picture extends Widget {
 		if (!source.startsWith("/")) {
 			source = new StringBuffer(KuixConstants.DEFAULT_IMG_RES_FOLDER).append(source).toString();
 		}
-		try {
-			image = Image.createImage(source);
-		} catch (IOException ioe) {
-		}
-		if (image == null) {
-			try {
-				InputStream is = getClass().getResourceAsStream(source);
-				if (is != null) {
-					byte[] imageData = new byte[is.available()];
-					is.read(imageData, 0, imageData.length);
-					image = Image.createImage(imageData, 0, imageData.length);
-					is.close();
-				}
-			} catch (Throwable e) {
-			}
-		}
+		image = ImageManager.instance.getImage(source);
 		invalidate();
 		return this;
 	}

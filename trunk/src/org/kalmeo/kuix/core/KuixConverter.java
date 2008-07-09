@@ -73,6 +73,7 @@ import org.kalmeo.kuix.widget.Widget;
 import org.kalmeo.util.BooleanUtil;
 import org.kalmeo.util.MathFP;
 import org.kalmeo.util.StringTokenizer;
+import org.kalmeo.util.resource.ImageManager;
 
 /**
  * @author bbeaulant
@@ -539,44 +540,46 @@ public class KuixConverter {
 					// By default the relative path point to /img
 					imgSrc = new StringBuffer(KuixConstants.DEFAULT_IMG_RES_FOLDER).append(imgSrc).toString();
 				}
-				try {
-					fullImage = Image.createImage(imgSrc);
-				} catch (IOException e) {
-					System.err.println("Error loading : " + imgSrc);
-				}
-				if (numTokens >= 5) {
-					int x = Integer.parseInt(st.nextToken());
-					int y = Integer.parseInt(st.nextToken());
-					int width = Integer.parseInt(st.nextToken());
-					int height = Integer.parseInt(st.nextToken());
-					int transform = Sprite.TRANS_NONE;
-					if (numTokens == 6) {
-						String transformStr = st.nextToken();
-						if (transformStr != null) {
-							if (transformStr.equals("mirror")) {
-								transform = Sprite.TRANS_MIRROR;
-							} else if (transformStr.equals("mirror_rot270")) {
-								transform = Sprite.TRANS_MIRROR_ROT270;
-							} else if (transformStr.equals("mirror_rot180")) {
-								transform = Sprite.TRANS_MIRROR_ROT180;
-							} else if (transformStr.equals("mirror_rot90")) {
-								transform = Sprite.TRANS_MIRROR_ROT90;
-							} else if (transformStr.equals("rot270")) {
-								transform = Sprite.TRANS_ROT270;
-							} else if (transformStr.equals("rot180")) {
-								transform = Sprite.TRANS_ROT180;
-							} else if (transformStr.equals("rot90")) {
-								transform = Sprite.TRANS_ROT90;
+				fullImage = ImageManager.instance.getImage(imgSrc);
+				if (fullImage != null) {
+					if (numTokens >= 5) {
+						
+						int x = Integer.parseInt(st.nextToken());
+						int y = Integer.parseInt(st.nextToken());
+						int width = Integer.parseInt(st.nextToken());
+						int height = Integer.parseInt(st.nextToken());
+						int transform = Sprite.TRANS_NONE;
+						
+						if (numTokens == 6) {
+							String transformStr = st.nextToken();
+							if (transformStr != null) {
+								if (transformStr.equals("mirror")) {
+									transform = Sprite.TRANS_MIRROR;
+								} else if (transformStr.equals("mirror_rot270")) {
+									transform = Sprite.TRANS_MIRROR_ROT270;
+								} else if (transformStr.equals("mirror_rot180")) {
+									transform = Sprite.TRANS_MIRROR_ROT180;
+								} else if (transformStr.equals("mirror_rot90")) {
+									transform = Sprite.TRANS_MIRROR_ROT90;
+								} else if (transformStr.equals("rot270")) {
+									transform = Sprite.TRANS_ROT270;
+								} else if (transformStr.equals("rot180")) {
+									transform = Sprite.TRANS_ROT180;
+								} else if (transformStr.equals("rot90")) {
+									transform = Sprite.TRANS_ROT90;
+								}
 							}
 						}
+						
+						try {
+							return Image.createImage(fullImage, x, y, width, height, transform);
+						} catch (Exception e) {
+							System.err.println("Error loading custom : " + imgSrc);
+						}
+						
+					} else {
+						return fullImage;
 					}
-					try {
-						return Image.createImage(fullImage, x, y, width, height, transform);
-					} catch (Exception e) {
-						System.err.println("Error loading custom : " + imgSrc);
-					}
-				} else {
-					return fullImage;
 				}
 			}
 		}
