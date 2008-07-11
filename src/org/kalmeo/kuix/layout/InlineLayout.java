@@ -90,6 +90,7 @@ public class InlineLayout implements Layout {
 		
 		Alignment targetAlignment = target.getAlign();
 		Insets insets = target.getInsets();
+		Metrics minSize = target.getMinSize();
 		Gap gap = target.getGap();
 		int width = preferredWidth - insets.left - insets.right;
 		int height = target.getHeight() - insets.top - insets.bottom;
@@ -123,8 +124,8 @@ public class InlineLayout implements Layout {
 		}
 
 		if (!layout) {
-			metrics.width = insets.left + contentWidth + insets.right;
-			metrics.height = insets.top + contentHeight + insets.bottom;
+			metrics.width = insets.left + Math.max(minSize.width, contentWidth) + insets.right;
+			metrics.height = insets.top + Math.max(minSize.height, contentHeight) + insets.bottom;
 			return;
 		}
 

@@ -276,13 +276,13 @@ public abstract class AbstractTextWidget extends AbstractFocusableWidget {
 		}
 		return super.getDefaultStylePropertyValue(name);
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.Widget#clearCachedStyle()
+	 * @see org.kalmeo.kuix.widget.Widget#clearCachedStyle(boolean)
 	 */
-	public void clearCachedStyle() {
+	public void clearCachedStyle(boolean propagateToChildren) {
 		cachedFont = null;
-		super.clearCachedStyle();
+		super.clearCachedStyle(propagateToChildren);
 	}
 	
 }

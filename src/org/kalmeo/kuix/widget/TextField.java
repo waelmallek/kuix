@@ -345,7 +345,6 @@ public class TextField extends Text implements CommandListener {
 	protected void paintChildrenImpl(Graphics g) {
 		super.paintChildrenImpl(g);
 		if (isFocused()) {
-			g.setColor(0);
 			g.drawLine(textX, textY, textX, textY + insetHeight - 1);
 		}
 		if (tooltipText != null && tooltipVisible) {

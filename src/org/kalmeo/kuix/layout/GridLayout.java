@@ -81,6 +81,7 @@ public class GridLayout implements Layout {
 	private void measure(Widget target, boolean layout, int preferredWidth, Metrics metrics) {
 		
 		Insets insets = target.getInsets();
+		Metrics minSize = target.getMinSize();
 		Gap gap = target.getGap();
 		int gapWidth = gap.horizontalGap * (numCols - 1);
 		int gapHeight = gap.verticalGap * (numRows - 1);
@@ -115,8 +116,8 @@ public class GridLayout implements Layout {
 		}
 		
 		if (!layout) {
-			metrics.width = insets.left + preferredContentWidth * numCols + insets.right + gapWidth;
-			metrics.height = insets.top + preferredContentHeight * numRows + insets.bottom + gapHeight;
+			metrics.width = insets.left + Math.max(minSize.width, preferredContentWidth * numCols + gapWidth) + insets.right;
+			metrics.height = insets.top + Math.max(minSize.height, preferredContentHeight * numRows + gapHeight) + insets.bottom;
 		}
 		
 	}

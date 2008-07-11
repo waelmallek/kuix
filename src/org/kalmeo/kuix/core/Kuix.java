@@ -336,7 +336,7 @@ public final class Kuix {
 							boolean internal = false;
 							if (path.isEmpty() && tag.equals(rootWidget.getTag())) {
 								newWidget = rootWidget;
-								rootWidget.clearCachedStyle();
+								rootWidget.clearCachedStyle(true);
 								path.push(rootWidget);
 							} else {
 								// Try to retrieve an internal instance
@@ -692,6 +692,10 @@ public final class Kuix {
 							}
 						}
 					} else {
+						
+						if (c == '*') {
+							throw new IllegalArgumentException("Invalid css comment block");
+						}
 	
 						if (c == '/') {	// Caution that all '/' character ar ignored
 							if ((c = reader.read()) == '*') {
@@ -1015,13 +1019,11 @@ public final class Kuix {
 	 * Clear style cache from the specified {@link Widget} and its childs
 	 * 
 	 * @param target
+	 * @param propagateToChildren
 	 */
-	public static void clearStyleCache(Widget target) {
+	public static void clearStyleCache(Widget target, boolean propagateToChildren) {
 		if (target != null) {
-			target.clearCachedStyle();
-			for (Widget widget = target.getChild(); widget != null; widget = widget.getChild()) {
-				clearStyleCache(widget);
-			}
+			target.clearCachedStyle(propagateToChildren);
 		}
 	}
 	

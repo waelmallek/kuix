@@ -168,6 +168,7 @@ public interface KuixConstants {
 	public static final String GAP_STYLE_PROPERTY 							= "gap";
 	public static final String SPAN_STYLE_PROPERTY 							= "span";
 	public static final String WEIGHT_STYLE_PROPERTY 						= "weight";
+	public static final String MIN_SIZE_STYLE_PROPERTY 						= "min-size";
 	public static final String ALIGN_STYLE_PROPERTY 						= "align";
 	public static final String TRANSITION_STYLE_PROPERTY					= "transition";
 	
@@ -230,6 +231,7 @@ public interface KuixConstants {
 	public static final String SCREEN_WIDGET_TAG 							= "screen";
 	public static final String SCROLL_BAR_WIDGET_TAG 						= "scrollbar";
 	public static final String SCROLL_CONTAINER_WIDGET_TAG 					= "scrollcontainer";
+	public static final String SCROLL_CONTAINER_CONTAINER_WIDGET_TAG 		= "scrollcontainercontainer";
 	public static final String SECOND_MENU_WIDGET_TAG 						= "secondmenu";
 	public static final String TAB_BUTTON_WIDGET_TAG 						= "tabbutton";
 	public static final String TAB_BUTTONS_CONTAINER_WIDGET_TAG 			= "tabbuttonscontainer";

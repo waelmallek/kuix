@@ -158,6 +158,10 @@ public class RadioButton extends CheckBox {
 	 */
 	public void setValue(String value) {
 		this.value = value;
+		RadioGroup radioGroup = getRadioGroup();
+		if (radioGroup != null) {
+			radioGroup.processNewRadioButtonValue(this);
+		}
 	}
 
 	/**
