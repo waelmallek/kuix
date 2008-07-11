@@ -202,11 +202,11 @@ public class TextArea extends AbstractTextWidget {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.AbstractTextWidget#clearCachedStyle()
+	 * @see org.kalmeo.kuix.widget.AbstractTextWidget#clearCachedStyle(boolean)
 	 */
-	public void clearCachedStyle() {
+	public void clearCachedStyle(boolean clearCachedStyle) {
 		cachedGap = null;
-		super.clearCachedStyle();
+		super.clearCachedStyle(clearCachedStyle);
 	}
 
 	/* (non-Javadoc)

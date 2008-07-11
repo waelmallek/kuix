@@ -215,17 +215,14 @@ public class RadioGroup extends List {
 	protected Widget newItemWidgetInstance(DataProvider item) {
 		return new RadioButton(item);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#add(org.kalmeo.kuix.widget.Widget)
 	 */
 	public Widget add(Widget widget) {
 		super.add(widget);
 		if (widget instanceof RadioButton) {
-			RadioButton radioButton = (RadioButton) widget;
-			if (radioButton.isSelected() || (wantedValue != null && wantedValue.equals(radioButton.getValue()))) {
-				setSelectedRadioButton(radioButton, false);
-			}
+			processNewRadioButtonValue((RadioButton) widget);
 		}
 		return this;
 	}
@@ -236,6 +233,17 @@ public class RadioGroup extends List {
 	public void cleanUp() {
 		selectedRadioButton = null;
 		super.cleanUp();
+	}
+	
+	/**
+	 * @param radioButton
+	 */
+	protected void processNewRadioButtonValue(RadioButton radioButton) {
+		if (radioButton != null && radioButton.parent == this) {
+			if (radioButton.isSelected() || (wantedValue != null && wantedValue.equals(radioButton.getValue()))) {
+				setSelectedRadioButton(radioButton, false);
+			}
+		}
 	}
 
 	/* (non-Javadoc)

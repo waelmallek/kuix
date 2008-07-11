@@ -56,6 +56,20 @@ public class Metrics {
 	}
 
 	/**
+	 * Construct a {@link Metrics}
+	 *
+	 * @param widget
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 */
+	public Metrics(Widget widget, int x, int y, int width, int height) {
+		this(widget);
+		setBounds(x, y, width, height);
+	}
+	
+	/**
 	 * Tests whether or not this {@link Metrics} represents an empty region.
 	 * 
 	 * @return <code>true</code> if the region represented by this

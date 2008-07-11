@@ -22,8 +22,11 @@
 - Add *title* and *maxsize* attribute on TextField
 - Add FocusManager.removeShortcutHandler(Widget widget) method
 - Add a *border-align* style property
+- Add a *min-size* style property
+- Add multi *bg-image* capabilities (e.g. container { bg-image: url(img1.png)|url(img2.png) }
 
 - Change Kuix.parseMethod signature from Kuix.parseMethod(String data, Widget owner, Desktop desktop) to Kuix.parseMethod(String data, Widget owner)
+- Change Widget.clearCachedStyle() signature to Widget.clearCachedStyle(boolean propagateToChildren)
 
 - List changes :
   - Remove the ListItem restriction on List
@@ -46,6 +49,7 @@
 - ScrollContainer changes :
   - ScrollContainer can be horizontal
   - You can hide scrollBar through the *showScrollBar* attribute
+  - You can now access to the *ScrollContainerContainer* inner widget
 
 ##Version 1.0.0RC3 (2008-05-27)
 

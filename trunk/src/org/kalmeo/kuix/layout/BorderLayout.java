@@ -66,6 +66,7 @@ public class BorderLayout implements Layout {
 	private void measure(Widget target, boolean layout, int preferredWidth, Metrics metrics) {
 		
 		Insets insets = target.getInsets();
+		Metrics minSize = target.getMinSize();
 		Gap gap = target.getGap();
 		int width = preferredWidth - insets.left - insets.right;
 		int height = target.getHeight() - insets.top - insets.bottom;
@@ -160,8 +161,8 @@ public class BorderLayout implements Layout {
 		}
 		
 		if (!layout) {
-			metrics.width = insets.left + left + centerWidth + right + insets.right + horizontalGap;
-			metrics.height = insets.top + top + centerHeight + bottom + insets.bottom + verticalGap;
+			metrics.width = insets.left + Math.max(minSize.width, left + centerWidth + right + horizontalGap) + insets.right;
+			metrics.height = insets.top + Math.max(minSize.height, top + centerHeight + bottom + verticalGap) + insets.bottom;
 			return;
 		}
 			

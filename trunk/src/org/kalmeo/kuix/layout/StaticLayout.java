@@ -67,6 +67,7 @@ public class StaticLayout implements Layout {
 	private void measure(Widget target, boolean layout, int preferredWidth, Metrics metrics) {
 		
 		Insets insets = target.getInsets();
+		Metrics minSize = target.getMinSize();
 		int width = preferredWidth - insets.left - insets.right;
 		int height = target.getHeight() - insets.top - insets.bottom;
 		
@@ -148,8 +149,8 @@ public class StaticLayout implements Layout {
 		}
 		
 		if (!layout) {
-			metrics.width = maxWidth + insets.left + insets.right;
-			metrics.height = maxHeight + insets.top + insets.bottom;
+			metrics.width = insets.left + Math.max(minSize.width, maxWidth) + insets.right;
+			metrics.height = insets.top + Math.max(minSize.height, maxHeight) + insets.bottom;
 		}
 		
 	}

@@ -29,7 +29,6 @@ import org.kalmeo.kuix.layout.BorderLayoutData;
 import org.kalmeo.kuix.layout.InlineLayout;
 import org.kalmeo.kuix.layout.Layout;
 import org.kalmeo.kuix.util.Alignment;
-import org.kalmeo.kuix.util.Gap;
 import org.kalmeo.kuix.util.Insets;
 import org.kalmeo.util.BooleanUtil;
 import org.kalmeo.util.MathFP;
@@ -67,7 +66,7 @@ import org.kalmeo.util.MathFP;
  * 		<td> <code>No</code> </td>
  * 		<td> <code>Yes</code> </td>
  * 		<td> <code>No</code> </td>
- * 		<td> Define if the scrollBar is visible. Default value <code>true</code>. </td>
+ * 		<td> Define if the scrollBar is displayed. Default value <code>true</code>. </td>
  *	</tr>
  * 	<tr class="TableRowColor">
  * 		<td colspan="5"> Inherited attributes : see {@link Widget} </td>
@@ -121,6 +120,10 @@ import org.kalmeo.util.MathFP;
  * 	<tr class="TableRowColor">
  * 		<th width="1%"> internal widget </th>
  * 		<th> Description </th>
+ *	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<td> <code>scrollcontainercontainer</code> </th>
+ * 		<td> The scroll container container (where content is added). </td>
  *	</tr>
  * 	<tr class="TableRowColor">
  * 		<td> <code>scrollbar</code> </th>
@@ -188,7 +191,7 @@ public class ScrollContainer extends Widget {
 	 */
 	public ScrollContainer(String tag) {
 		super(tag);
-		container = new Widget() {
+		container = new Widget(KuixConstants.SCROLL_CONTAINER_CONTAINER_WIDGET_TAG) {
 			
 			private final InlineLayout layout = new InlineLayout(false, Alignment.FILL);
 			
@@ -221,20 +224,6 @@ public class ScrollContainer extends Widget {
 			}
 			
 			/* (non-Javadoc)
-			 * @see org.kalmeo.kuix.widget.Widget#getPadding()
-			 */
-			public Insets getPadding() {
-				return (Insets) ScrollContainer.this.getStylePropertyValue(KuixConstants.PADDING_STYLE_PROPERTY, false);
-			}
-			
-			/* (non-Javadoc)
-			 * @see org.kalmeo.kuix.widget.Widget#getGap()
-			 */
-			public Gap getGap() {
-				return (Gap) ScrollContainer.this.getStylePropertyValue(KuixConstants.GAP_STYLE_PROPERTY, false);
-			}
-
-			/* (non-Javadoc)
 			 * @see org.kalmeo.kuix.widget.Widget#getWidgetAt(int, int)
 			 */
 			public Widget getWidgetAt(int mx, int my) {
@@ -261,19 +250,23 @@ public class ScrollContainer extends Widget {
 			 */
 			protected void doLayout() {
 				super.doLayout();
-				Insets padding = getPadding();
+				Insets insets = getInsets();
 				if (horizontal) {
 					innerWidth = container.getInnerWidth();
-					contentWidth = container.getPreferredSize(getWidth()).width - padding.left - padding.right;
+					contentWidth = container.getPreferredSize(getWidth()).width - insets.left - insets.right;
 					contentHeight = container.getInnerHeight();
 					maxIncrement = innerWidth / MAX_INCREMENT_DIVIDER;
-					setXOffset(xOffset > contentWidth - innerWidth ? contentWidth - innerWidth : xOffset); // Adjust xOffset if contentWidth has changed
+					if (xOffset > contentWidth - innerWidth) {
+						setXOffset(contentWidth - innerWidth); // Adjust xOffset if contentWidth has changed
+					}
 				} else {
 					innerHeight = container.getInnerHeight();
 					contentWidth = container.getInnerWidth();
-					contentHeight = container.getPreferredSize(getWidth()).height - padding.top - padding.bottom;
+					contentHeight = container.getPreferredSize(getWidth()).height - insets.top - insets.bottom;
 					maxIncrement = innerHeight / MAX_INCREMENT_DIVIDER;
-					setYOffset(yOffset > contentHeight - innerHeight ? contentHeight - innerHeight : yOffset); // Adjust yOffset if contentHeight has changed
+					if (yOffset > contentHeight - innerHeight) {
+						setYOffset(contentHeight - innerHeight); // Adjust yOffset if contentHeight has changed
+					}
 				}
 				updateScrollBarValues();
 			}
@@ -351,6 +344,9 @@ public class ScrollContainer extends Widget {
 	 * @see org.kalmeo.kuix.widget.Widget#getInternalChildInstance(java.lang.String)
 	 */
 	public Widget getInternalChildInstance(String tag) {
+		if (KuixConstants.SCROLL_CONTAINER_CONTAINER_WIDGET_TAG.equals(tag)) {
+			return getContainer();
+		}
 		if (KuixConstants.SCROLL_BAR_WIDGET_TAG.equals(tag)) {
 			return getScrollBar();
 		}
@@ -362,13 +358,6 @@ public class ScrollContainer extends Widget {
 	 */
 	public Layout getLayout() {
 		return BorderLayout.instance;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.Widget#getPadding()
-	 */
-	public Insets getPadding() {
-		return DEFAULT_PADDING;
 	}
 	
 	/**
@@ -416,7 +405,7 @@ public class ScrollContainer extends Widget {
 	}
 	
 	/**
-	 * @return the showScrollBar
+	 * @return the autoHideScrollBar
 	 */
 	public boolean isShowScrollBar() {
 		return showScrollBar;
@@ -427,13 +416,7 @@ public class ScrollContainer extends Widget {
 	 */
 	public void setShowScrollBar(boolean showScrollBar) {
 		this.showScrollBar = showScrollBar;
-		if (showScrollBar) {
-			if (scrollBar.parent != this) {
-				super.add(scrollBar);
-			}
-		} else {
-			scrollBar.remove();
-		}
+		updateScrollBarVisibility();
 	}
 	
 	/**
@@ -462,7 +445,7 @@ public class ScrollContainer extends Widget {
 			return true;
 		}
 		int lastXOffset = this.xOffset;
-		this.xOffset = Math.max(0, Math.min(contentWidth - container.getInnerWidth(), xOffset));
+		this.xOffset = Math.max(0, Math.min(contentWidth - innerWidth, xOffset));
 		return lastXOffset != this.xOffset;
 	}
 
@@ -476,7 +459,7 @@ public class ScrollContainer extends Widget {
 			return true;
 		}
 		int lastYOffset = this.yOffset;
-		this.yOffset = Math.max(0, Math.min(contentHeight - container.getInnerHeight(), yOffset));
+		this.yOffset = Math.max(0, Math.min(contentHeight - innerHeight, yOffset));
 		return lastYOffset != this.yOffset;
 	}
 	
@@ -570,21 +553,35 @@ public class ScrollContainer extends Widget {
 	 * Apply scroll values to the scrollBar
 	 */
 	private void updateScrollBarValues() {
-		if (scrollBar != null) {
-			if (horizontal) {
-				if (contentWidth != 0) {
-					scrollBar.setValue(MathFP.div(xOffset, contentWidth - innerWidth));
-					scrollBar.setSelection(MathFP.div(innerWidth, contentWidth));
-				}
-			} else {
-				if (contentHeight != 0) {
-					scrollBar.setValue(MathFP.div(yOffset, contentHeight - innerHeight));
-					scrollBar.setSelection(MathFP.div(innerHeight, contentHeight));
-				}
+		if (horizontal) {
+			if (contentWidth != 0) {
+				scrollBar.setValue(MathFP.div(xOffset, contentWidth - innerWidth));
+				scrollBar.setSelection(MathFP.div(innerWidth, contentWidth));
+				
+			}
+		} else {
+			if (contentHeight != 0) {
+				scrollBar.setValue(MathFP.div(yOffset, contentHeight - innerHeight));
+				scrollBar.setSelection(MathFP.div(innerHeight, contentHeight));
 			}
 		}
 	}
-
+	
+	/**
+	 * Update the scrollBar visibility according to its selection size.
+	 */
+	private void updateScrollBarVisibility() {
+		if (showScrollBar) {
+			if (scrollBar.parent != this) {
+				super.add(scrollBar);
+			}
+		} else {
+			if (scrollBar.parent == this) {
+				scrollBar.remove();
+			}
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#processPointerEvent(byte, int, int)
 	 */

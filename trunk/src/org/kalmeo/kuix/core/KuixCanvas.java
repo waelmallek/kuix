@@ -59,6 +59,9 @@ public final class KuixCanvas extends GameCanvas {
 	// Workaround to fix the bug when the vm do not call sizeChanged method
 	private boolean sizeInitialized = false;
 	
+	// Specify if the KuixCanvas is hidded
+	private boolean hidded = true;
+	
 	// The GameCanvas and BuffuredImage graphics instance
 	private Graphics canvasGraphics;
 	private Graphics imageBufferGraphics;
@@ -336,12 +339,29 @@ public final class KuixCanvas extends GameCanvas {
 			needToChangeSize = true;
 			desiredWidth = w;
 			desiredHeight = h;
-			repaintNextFrame();
+			if (!hidded) {
+				revalidateNextFrame();
+			}
 		} else {
 			forceSizeChanged(w, h);
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see javax.microedition.lcdui.Canvas#hideNotify()
+	 */
+	protected void hideNotify() {
+		hidded = true;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.microedition.lcdui.Canvas#showNotify()
+	 */
+	protected void showNotify() {
+		hidded = false;
+		revalidateNextFrame();
+	}
+
 	/**
 	 * Repaint through the Worker task
 	 */

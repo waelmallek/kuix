@@ -96,6 +96,7 @@ public class FlowLayout implements Layout {
 
 		Alignment targetAlignment = target.getAlign();
 		Insets insets = target.getInsets();
+		Metrics minSize = target.getMinSize();
 		Gap gap = target.getGap();
 		int width = preferredWidth - insets.left - insets.right;
 		int height = target.getHeight() - insets.top - insets.bottom;
@@ -139,8 +140,8 @@ public class FlowLayout implements Layout {
 		}
 		
 		if (!layout) {
-			metrics.width = insets.left + contentWidth + insets.right;
-			metrics.height = insets.top + contentHeight + insets.bottom;
+			metrics.width = insets.left + Math.max(minSize.width, contentWidth) + insets.right;
+			metrics.height = insets.top + Math.max(minSize.height, contentHeight) + insets.bottom;
 			return;
 		}
 
@@ -155,7 +156,9 @@ public class FlowLayout implements Layout {
 		}
 		
 		for (LineInfo line = firstLine; line != null; line = line.next) {
-			contentX = targetAlignment.alignX(contentWidth, line.width);
+			if (targetAlignment != null) {
+				contentX = targetAlignment.alignX(contentWidth, line.width);
+			}
 			for (Metrics widgetMetrics = line.firstMetrics; widgetMetrics != null; widgetMetrics = widgetMetrics.next) {
 				Widget widget = widgetMetrics.widget;
 				int h = widgetMetrics.height;

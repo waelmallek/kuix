@@ -47,6 +47,8 @@ import org.kalmeo.kuix.util.Alignment;
 import org.kalmeo.kuix.util.Color;
 import org.kalmeo.kuix.util.Gap;
 import org.kalmeo.kuix.util.Insets;
+import org.kalmeo.kuix.util.Metrics;
+import org.kalmeo.kuix.util.Repeat;
 import org.kalmeo.kuix.util.Span;
 import org.kalmeo.kuix.util.Weight;
 import org.kalmeo.kuix.widget.Button;
@@ -171,7 +173,7 @@ public class KuixConverter {
 	 * @return a specific object instance.
 	 */
 	public Object convertStyleProperty(String name, String rawData) throws IllegalArgumentException {
-
+		
 		// Color
 		if (KuixConstants.COLOR_STYLE_PROPERTY.equals(name) 
 				|| KuixConstants.BACKGROUND_COLOR_STYLE_PROPERTY.equals(name) 
@@ -205,6 +207,11 @@ public class KuixConverter {
 				|| KuixConstants.PADDING_STYLE_PROPERTY.equals(name)) {
 			return convertInset(rawData);
 		}
+		
+		// Metrics
+		if (KuixConstants.MIN_SIZE_STYLE_PROPERTY.equals(name)) {
+			return convertMetrics(rawData);
+		}
 
 		// Gap
 		if (KuixConstants.GAP_STYLE_PROPERTY.equals(name)) {
@@ -222,20 +229,22 @@ public class KuixConverter {
 		}
 
 		// Align
-		if (KuixConstants.ALIGN_STYLE_PROPERTY.equals(name)
-				|| KuixConstants.BACKGROUND_ALIGN_STYLE_PROPERTY.equals(name)) {
+		if (KuixConstants.ALIGN_STYLE_PROPERTY.equals(name)) {
 			return convertAlignment(rawData);
 		}
+		if (KuixConstants.BACKGROUND_ALIGN_STYLE_PROPERTY.equals(name)) {
+			return convertAlignmentArray(rawData, 1, "|");
+		}
 		if (KuixConstants.BORDER_ALIGN_STYLE_PROPERTY.equals(name)) {
-			return convertAlignmentArray(rawData, 8);
+			return convertAlignmentArray(rawData, 8, StringTokenizer.DEFAULT_DELIM);
 		}
 
 		// Image
 		if (KuixConstants.BACKGROUND_IMAGE_STYLE_PROPERTY.equals(name)) {
-			return convertImage(rawData);
+			return convertImageArray(rawData, 1, "|");
 		}
 		if (KuixConstants.BORDER_IMAGES_STYLE_PROPERTY.equals(name)) {
-			return convertImageArray(rawData, 8);
+			return convertImageArray(rawData, 8, StringTokenizer.DEFAULT_DELIM);
 		}
 		
 		// Layout
@@ -248,7 +257,7 @@ public class KuixConverter {
 		
 		// Background repeat
 		if (KuixConstants.BACKGROUND_REPEAT_STYLE_PROPERTY.equals(name)) {
-			return convertIntArray(rawData, 2, " ");
+			return convertRepeatArray(rawData, 1, "|");
 		}
 		
 		// Transition
@@ -382,7 +391,7 @@ public class KuixConverter {
 	
 	/**
 	 * @param rawData
-	 * @return The converted {@link Inset}
+	 * @return The converted {@link Insets}
 	 */
 	protected Insets convertInset(String rawData) {
 		if (isNone(rawData)) {
@@ -392,11 +401,30 @@ public class KuixConverter {
 		if (intValues != null) {
 			if (intValues.length == 1) {
 				return new Insets(intValues[0], intValues[0], intValues[0], intValues[0]);
-			} else {
+			} else if (intValues.length >= 4) {
 				return new Insets(intValues[0], intValues[1], intValues[2], intValues[3]);
 			}
 		}
 		throw new IllegalArgumentException("Bad inset value");
+	}
+	
+	/**
+	 * @param rawData
+	 * @return The converted {@link Metrics}
+	 */
+	protected Metrics convertMetrics(String rawData) {
+		if (isNone(rawData)) {
+			return null;
+		}
+		int[] intValues = convertIntArray(rawData, 2, StringTokenizer.DEFAULT_DELIM);
+		if (intValues != null) {
+			if (intValues.length == 2) {
+				return new Metrics(null, 0, 0, intValues[0], intValues[1]);
+			} else if (intValues.length >= 4) {
+				return new Metrics(null, intValues[0], intValues[1], intValues[2], intValues[3]);
+			}
+		}
+		throw new IllegalArgumentException("Bad metrics value");
 	}
 
 	/**
@@ -411,13 +439,58 @@ public class KuixConverter {
 		if (intValues != null) {
 			if (intValues.length == 1) {
 				return new Gap(intValues[0], intValues[0]);
-			} else {
+			} else if (intValues.length >= 1) {
 				return new Gap(intValues[0], intValues[1]);
 			}
 		}
 		throw new IllegalArgumentException("Bad gap value");
 	}
 
+	/**
+	 * @param rawData
+	 * @return The converted {@link Repeat}
+	 */
+	protected Repeat convertRepeat(String rawData) {
+		if (isNone(rawData)) {
+			return null;
+		}
+		int[] intValues = convertIntArray(rawData, 1, StringTokenizer.DEFAULT_DELIM);
+		if (intValues != null) {
+			if (intValues.length == 1) {
+				return new Repeat(intValues[0], intValues[0]);
+			} else if (intValues.length >= 2) {
+				return new Repeat(intValues[0], intValues[1]);
+			}
+		}
+		throw new IllegalArgumentException("Bad repeat value");
+	}
+	
+	/**
+	 * @param rawData
+	 * @param wantedSize
+	 * @param delim
+	 * @return The converted Repeat[]
+	 */
+	protected Repeat[] convertRepeatArray(String rawData, int wantedSize, String delim) {
+		if (isNone(rawData)) {
+			return null;
+		}
+		StringTokenizer values = new StringTokenizer(rawData, delim);
+		if (values.countTokens() >= wantedSize) {
+			Repeat[] repeats = new Repeat[values.countTokens()];
+			for (int i = 0; values.hasMoreTokens(); ++i) {
+				try {
+					repeats[i] = convertRepeat((String) values.nextElement());
+					continue;
+				} catch (Exception e) {
+					return null;
+				}
+			}
+			return repeats;
+		}
+		throw new IllegalArgumentException("Bad repeats value");
+	}
+	
 	/**
 	 * @param rawData
 	 * @return The converted {@link Span}
@@ -499,13 +572,14 @@ public class KuixConverter {
 	/**
 	 * @param rawData
 	 * @param wantedSize
+	 * @param delim
 	 * @return The converted Alignment[]
 	 */
-	protected Alignment[] convertAlignmentArray(String rawData, int wantedSize) {
+	protected Alignment[] convertAlignmentArray(String rawData, int wantedSize, String delim) {
 		if (isNone(rawData)) {
 			return null;
 		}
-		StringTokenizer values = new StringTokenizer(rawData);
+		StringTokenizer values = new StringTokenizer(rawData, delim);
 		if (values.countTokens() >= wantedSize) {
 			Alignment[] alignments = new Alignment[values.countTokens()];
 			for (int i = 0; values.hasMoreTokens(); ++i) {
@@ -522,6 +596,8 @@ public class KuixConverter {
 	}
 	
 	/**
+	 * Syntax : <code>url(src:x:y:width:height:transform)</code>.
+	 * 
 	 * @param rawData
 	 * @return The converted {@link Image}
 	 */
@@ -530,12 +606,13 @@ public class KuixConverter {
 			return null;
 		}
 		String rawParams = null;
+		String imgSrc = null;
 		if ((rawParams = extractRawParams("url", rawData)) != null) {
-			StringTokenizer st = new StringTokenizer(rawParams, ", ");
+			StringTokenizer st = new StringTokenizer(rawParams, ",");
 			int numTokens = st.countTokens();
 			if (numTokens >= 1) {
 				Image fullImage = null;
-				String imgSrc = st.nextToken();
+				imgSrc = st.nextToken();
 				if (!imgSrc.startsWith("/")) {
 					// By default the relative path point to /img
 					imgSrc = new StringBuffer(KuixConstants.DEFAULT_IMG_RES_FOLDER).append(imgSrc).toString();
@@ -583,19 +660,20 @@ public class KuixConverter {
 				}
 			}
 		}
-		throw new IllegalArgumentException("Bad image value");
+		throw new IllegalArgumentException("Bad image value : " + (imgSrc != null ? imgSrc : ""));
 	}
 	
 	/**
 	 * @param rawData
 	 * @param wantedSize
+	 * @param delim
 	 * @return The converted Image[]
 	 */
-	protected Image[] convertImageArray(String rawData, int wantedSize) {
+	protected Image[] convertImageArray(String rawData, int wantedSize, String delim) {
 		if (isNone(rawData)) {
 			return null;
 		}
-		StringTokenizer values = new StringTokenizer(rawData);
+		StringTokenizer values = new StringTokenizer(rawData, delim);
 		if (values.countTokens() >= wantedSize) {
 			Image[] images = new Image[values.countTokens()];
 			for (int i = 0; values.hasMoreTokens(); ++i) {

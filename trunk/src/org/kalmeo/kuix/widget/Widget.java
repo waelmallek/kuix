@@ -42,6 +42,7 @@ import org.kalmeo.kuix.util.Color;
 import org.kalmeo.kuix.util.Gap;
 import org.kalmeo.kuix.util.Insets;
 import org.kalmeo.kuix.util.Metrics;
+import org.kalmeo.kuix.util.Repeat;
 import org.kalmeo.kuix.util.Span;
 import org.kalmeo.kuix.util.Weight;
 import org.kalmeo.util.BooleanUtil;
@@ -224,6 +225,12 @@ import org.kalmeo.util.LinkedList.LinkedListEnumeration;
  * 		<td> Define the padding. <code>Syntax : &lt;top&gt; &lt;right&gt; &lt;bottom&gt; &lt;left&gt;</code> </td>
  * 	</tr>
  * 	<tr class="TableRowColor">
+ * 		<td> <code>min-size</code> </td>
+ * 		<td> <code>0&nbsp;0</code> </td>
+ * 		<td> <code>No</code> </td>
+ * 		<td> Define the min size. <code>Syntax : &lt;min width&gt; &lt;min height&gt;</code> </td>
+ * 	</tr>
+ * 	<tr class="TableRowColor">
  * 		<td> <code>span</code> </td>
  * 		<td> <code>1&nbsp;1</code> </td>
  * 		<td> <code>No</code> </td>
@@ -389,10 +396,14 @@ public class Widget {
 	protected static final Insets DEFAULT_MARGIN = new Insets();
 	protected static final Insets DEFAULT_BORDER = new Insets();
 	protected static final Insets DEFAULT_PADDING = new Insets();
+	protected static final Metrics DEFAULT_MIN_SIZE = new Metrics();
 	protected static final Gap DEFAULT_GAP = new Gap();
 	protected static final Span DEFAULT_SPAN = new Span(1, 1);
 	protected static final Weight DEFAULT_WEIGHT = new Weight(0, 0);
 	protected static final Alignment DEFAULT_ALIGN = Alignment.TOP_LEFT;
+	
+	protected static final Alignment[] DEFAULT_BACKGROUND_ALIGN = new Alignment[] { Alignment.TOP_LEFT };
+	protected static final Repeat[] DEFAULT_BACKGROUND_REPEAT = new Repeat[] { new Repeat() };
 
 	// The widget tag
 	private final String tag;
@@ -696,7 +707,6 @@ public class Widget {
 	 * @return the innerWidth
 	 */
 	public int getInnerWidth() {
-		// TODO : Add a cache system
 		Insets insets = getInsets();
 		return width - insets.left - insets.right;
 	}
@@ -707,7 +717,6 @@ public class Widget {
 	 * @return the innerHeight
 	 */
 	public int getInnerHeight() {
-		// TODO : Add a cache system
 		Insets insets = getInsets();
 		return height - insets.top - insets.bottom;
 	}
@@ -722,14 +731,20 @@ public class Widget {
 	 */
 	public void setBounds(int x, int y, int width, int height) {
 		if (invalidated || this.x != x || this.y != y || this.width != width || this.height != height) {
+			
+			// Store position and size
 			this.x = x;
 			this.y = y;
 			this.width = width;
 			this.height = height;
+			
+			// Compute visual center coordiantes
 			Insets margin = getMargin();
 			visualCenterX = (width - margin.left - margin.right) / 2 + margin.left;
 			visualCenterY = (height - margin.top - margin.bottom) / 2 + margin.top;
+			
 			doLayout();
+			
 		}
 	}
 	
@@ -975,9 +990,17 @@ public class Widget {
 	}
 
 	/**
+	 * @return the minSize
+	 */
+	public Metrics getMinSize() {
+		return (Metrics) getStylePropertyValue(KuixConstants.MIN_SIZE_STYLE_PROPERTY, false);
+	}
+	
+	/**
 	 * @return The insets
 	 */
 	public Insets getInsets() {
+		// TODO : Add a better cache system
 		Insets margin = getMargin();
 		Insets border = getBorder();
 		Insets padding = getPadding();
@@ -1150,8 +1173,9 @@ public class Widget {
 			Layout layout = getLayout();
 			if (layout == null) {
 				Insets insets = getInsets();
-				metrics.width = insets.left + insets.right;
-				metrics.height = insets.top + insets.bottom;
+				Metrics minSize = getMinSize();
+				metrics.width = insets.left + minSize.width + insets.right;
+				metrics.height = insets.top + minSize.height + insets.bottom;
 			} else {
 				layout.measurePreferredSize(this, preferredWidth, metrics);
 			}
@@ -1352,8 +1376,7 @@ public class Widget {
 			lastChild = widget.lastChild;
 			widget.child = null;
 			widget.lastChild = null;
-			widget.invalidate();
-			invalidate();
+			clearCachedStyle(true);	// invalidate is called by clearCachedStyle
 		}
 	}
 	
@@ -1471,7 +1494,7 @@ public class Widget {
 			widget.cleanUp();
 		}
 	}
-
+	
 	/**
 	 * Invalidate the widget and propagate the information to its parent
 	 */
@@ -1568,25 +1591,36 @@ public class Widget {
 		// Background Image
 		Object backgroundImageValue = getStylePropertyValue(KuixConstants.BACKGROUND_IMAGE_STYLE_PROPERTY, false);
 		if (backgroundImageValue != null) {
-			Alignment alignment = Alignment.TOP_LEFT;
+			
+			Image[] images = (Image[]) backgroundImageValue;
+			
+			Alignment[] alignments = DEFAULT_BACKGROUND_ALIGN;
 			Object backgroundAlignValue = getStylePropertyValue(KuixConstants.BACKGROUND_ALIGN_STYLE_PROPERTY, false);
 			if (backgroundAlignValue != null) {
-				alignment = (Alignment) backgroundAlignValue;
-			}
-			int repeatX = Integer.MAX_VALUE;
-			int repeatY = Integer.MAX_VALUE;
-			Object backgroundRepeatValue = getStylePropertyValue(KuixConstants.BACKGROUND_REPEAT_STYLE_PROPERTY, false);
-			if (backgroundRepeatValue != null) {
-				int[] backgroundRepeat = (int[]) backgroundRepeatValue;
-				if ((backgroundRepeat[0] > 0)) {
-					repeatX = backgroundRepeat[0];
-				}
-				if ((backgroundRepeat[1] > 0)) {
-					repeatY = backgroundRepeat[1];
-				}
+				alignments = (Alignment[]) backgroundAlignValue;
 			}
 			
-			paintMosaicImage(g, (Image) backgroundImageValue, x, y, width, height, alignment, repeatX, repeatY);
+			Repeat[] repeats = DEFAULT_BACKGROUND_REPEAT;
+			Object backgroundRepeatValue = getStylePropertyValue(KuixConstants.BACKGROUND_REPEAT_STYLE_PROPERTY, false);
+			if (backgroundRepeatValue != null) {
+				repeats = (Repeat[]) backgroundRepeatValue;
+			}
+			
+			int backgroundCount = Math.max(images.length, Math.max(alignments.length, repeats.length));
+			Repeat repeat;
+			for (int i = 0; i<backgroundCount; ++i) {
+				repeat = repeats[i % repeats.length];
+				paintMosaicImage(	g, 
+									images[i % images.length], 
+									x, 
+									y, 
+									width, 
+									height, 
+									alignments[i % alignments.length], 
+									repeat.repeatX > 0 ? repeat.repeatX : Integer.MAX_VALUE, 
+									repeat.repeatY > 0 ? repeat.repeatY : Integer.MAX_VALUE);
+			}
+			
 		}
 		
 	}
@@ -1616,25 +1650,47 @@ public class Widget {
 	 */
 	protected void drawBorder(Graphics g, int x, int y, int width, int height) {
 		
+		if (width == 0 || height == 0) {
+			return;
+		}
+		
 		// Border Color
 		Object borderColorValue = getStylePropertyValue(KuixConstants.BORDER_COLOR_STYLE_PROPERTY, false);
 		if (borderColorValue != null) {
 			g.setColor(((Color) borderColorValue).getRGB());
 			Insets border = getBorder();
-			if (border.top == 1 && border.left == 1 && border.bottom == 1 && border.right == 1) {
+			
+			// Stroke is only possible if border thin is 1
+			if (border.top + border.right + border.bottom + border.left <= 4) {
 				Object strokeValue = getStylePropertyValue(KuixConstants.BORDER_STROKE_STYLE_PROPERTY, false);
 				if (strokeValue != null) {
 					g.setStrokeStyle(((Integer) strokeValue).intValue());
 				} else {
 					g.setStrokeStyle(Graphics.SOLID);
 				}
-				g.drawRect(x, y, width - 1, height - 1);
-			} else {
-				g.fillRect(x, y, border.left, height);
+			}
+			
+			if (border.top == 1) {
+				g.drawLine(x, y, x + width - 1, y);
+			} else if (border.top != 0) {
 				g.fillRect(x, y, width, border.top);
-				g.fillRect(x, y + height - border.bottom, width, border.bottom);
+			}
+			if (border.right == 1) {
+				g.drawLine(x + width - 1, y, x + width - 1, y + height - 1);
+			} else if (border.right != 0) {
 				g.fillRect(x + width - border.right, y, border.right, height);
 			}
+			if (border.bottom == 1) {
+				g.drawLine(x, y + height - 1, x + width - 1, y + height - 1);
+			} else if (border.bottom != 0) {
+				g.fillRect(x, y + height - border.bottom, width, border.bottom);
+			}
+			if (border.left == 1) {
+				g.drawLine(x, y, x, y + height - 1);
+			} else if (border.left != 0) {
+				g.fillRect(x, y, border.left, height);
+			}
+			
 		}
 		
 		// Border Images
@@ -1876,10 +1932,17 @@ public class Widget {
 	}
 
 	/**
-	 * Clear the cachedStyle
+	 * Clear the cachedStyle.
+	 * 
+	 * @param propagateToChildren
 	 */
-	public void clearCachedStyle() {
+	public void clearCachedStyle(boolean propagateToChildren) {
 		cachedStyles = null;
+		if (propagateToChildren) {
+			for (Widget widget = child; widget != null; widget = widget.next) {
+				widget.clearCachedStyle(propagateToChildren);
+			}
+		}
 		invalidate();
 	}
 
@@ -1941,6 +2004,9 @@ public class Widget {
 		}
 		if (KuixConstants.PADDING_STYLE_PROPERTY.equals(name)) {
 			return DEFAULT_PADDING;
+		}
+		if (KuixConstants.MIN_SIZE_STYLE_PROPERTY.equals(name)) {
+			return DEFAULT_MIN_SIZE;
 		}
 		if (KuixConstants.GAP_STYLE_PROPERTY.equals(name)) {
 			return DEFAULT_GAP;

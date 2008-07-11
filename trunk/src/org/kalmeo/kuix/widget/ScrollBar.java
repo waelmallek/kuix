@@ -155,6 +155,7 @@ public class ScrollBar extends Widget {
 			}
 			
 		};
+		bar.setVisible(false);
 		add(bar);
 	}
 
@@ -187,7 +188,7 @@ public class ScrollBar extends Widget {
 	}
 
 	/**
-	 * Define the ScrollBar selection
+	 * Define the ScrollBar selection.
 	 * 
 	 * @param selection a fixed-point integer representing the selection
 	 */
@@ -200,7 +201,7 @@ public class ScrollBar extends Widget {
 			barLayoutData.width = -1;
 			barLayoutData.height = this.selection;
 		}
-		bar.setVisible(this.selection != MathFP.ONE || this.selection != 0);
+		bar.setVisible(this.selection != MathFP.ONE && this.selection != 0);
 		bar.invalidate();
 	}
 
@@ -239,6 +240,15 @@ public class ScrollBar extends Widget {
 	public void setHorizontal(boolean horizontal) {
 		this.horizontal = horizontal;
 		setSelection(selection);	// Reapply the selection to switch direction
+	}
+	
+	/**
+	 * Check the bar visibility.
+	 * 
+	 * @return <code>true</code> if the bar is visible.
+	 */
+	public boolean isBarVisible() {
+		return bar.isVisible();
 	}
 
 	/* (non-Javadoc)
