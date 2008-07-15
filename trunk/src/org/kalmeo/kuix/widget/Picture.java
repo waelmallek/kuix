@@ -161,10 +161,16 @@ public class Picture extends Widget {
 	 */
 	public boolean setObjectAttribute(String name, Object value) {
 		if (KuixConstants.IMAGE_DATA_ATTRIBUTE.equals(name)) {
-			if (value instanceof byte[]) {
+			if (value instanceof Image) {
+				setImageData((Image) value);
+			} else if (value instanceof byte[]) {
 				setImageData((byte[]) value);
 			} else {
-				setImageData(null);
+				boolean needToInvalidate = image == null;
+				image = null;
+				if (needToInvalidate) {
+					invalidate();
+				}
 			}
 			return true;
 		}
@@ -216,6 +222,18 @@ public class Picture extends Widget {
 		} else {
 			image = Image.createImage(imageData, 0, imageData.length);
 		}
+		invalidate();
+		return this;
+	}
+	
+	/**
+	 * Define the image data. The data is a preloaded {@link Image} object instance.
+	 * 
+	 * @param image the {@link Image} instance to use in this {@link Picture}.
+	 * @return The instance of this {@link Picture}
+	 */
+	public Picture setImageData(Image image) {
+		this.image = image;
 		invalidate();
 		return this;
 	}

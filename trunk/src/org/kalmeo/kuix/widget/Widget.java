@@ -1376,6 +1376,7 @@ public class Widget {
 			lastChild = widget.lastChild;
 			widget.child = null;
 			widget.lastChild = null;
+			widget.invalidate();
 			clearCachedStyle(true);	// invalidate is called by clearCachedStyle
 		}
 	}

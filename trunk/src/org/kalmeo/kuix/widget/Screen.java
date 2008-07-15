@@ -37,6 +37,7 @@ import org.kalmeo.kuix.util.Alignment;
 import org.kalmeo.kuix.util.Gap;
 import org.kalmeo.kuix.util.Insets;
 import org.kalmeo.util.BooleanUtil;
+import org.kalmeo.util.MathFP;
 
 /**
  * This class represent a Kuix screen.
@@ -79,6 +80,13 @@ import org.kalmeo.util.BooleanUtil;
  * 		<td> <code>Yes</code> </td>
  * 		<td> <code>No</code> </td>
  * 		<td> Define if the <code>cleanUp</code> method is called when this {@link Screen} is removed from the widget tree. Activate this parameter if you don't want to see this Screen any more. Default value is <code>false</code>. </td>
+ *	</tr>
+ * 	<tr class="TableRowColor">
+ * 		<td> <code>barsontop</code> </th>
+ * 		<td> <code>No</code> </td>
+ * 		<td> <code>Yes</code> </td>
+ * 		<td> <code>No</code> </td>
+ * 		<td> Define if the <code>topBar</code> and <code>bottomBar</code> are displayed on top of screen's content. Default value is <code>false</code> </td>
  *	</tr>
  * 	<tr class="TableRowColor">
  * 		<td colspan="5"> Inherited attributes : see {@link AbstractActionWidget} </td>
@@ -169,17 +177,18 @@ public class Screen extends Widget {
 	 */
 	public class ScreenBar extends Widget {
 		
-		private BorderLayoutData layoutData;
+		private final boolean isTop;
+		private StaticLayoutData staticLayoutData;
 		
 		/**
 		 * Construct a {@link ScreenBar}
 		 *
 		 * @param tag
-		 * @param layoutData
+		 * @param isTop
 		 */
-		public ScreenBar(String tag, BorderLayoutData layoutData) {
+		public ScreenBar(String tag, boolean isTop) {
 			super(tag);
-			this.layoutData = layoutData;
+			this.isTop = isTop;
 		}
 
 		/* (non-Javadoc)
@@ -193,7 +202,14 @@ public class Screen extends Widget {
 		 * @see org.kalmeo.kuix.widget.Widget#getLayoutData()
 		 */
 		public LayoutData getLayoutData() {
-			return layoutData;
+			if (barsOnTop) {
+				if (staticLayoutData == null) {
+					staticLayoutData = new StaticLayoutData(isTop ? Alignment.TOP_LEFT : Alignment.BOTTOM_LEFT, MathFP.ONE, -1);
+				}
+				return staticLayoutData;
+			} else {
+				return isTop ? BorderLayoutData.instanceNorth : BorderLayoutData.instanceSouth;
+			}
 		}
 		
 	}
@@ -277,6 +293,9 @@ public class Screen extends Widget {
 	// Used to determine if firstMenu is on the left and then the secondMenu onthe right
 	public boolean firstIsLeft = true;
 	
+	// Used to determine if topBar and bottomBar are displayed on top of the screen content
+	public boolean barsOnTop = false;
+	
 	// Menus 
 	private ScreenMenu firstMenu;
 	private ScreenMenu secondMenu;
@@ -303,6 +322,9 @@ public class Screen extends Widget {
 			 * @see org.kalmeo.kuix.widget.Widget#getLayoutData()
 			 */
 			public LayoutData getLayoutData() {
+				if (barsOnTop) {
+					return StaticLayoutData.instanceFull;
+				}
 				return BorderLayoutData.instanceCenter;
 			}
 			
@@ -396,8 +418,12 @@ public class Screen extends Widget {
 			firstIsLeft = BooleanUtil.parseBoolean(value);
 			return true;
 		}
-		if (KuixConstants.CLEAN_UP_WHEN_REMOVED.equals(name)) {
+		if (KuixConstants.CLEAN_UP_WHEN_REMOVED_ATTRIBUTE.equals(name)) {
 			cleanUpWhenRemoved = BooleanUtil.parseBoolean(value);
+			return true;
+		}
+		if (KuixConstants.BARS_ON_TOP_ATTRIBUTE.equals(name)) {
+			barsOnTop = BooleanUtil.parseBoolean(value);
 			return true;
 		}
 		return super.setAttribute(name, value);
@@ -414,6 +440,9 @@ public class Screen extends Widget {
 	 * @see org.kalmeo.kuix.widget.Widget#getLayout()
 	 */
 	public Layout getLayout() {
+		if (barsOnTop) {
+			return StaticLayout.instance;
+		}
 		return BorderLayout.instance;
 	}
 
@@ -500,7 +529,7 @@ public class Screen extends Widget {
 	 */
 	public ScreenBar getTopBar() {
 		if (topBar == null) {
-			topBar = new ScreenBar(KuixConstants.TOP_BAR_WIDGET_TAG, BorderLayoutData.instanceNorth);
+			topBar = new ScreenBar(KuixConstants.TOP_BAR_WIDGET_TAG, true);
 			super.add(topBar);
 		}
 		return topBar;
@@ -513,7 +542,7 @@ public class Screen extends Widget {
 	 */
 	public ScreenBar getBottomBar() {
 		if (bottomBar == null) {
-			bottomBar = new ScreenBar(KuixConstants.BOTTOM_BAR_WIDGET_TAG, BorderLayoutData.instanceSouth);
+			bottomBar = new ScreenBar(KuixConstants.BOTTOM_BAR_WIDGET_TAG, false);
 			super.add(bottomBar);
 		}
 		return bottomBar;
@@ -671,9 +700,9 @@ public class Screen extends Widget {
 		if (internal) {
 			boolean switchToDefaultMenu = true;
 			if (isFirst) {
-				FocusManager focusManager = getDesktop().getCurrentFocusManager();
-				if (focusManager != null) {
-					switchToDefaultMenu = focusManager.processKeyEvent(KuixConstants.KEY_PRESSED_EVENT_TYPE, KuixConstants.KUIX_KEY_FIRE) && !(focusManager.getFocusedWidget() instanceof Menu);
+				FocusManager tmpFocusManager = getDesktop().getCurrentFocusManager();
+				if (tmpFocusManager != null) {
+					switchToDefaultMenu = tmpFocusManager.processKeyEvent(KuixConstants.KEY_PRESSED_EVENT_TYPE, KuixConstants.KUIX_KEY_FIRE) && !(tmpFocusManager.getFocusedWidget() instanceof Menu);
 				}
 			} else {
 				Menu.hideAllPopupMenu();

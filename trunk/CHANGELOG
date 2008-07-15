@@ -24,6 +24,7 @@
 - Add a *border-align* style property
 - Add a *min-size* style property
 - Add multi *bg-image* capabilities (e.g. container { bg-image: url(img1.png)|url(img2.png) }
+- Add *barsontop* attribute on Screen widget. It defines if topBar and bottomBar are displayed on top of screen's content.
 
 - Change Kuix.parseMethod signature from Kuix.parseMethod(String data, Widget owner, Desktop desktop) to Kuix.parseMethod(String data, Widget owner)
 - Change Widget.clearCachedStyle() signature to Widget.clearCachedStyle(boolean propagateToChildren)
@@ -50,6 +51,9 @@
   - ScrollContainer can be horizontal
   - You can hide scrollBar through the *showScrollBar* attribute
   - You can now access to the *ScrollContainerContainer* inner widget
+  
+- Picture changes:
+  - Picture now accept javax.microedition.lcdui.Image input imageData.
 
 ##Version 1.0.0RC3 (2008-05-27)
 
