@@ -167,7 +167,7 @@ public class Choice extends AbstractActionWidget {
 				}
 				return super.getLayout();
 			}
-			
+
 		};
 		super.add(choiceContainer);
 		
