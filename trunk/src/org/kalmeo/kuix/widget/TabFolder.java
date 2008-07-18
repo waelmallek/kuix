@@ -31,83 +31,14 @@ import org.kalmeo.kuix.layout.LayoutData;
 import org.kalmeo.kuix.layout.StaticLayout;
 
 /**
- * This class represent a tab folder.
- * 
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="5"><font size="+2"> Attributes </font></th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Attribute </th>
- * 		<th width="1%"> Object </th>
- * 		<th width="1%"> Set </th>
- * 		<th width="1%"> Get </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="5"> Inherited attributes : see {@link AbstractFocusableWidget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="4"> <font size="+2"> Style properties </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Property </th>
- * 		<th width="1%"> Default </th>
- * 		<th width="1%"> Inherit </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="4"> Inherited style properties : see {@link AbstractFocusableWidget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available style pseudo-classes </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Pseudo-class </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited style pseudo-classes : see {@link AbstractFocusableWidget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available internal widgets </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> internal widget </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>defaulttabitem</code> </th>
- * 		<td> The default {@link TabItem} displayed if the {@link TabFolder} contains no tab or all are disabled. </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>tabbuttonscontainer</code> </th>
- * 		<td> The widget that contains TabButtons. </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>tabitemscontainer</code> </th>
- * 		<td> The widget that contains TabItems. </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited internal widgets : see {@link AbstractFocusableWidget} </td>
- * 	</tr>
- * </table>
+ * This class represents a tab folder.
  * 
  * @author bbeaulant
  */
 public class TabFolder extends List {
 
 	/**
-	 * Represents a tab button
+	 * This class represents a tab button.
 	 */
 	class TabButton extends CheckBox {
 		
@@ -192,8 +123,8 @@ public class TabFolder extends List {
 	}
 	
 	// Internal widgets
-	private final ScrollContainer tabButtonsContainer;
-	private final Widget tabItemContainer;
+	private final ScrollPane buttonsContainer;
+	private final Widget container;
 	private TabItem currentTabItem;
 	
 	// The default widget visible if there's no valid tabs
@@ -204,21 +135,26 @@ public class TabFolder extends List {
 	 */
 	public TabFolder() {
 		super(KuixConstants.TAB_FOLDER_WIDGET_TAG);
-		tabButtonsContainer = new ScrollContainer(KuixConstants.TAB_BUTTONS_CONTAINER_WIDGET_TAG) {
+		
+		buttonsContainer = new ScrollPane(KuixConstants.TAB_FOLDER_BUTTONS_CONTAINER_WIDGET_TAG) {
 
 			/* (non-Javadoc)
-			 * @see org.kalmeo.kuix.widget.Widget#getLayoutData()
+			 * @see org.kalmeo.kuix.widget.Widget#getDefaultStylePropertyValue(java.lang.String)
 			 */
-			public LayoutData getLayoutData() {
-				return BorderLayoutData.instanceNorth;
+			protected Object getDefaultStylePropertyValue(String name) {
+				if (KuixConstants.LAYOUT_DATA_STYLE_PROPERTY.equals(name)) {
+					return BorderLayoutData.instanceNorth;
+				}
+				return super.getDefaultStylePropertyValue(name);
 			}
 
 		};
-		tabButtonsContainer.setHorizontal(true);
-		tabButtonsContainer.setShowScrollBar(false);
-		tabButtonsContainer.setUseMarkers(false);
-		super.add(tabButtonsContainer);
-		tabItemContainer = new Widget(KuixConstants.TAB_ITEM_CONTAINER_WIDGET_TAG) {
+		buttonsContainer.setHorizontal(true);
+		buttonsContainer.setShowScrollBar(false);
+		buttonsContainer.setUseMarkers(false);
+		super.add(buttonsContainer);
+		
+		container = new Widget(KuixConstants.TAB_FOLDER_CONTAINER_WIDGET_TAG) {
 
 			/* (non-Javadoc)
 			 * @see org.kalmeo.kuix.widget.Widget#getLayout()
@@ -244,7 +180,8 @@ public class TabFolder extends List {
 			}
 			
 		};
-		super.add(tabItemContainer);
+		super.add(container);
+		
 	}
 	
 	/* (non-Javadoc)
@@ -265,14 +202,14 @@ public class TabFolder extends List {
 	 * @see org.kalmeo.kuix.widget.Widget#getInternalChildInstance(java.lang.String)
 	 */
 	public Widget getInternalChildInstance(String tag) {
-		if (KuixConstants.DEFAULT_TAB_ITEM_WIDGET_TAG.equals(tag)) {
+		if (KuixConstants.TAB_FOLDER_DEFAULT_TAB_ITEM_WIDGET_TAG.equals(tag)) {
 			return getDefaultTabItem();
 		}
-		if (KuixConstants.TAB_BUTTONS_CONTAINER_WIDGET_TAG.equals(tag)) {
-			return tabButtonsContainer;
+		if (KuixConstants.TAB_FOLDER_BUTTONS_CONTAINER_WIDGET_TAG.equals(tag)) {
+			return buttonsContainer;
 		}
-		if (KuixConstants.TAB_ITEM_CONTAINER_WIDGET_TAG.equals(tag)) {
-			return tabItemContainer;
+		if (KuixConstants.TAB_FOLDER_CONTAINER_WIDGET_TAG.equals(tag)) {
+			return container;
 		}
 		return super.getInternalChildInstance(tag);
 	}
@@ -289,6 +226,20 @@ public class TabFolder extends List {
 	}
 	
 	/**
+	 * @return the buttonsContainer
+	 */
+	public ScrollPane getButtonsContainer() {
+		return buttonsContainer;
+	}
+
+	/**
+	 * @return the container
+	 */
+	public Widget getContainer() {
+		return container;
+	}
+
+	/**
 	 * @return the currentTabItem
 	 */
 	public TabItem getCurrentTabItem() {
@@ -302,7 +253,7 @@ public class TabFolder extends List {
 	 * @param tabItem
 	 */
 	public void setCurrentTabItem(TabItem tabItem) {
-		if (tabItem != null && tabItem.parent != tabItemContainer) {
+		if (tabItem != null && tabItem.parent != container) {
 			return;
 		}
 		if (currentTabItem != null) {
@@ -319,7 +270,7 @@ public class TabFolder extends List {
 			}
 			tabItem.selected = true;
 			tabItem.setVisible(true);
-			tabButtonsContainer.bestScrollToChild(tabItem.tabButton, false);
+			buttonsContainer.bestScrollToChild(tabItem.tabButton, false);
 		}
 		if (defaultTabItem != null) {
 			defaultTabItem.setVisible(currentTabItem == null);
@@ -331,7 +282,7 @@ public class TabFolder extends List {
 	 */
 	private void initDefaultTabItem() {
 		if (defaultTabItem != null) {
-			tabItemContainer.add(defaultTabItem);
+			container.add(defaultTabItem);
 			defaultTabItem.setVisible(currentTabItem == null);
 		}
 	}
@@ -360,15 +311,15 @@ public class TabFolder extends List {
 	 * @return This {@link TabFolder}
 	 */
 	public void addTabItem(final TabItem tabItem) {
-		if (tabItem != null && tabItem.parent != tabItemContainer) {
+		if (tabItem != null && tabItem.parent != container) {
 			
 			// Create the tabButton
 			TabButton tabButton = new TabButton(tabItem);
 			tabItem.tabButton = tabButton;
-			tabButtonsContainer.add(tabButton);
+			buttonsContainer.add(tabButton);
 			
 			// Add tabItem
-			tabItemContainer.add(tabItem);
+			container.add(tabItem);
 			if ((currentTabItem == null || tabItem.isSelected()) && tabItem.isEnabled()) {
 				setCurrentTabItem(tabItem);
 			} else {
@@ -382,7 +333,7 @@ public class TabFolder extends List {
 	 * @see org.kalmeo.kuix.widget.Widget#removeAll()
 	 */
 	public void removeAll() {
-		tabItemContainer.removeAll();
+		container.removeAll();
 		initDefaultTabItem();
 		setCurrentTabItem(null);			// No tabItem : setCurrent to null
 	}
@@ -394,12 +345,12 @@ public class TabFolder extends List {
 	 * @param unselectIfNoOther
 	 */
 	protected void selectOtherTab(boolean forward, boolean unselectIfNoOther) {
-		Widget currentTab = currentTabItem != null ? currentTabItem.tabButton : (forward ? tabButtonsContainer.getContainer().getChild() : tabButtonsContainer.getContainer().getLastChild());
+		Widget currentTab = currentTabItem != null ? currentTabItem.tabButton : (forward ? buttonsContainer.getContainer().getChild() : buttonsContainer.getContainer().getLastChild());
 		Widget tab = currentTab;
 		while (tab != null) {
 			tab = forward ? tab.next : tab.previous;
 			if (tab == null) {
-				tab = (forward ? tabButtonsContainer.getContainer().getChild() : tabButtonsContainer.getContainer().getLastChild());
+				tab = (forward ? buttonsContainer.getContainer().getChild() : buttonsContainer.getContainer().getLastChild());
 			}
 			if (tab != null) {
 				if (tab == currentTab) {

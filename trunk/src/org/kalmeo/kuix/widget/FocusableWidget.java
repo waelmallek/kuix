@@ -27,104 +27,11 @@ import org.kalmeo.kuix.core.focus.FocusManager;
 import org.kalmeo.util.BooleanUtil;
 
 /**
- * This abstract class is base for all focusable widgets.
- * 
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="5"><font size="+2"> Attributes </font></th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Attribute </th>
- * 		<th width="1%"> Object </th>
- * 		<th width="1%"> Set </th>
- * 		<th width="1%"> Get </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>enabled</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the widget's state. The value is a boolean (<code>true or false</code>). </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>focusable</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define if the widget is focusable. </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>focused</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> Request the focus for this widget. </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>onfocus</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> The focus gain called method. </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>onlostfocus</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> The focus lost called method. </td>
- * 	</tr>
- * 	<tr>
- * 		<td colspan="5"> Inherited attributes : see {@link Widget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="4"> <font size="+2"> Style properties </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Property </th>
- * 		<th width="1%"> Default </th>
- * 		<th width="1%"> Inherit </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="4"> Inherited style properties : see {@link Widget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available style pseudo-classes </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Pseudo-class </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>hover</code> </th>
- * 		<td> Active when the widget is focused </th>
- *	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available internal widgets </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> internal widget </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited internal widgets : see {@link Widget} </td>
- * 	</tr>
- * </table>
+ * This class is base for all focusable widgets.
  * 
  * @author bbeaulant
  */
-public abstract class AbstractFocusableWidget extends Widget {
+public class FocusableWidget extends Widget {
 
 	// Widget's pseudo class list
 	public static final String HOVER_PSEUDO_CLASS = "hover";
@@ -148,18 +55,18 @@ public abstract class AbstractFocusableWidget extends Widget {
 	private boolean requestFocusOnAdded = false;
 	
 	/**
-	 * Construct a {@link AbstractFocusableWidget}
+	 * Construct a {@link FocusableWidget}
 	 */
-	public AbstractFocusableWidget() {
+	public FocusableWidget() {
 		super();
 	}
 	
 	/**
-	 * Construct a {@link AbstractFocusableWidget}
+	 * Construct a {@link FocusableWidget}
 	 *
 	 * @param tag
 	 */
-	public AbstractFocusableWidget(String tag) {
+	public FocusableWidget(String tag) {
 		super(tag);
 	}
 
@@ -238,6 +145,7 @@ public abstract class AbstractFocusableWidget extends Widget {
 	 */
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+		invalidateStylePropertiesCache(true);
 		if (!enabled) {
 			giveFocusToNearestWidget();
 		}
@@ -257,11 +165,14 @@ public abstract class AbstractFocusableWidget extends Widget {
 		if (HOVER_PSEUDO_CLASS.equals(pseudoClass)) {
 			return isFocused();
 		}
+		if (DISABLED_PSEUDO_CLASS.equals(pseudoClass)) {
+			return !isEnabled();
+		}
 		return false;
 	}
 	
 	/**
-	 * Give the focus to the nearest {@link AbstractFocusableWidget}.
+	 * Give the focus to the nearest {@link FocusableWidget}.
 	 */
 	private void giveFocusToNearestWidget() {
 		if (isFocused()) {
@@ -293,7 +204,7 @@ public abstract class AbstractFocusableWidget extends Widget {
 		if (isFocusable()) {
 			FocusManager focusManager = getFocusManager();
 			if (focusManager != null) {
-				ScrollContainer scrollContainer = focusManager.findFirstScrollContainerParent(this);
+				ScrollPane scrollContainer = focusManager.findFirstScrollContainerParent(this);
 				if (scrollContainer != null) {
 					scrollContainer.bestScrollToChild(this, false);
 				}
@@ -311,6 +222,7 @@ public abstract class AbstractFocusableWidget extends Widget {
 		switch (type) {
 			case KuixConstants.FOCUS_GAINED_EVENT_TYPE: {
 				focused = true;
+				invalidateStylePropertiesCache(true);
 				if (onFocus != null) {
 					Kuix.callActionMethod(Kuix.parseMethod(onFocus, this));
 				}
@@ -319,6 +231,7 @@ public abstract class AbstractFocusableWidget extends Widget {
 			}
 			case KuixConstants.FOCUS_LOST_EVENT_TYPE: {
 				focused = false;
+				invalidateStylePropertiesCache(true);
 				if (onLostFocus != null) {
 					Kuix.callActionMethod(Kuix.parseMethod(onLostFocus, this));
 				}

@@ -27,7 +27,7 @@ import org.kalmeo.kuix.core.KuixConstants;
 import org.kalmeo.kuix.util.Alignment;
 import org.kalmeo.kuix.widget.Menu;
 import org.kalmeo.kuix.widget.Screen;
-import org.kalmeo.kuix.widget.ScrollContainer;
+import org.kalmeo.kuix.widget.ScrollPane;
 import org.kalmeo.kuix.widget.TabFolder;
 import org.kalmeo.kuix.widget.TabItem;
 import org.kalmeo.kuix.widget.Widget;
@@ -141,12 +141,12 @@ public class FocusManager {
 	
 	/**
 	 * @param widget
-	 * @return The direct or indirect parent {@link ScrollContainer} if it exists or <code>null</code>
+	 * @return The direct or indirect parent {@link ScrollPane} if it exists or <code>null</code>
 	 */
-	public ScrollContainer findFirstScrollContainerParent(Widget widget) {
+	public ScrollPane findFirstScrollContainerParent(Widget widget) {
 		for (Widget container = widget.parent; container != null; container = container.parent) {
-			if (container instanceof ScrollContainer) {
-				return ((ScrollContainer) container);
+			if (container instanceof ScrollPane) {
+				return ((ScrollPane) container);
 			}
 		}
 		return null;
@@ -188,7 +188,7 @@ public class FocusManager {
 		}
 		Widget otherFocus = ((startWidget == null) ? rootWidget : startWidget).getOtherFocus(rootWidget, startWidget, null, forward, direction, true, true);
 		if (otherFocus != null) {
-			ScrollContainer scrollContainer = findFirstScrollContainerParent(otherFocus);
+			ScrollPane scrollContainer = findFirstScrollContainerParent(otherFocus);
 			if (scrollContainer != null) {
 				if (!scrollContainer.bestScrollToChild(otherFocus, startWidget != null)) {
 					return;
@@ -196,7 +196,7 @@ public class FocusManager {
 			}
 			requestFocus(otherFocus);
 		} else if (!loop && focusedWidget != null) {
-			ScrollContainer scrollContainer = findFirstScrollContainerParent(focusedWidget);
+			ScrollPane scrollContainer = findFirstScrollContainerParent(focusedWidget);
 			if (scrollContainer != null) {
 				if (!scrollContainer.bestScrollToChild(focusedWidget, true)) {
 					return;

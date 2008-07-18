@@ -55,211 +55,12 @@ import org.kalmeo.util.LinkedList.LinkedListEnumeration;
 /**
  * This class is the base of all Kuix widgets.
  * 
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="5"><font size="+2"> Attributes </font></th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Attribute </th>
- * 		<th width="1%"> Object </th>
- * 		<th width="1%"> Set </th>
- * 		<th width="1%"> Get </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>id</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> The widget's unique identifier. The value is as string text </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>class</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> The widget's style class. The value is as string text </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>style</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> The author style. The value is as string text where each style property/value couple is separated by a ';' and is conforme to style properties syntax. ( ex: <code>color:red;layout:borderlayout</code> ) </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>visible</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> The widget visibility. The value is a string boolean ( <code>true or false</code> ). </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>shortcuts</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> The widget key pressed shortcuts. The value is a string representing one or more KuixKeyCode ( <code>0, 1, 2, 3, 4, 5, 6, 7, 8, 9, *, #, softleft, softright, up, left, right, down, fire, back, delete</code> ). The multiple keys separator is the '|' </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>pressedshortcuts</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> idem <code>shortcuts</code> </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>repeatedshortcuts</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> The widget key repeated shortcuts.  </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>releasedshortcuts</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> The widget key released shortcuts.  </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="4"> <font size="+2"> Style properties </font> </th>
- * 	</tr>
- * 	<tr>
- * 		<th width="1%"> Property </th>
- * 		<th width="1%"> Default </th>
- * 		<th width="1%"> Inherit </th>
- * 		<th> Description </th>
- *	</tr class="TableRowColor">
- * 	<tr class="TableRowColor">
- * 		<td> <code>align</code> </td>
- * 		<td> <code>top-left</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the content alignment. The value is an alignement string ( <code>top, top-left, left, bottom-left, bottom, bottom-right, right, top-right, fill, fill-top, fill-left, fill-bottom, fill-right</code> ) </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>bg-align</code> </td>
- * 		<td> <code>top-left</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the background image alignment. The value is an alignment like <code>align</code> property. This property is only available if <code>bg-image</code> is defined. </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>bg-color</code> </td>
- * 		<td> <code>-</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the background color. The value is a color like <code>color</code> property. </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>bg-image</code> </td>
- * 		<td> <code>-</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the background image. The value is an the image file path. </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>bg-repeat</code> </td>
- * 		<td> <code>0&nbsp;0</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the background image repeat method. <code>Syntax : &lt;repeatx&gt; &lt;repeaty&gt;</code>. <code>0</code> means infinit. This property is only available if <code>bg-image</code> is defined. </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>border</code> </td>
- * 		<td> <code>0&nbsp;0&nbsp;0&nbsp;0</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the border. <code>Syntax : &lt;top&gt; &lt;right&gt; &lt;bottom&gt; &lt;left&gt;</code> </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>border-color</code> </td>
- * 		<td> <code>-</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the border color. The value is a color like <code>color</code> property. </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>border-images</code> </td>
- * 		<td> <code>-</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the border images. <code>Syntax : url(&lt;top&gt;) url(&lt;top-right&gt;) url(&lt;right&gt;) url(&lt;bottom-right&gt;) url(&lt;bottom&gt;) url(&lt;bottom-left&gt;) url(&lt;left&gt;) url(&lt;top-left&gt;)</code>. </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>border-align</code> </td>
- * 		<td> <code>-</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the border images alignment. <code>Syntax : &lt;align top&gt; &lt;align top-right&gt; &lt;align right&gt; &lt;align bottom-right&gt; &lt;align bottom&gt; &lt;align bottom-left&gt; &lt;align left&gt; &lt;align top-left&gt;</code>. </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>color</code> </td>
- * 		<td> <code>#000000</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> Define the font color. The value is a color string ( <code>red, green, blue, white, black or #RRGGBB</code> ) </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>gap</code> </td>
- * 		<td> <code>0&nbsp;0</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the gap. <code>Syntax : &lt;hgap&gt; &lt;vgap&gt;</code> </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>layout</code> </td>
- * 		<td> <code>inlinelayout(true,top-left)</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the content layout. The value is a layout tag ( <code>borderlayout, flowlayout(&lt;align&gt;), gridlayout(&lt;cols&gt;,&lt;rows&gt;), inlinelayout(&lt;horizontal&gt;,&lt;align&gt;), staticlayout, tablelayout</code> ) </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>layout-data</code> </td>
- * 		<td> <code>null</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the widget layout data. The value is a layout data tag ( <code>bld(&lt;align&gt;), sld(&lt;align&gt;,&lt;width&gt;,&lt;height&gt;)</code> ) </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>margin</code> </td>
- * 		<td> <code>0&nbsp;0&nbsp;0&nbsp;0</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the margin. <code>Syntax : &lt;top&gt; &lt;right&gt; &lt;bottom&gt; &lt;left&gt;</code> </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>padding</code> </td>
- * 		<td> <code>0&nbsp;0&nbsp;0&nbsp;0</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the padding. <code>Syntax : &lt;top&gt; &lt;right&gt; &lt;bottom&gt; &lt;left&gt;</code> </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>min-size</code> </td>
- * 		<td> <code>0&nbsp;0</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the min size. <code>Syntax : &lt;min width&gt; &lt;min height&gt;</code> </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>span</code> </td>
- * 		<td> <code>1&nbsp;1</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the col and row span. <code>Syntax : &lt;colspan&gt; &lt;rowspan&gt;</code> </td>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>weight</code> </td>
- * 		<td> <code>0&nbsp;0</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the weight x and y. <code>Syntax : &lt;weightx&gt; &lt;weighty&gt;</code>  </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available internal widgets </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> internal widget </th>
- * 		<th> Description </th>
- *	</tr>
- * </table>
- * 
  * @author bbeaulant
  */
 public class Widget {
 	
 	/**
-	 * This class represent a bind instruction for a specific attribute.
+	 * This class represents a bind instruction for a specific attribute.
 	 */
 	protected class BindInstruction implements LinkedListItem {
 		
@@ -464,8 +265,54 @@ public class Widget {
 	
 	// The cached objects
 	private Vector cachedStyles = null;
-	private Insets cachedInsets = null;
 	private Metrics cachedMetrics = null;
+	
+	// Style proprperties cache
+	private boolean validCachedLayout;
+	private boolean validCachedLayoutData;
+	private boolean validCachedMargin;
+	private boolean validCachedBorder;
+	private boolean validCachedPadding;
+	private boolean validCachedInsets;
+	private boolean validCachedMinSize;
+
+	private boolean validCachedColor;
+	private boolean validCachedBorderColor;
+	private boolean validCachedBorderStroke;
+	private boolean validCachedBorderImages;
+	private boolean validCachedBorderAlignments;
+	private boolean validCachedBackgroundColor;
+	private boolean validCachedBackgroundImage;
+	private boolean validCachedBackgroundRepeat;
+	private boolean validCachedBackgroundAlignment;
+
+	private boolean validCachedGap;
+	private boolean validCachedSpan;
+	private boolean validCachedWeight;
+	private boolean validCachedAlignment;
+
+	private Layout cachedLayout;
+	private LayoutData cachedLayoutData;
+	private Insets cachedMargin;
+	private Insets cachedBorder;
+	private Insets cachedPadding;
+	private Insets cachedInsets;
+	private Metrics cachedMinSize;
+	
+	private Color cachedColor;
+	private Color cachedBorderColor;
+	private int cachedBorderStroke;
+	private Image[] cachedBorderImages;
+	private Alignment[] cachedBorderAlignments;
+	private Color cachedBackgroundColor;
+	private Image[] cachedBackgroundImage;
+	private Repeat[] cachedBackgroundRepeat;
+	private Alignment[] cachedBackgroundAlignment;
+	
+	private Gap cachedGap;
+	private Span cachedSpan;
+	private Weight cachedWeight;
+	private Alignment cachedAlignment;
 	
 	/**
 	 * Construct a {@link Widget}
@@ -579,6 +426,13 @@ public class Widget {
 	public String getTag() {
 		return tag;
 	}
+	
+	/**
+	 * @return the inherited tag
+	 */
+	public String getInheritedTag() {
+		return null;
+	}
 
 	/**
 	 * @return the id
@@ -606,6 +460,7 @@ public class Widget {
 	 */
 	public void setStyleClasses(String[] styleClasses) {
 		this.styleClasses = styleClasses;
+		invalidateStylePropertiesCache(true);
 	}
 	
 	/**
@@ -617,6 +472,7 @@ public class Widget {
 		} else {
 			styleClasses = new String[] { styleClass };
 		}
+		invalidateStylePropertiesCache(true);
 	}
 	
 	/**
@@ -953,93 +809,314 @@ public class Widget {
 	public void setDataProvider(DataProvider dataProvider) {
 		this.dataProvider = dataProvider;
 	}
-
+	
 	/**
 	 * @return the layout
 	 */
 	public Layout getLayout() {
-		return (Layout) getStylePropertyValue(KuixConstants.LAYOUT_STYLE_PROPERTY, false);
+		if (!validCachedLayout) {
+			cachedLayout = (Layout) getStylePropertyValue(KuixConstants.LAYOUT_STYLE_PROPERTY, false);
+			validCachedLayout = true;
+		}
+		return cachedLayout;
 	}
 	
 	/**
 	 * @return the layoutData
 	 */
 	public LayoutData getLayoutData() {
-		return (LayoutData) getStylePropertyValue(KuixConstants.LAYOUT_DATA_STYLE_PROPERTY, false);
+		if (!validCachedLayoutData) {
+			cachedLayoutData = (LayoutData) getStylePropertyValue(KuixConstants.LAYOUT_DATA_STYLE_PROPERTY, false);
+			validCachedLayoutData = true;
+		}
+		return cachedLayoutData;
 	}
 	
 	/**
 	 * @return the margin
 	 */
 	public Insets getMargin() {
-		return (Insets) getStylePropertyValue(KuixConstants.MARGIN_STYLE_PROPERTY, false);
+		if (!validCachedMargin) {
+			cachedMargin = (Insets) getStylePropertyValue(KuixConstants.MARGIN_STYLE_PROPERTY, false);
+			validCachedMargin = true;
+		}
+		return cachedMargin;
 	}
 
 	/**
 	 * @return the border
 	 */
 	public Insets getBorder() {
-		return (Insets) getStylePropertyValue(KuixConstants.BORDER_STYLE_PROPERTY, false);
+		if (!validCachedBorder) {
+			cachedBorder = (Insets) getStylePropertyValue(KuixConstants.BORDER_STYLE_PROPERTY, false);
+			validCachedBorder = true;
+		}
+		return cachedBorder;
 	}
 
 	/**
 	 * @return the padding
 	 */
 	public Insets getPadding() {
-		return (Insets) getStylePropertyValue(KuixConstants.PADDING_STYLE_PROPERTY, false);
+		if (!validCachedPadding) {
+			cachedPadding = (Insets) getStylePropertyValue(KuixConstants.PADDING_STYLE_PROPERTY, false);
+			validCachedPadding = true;
+		}
+		return cachedPadding;
 	}
 
 	/**
 	 * @return the minSize
 	 */
 	public Metrics getMinSize() {
-		return (Metrics) getStylePropertyValue(KuixConstants.MIN_SIZE_STYLE_PROPERTY, false);
+		if (!validCachedMinSize) {
+			cachedMinSize = (Metrics) getStylePropertyValue(KuixConstants.MIN_SIZE_STYLE_PROPERTY, false);
+			validCachedMinSize = true;
+		}
+		return cachedMinSize;
 	}
 	
 	/**
 	 * @return The insets
 	 */
 	public Insets getInsets() {
-		// TODO : Add a better cache system
-		Insets margin = getMargin();
-		Insets border = getBorder();
-		Insets padding = getPadding();
-		if (cachedInsets == null) {
+		if (!validCachedInsets) {
+			
+			Insets margin = getMargin();
+			Insets border = getBorder();
+			Insets padding = getPadding();
+			
 			cachedInsets = new Insets();
+			cachedInsets.top = margin.top + border.top + padding.top;
+			cachedInsets.left = margin.left + border.left + padding.left;
+			cachedInsets.bottom = margin.bottom + border.bottom + padding.bottom;
+			cachedInsets.right = margin.right + border.right + padding.right;
+			
+			validCachedInsets = true;
+			
 		}
-		cachedInsets.top = margin.top + border.top + padding.top;
-		cachedInsets.left = margin.left + border.left + padding.left;
-		cachedInsets.bottom = margin.bottom + border.bottom + padding.bottom;
-		cachedInsets.right = margin.right + border.right + padding.right;
 		return cachedInsets;
 	}
 	
 	/**
+	 * Returns the color value. By default the value is
+	 * <code>null</code>.
+	 * 
+	 * @return the color
+	 */
+	public Color getColor() {
+		if (!validCachedColor) {
+			Object colorValue = getStylePropertyValue(KuixConstants.COLOR_STYLE_PROPERTY, true);
+			if (colorValue != null) {
+				cachedColor = (Color) colorValue;
+			} else {
+				cachedColor = null;
+			}
+			validCachedColor = true;
+		}
+		return cachedColor;
+	}
+	
+	/**
+	 * Returns the border color value. By default the value is
+	 * <code>null</code>.
+	 * 
+	 * @return the borderColor
+	 */
+	public Color getBorderColor() {
+		if (!validCachedBorderColor) {
+			Object borderColorValue = getStylePropertyValue(KuixConstants.BORDER_COLOR_STYLE_PROPERTY, false);
+			if (borderColorValue != null) {
+				cachedBorderColor = (Color) borderColorValue;
+			} else {
+				cachedBorderColor = null;
+			}
+			validCachedBorderColor = true;
+		}
+		return cachedBorderColor;
+	}
+	
+	/**
+	 * Returns the border stroke int value. By default the value is
+	 * <code>Graphics.SOLID</code>.
+	 * 
+	 * @return the borderStroke
+	 */
+	public int getBorderStroke() {
+		if (!validCachedBorderStroke) {
+			Object borderStrokeValue = getStylePropertyValue(KuixConstants.BORDER_STROKE_STYLE_PROPERTY, false);
+			if (borderStrokeValue != null) {
+				cachedBorderStroke = ((Integer) borderStrokeValue).intValue();
+			} else {
+				cachedBorderStroke = Graphics.SOLID;
+			}
+			validCachedBorderStroke = true;
+		}
+		return cachedBorderStroke;
+	}
+	
+	/**
+	 * Returns the border images array. The array length is 8. By default the
+	 * value is <code>null</code>.
+	 * 
+	 * @return the borderImages array
+	 */
+	public Image[] getBorderImages() {
+		if (!validCachedBorderImages) {
+			Object borderImagesValue = getStylePropertyValue(KuixConstants.BORDER_IMAGES_STYLE_PROPERTY, false);
+			if (borderImagesValue != null) {
+				cachedBorderImages = (Image[]) borderImagesValue;
+			} else {
+				cachedBorderImages = null;
+			}
+			validCachedBorderImages = true;
+		}
+		return cachedBorderImages;
+	}
+	
+	/**
+	 * Returns the border alignments array. The array length is 8. By default the
+	 * value is <code>null</code>.
+	 * 
+	 * @return the borderAlignments array
+	 */
+	public Alignment[] getBorderAlignments() {
+		if (!validCachedBorderAlignments) {
+			Object borderAlignValue = getStylePropertyValue(KuixConstants.BORDER_ALIGN_STYLE_PROPERTY, false);
+			if (borderAlignValue != null) {
+				cachedBorderAlignments = (Alignment[]) borderAlignValue;
+			} else {
+				cachedBorderAlignments = null;
+			}
+			validCachedBorderAlignments = true;
+		}
+		return cachedBorderAlignments;
+	}
+	
+	/**
+	 * Returns the background color value. By default the value is
+	 * <code>null</code>.
+	 * 
+	 * @return the backgroundColor
+	 */
+	public Color getBackgroundColor() {
+		if (!validCachedBackgroundColor) {
+			Object backgroundColorValue = getStylePropertyValue(KuixConstants.BACKGROUND_COLOR_STYLE_PROPERTY, false);
+			if (backgroundColorValue != null) {
+				cachedBackgroundColor = (Color) backgroundColorValue;
+			} else {
+				cachedBackgroundColor = null;
+			}
+			validCachedBackgroundColor = true;
+		}
+		return cachedBackgroundColor;
+	}
+	
+	/**
+	 * Returns the backroundImage or image list if multi images are defined.
+	 * 
+	 * @return the backroundImage array
+	 */
+	public Image[] getBackgroundImage() {
+		if (!validCachedBackgroundImage) {
+			Object backgroundImageValue = getStylePropertyValue(KuixConstants.BACKGROUND_IMAGE_STYLE_PROPERTY, false);
+			if (backgroundImageValue != null) {
+				cachedBackgroundImage = (Image[]) backgroundImageValue;
+			} else {
+				cachedBackgroundImage = null;
+			}
+			validCachedBackgroundImage = true;
+		}
+		return cachedBackgroundImage;
+	}
+	
+	/**
+	 * Returns the backroundAlignment or alignment list if multi alignments are defined.
+	 * 
+	 * @return the backroundAlignment array
+	 */
+	public Alignment[] getBackgroundAlignment() {
+		if (!validCachedBackgroundAlignment) {
+			Object backgroundAlignValue = getStylePropertyValue(KuixConstants.BACKGROUND_ALIGN_STYLE_PROPERTY, false);
+			if (backgroundAlignValue != null) {
+				cachedBackgroundAlignment = (Alignment[]) backgroundAlignValue;
+			} else {
+				cachedBackgroundAlignment = DEFAULT_BACKGROUND_ALIGN;
+			}
+			validCachedBackgroundAlignment = true;
+		}
+		return cachedBackgroundAlignment;
+	}
+	
+	/**
+	 * Returns the backgroundRepeat or repeat list if multi repeats are defined.
+	 * 
+	 * @return the backgroundRepeat array
+	 */
+	public Repeat[] getBackgroundRepeat() {
+		if (!validCachedBackgroundRepeat) {
+			Object backgroundRepeatValue = getStylePropertyValue(KuixConstants.BACKGROUND_REPEAT_STYLE_PROPERTY, false);
+			if (backgroundRepeatValue != null) {
+				cachedBackgroundRepeat = (Repeat[]) backgroundRepeatValue;
+			} else {
+				cachedBackgroundRepeat = DEFAULT_BACKGROUND_REPEAT;
+			}
+			validCachedBackgroundRepeat = true;
+		}
+		return cachedBackgroundRepeat;
+	}
+	
+	/**
+	 * Returns the gap value.
+	 * 
 	 * @return the gap
 	 */
 	public Gap getGap() {
-		return (Gap) getStylePropertyValue(KuixConstants.GAP_STYLE_PROPERTY, false);
+		if (!validCachedGap) {
+			cachedGap = (Gap) getStylePropertyValue(KuixConstants.GAP_STYLE_PROPERTY, false);
+			validCachedGap = true;
+		}
+		return cachedGap;
 	}
 
 	/**
+	 * Returns the span value.
+	 * 
 	 * @return the span
 	 */
 	public Span getSpan() {
-		return (Span) getStylePropertyValue(KuixConstants.SPAN_STYLE_PROPERTY, false);
+		if (!validCachedSpan) {
+			cachedSpan = (Span) getStylePropertyValue(KuixConstants.SPAN_STYLE_PROPERTY, false);
+			validCachedSpan = true;
+		}
+		return cachedSpan;
 	}
 
 	/**
+	 * 
+	 * Returns the weight value.
+	 * 
 	 * @return the weight
 	 */
 	public Weight getWeight() {
-		return (Weight) getStylePropertyValue(KuixConstants.WEIGHT_STYLE_PROPERTY, false);
+		if (!validCachedWeight) {
+			cachedWeight = (Weight) getStylePropertyValue(KuixConstants.WEIGHT_STYLE_PROPERTY, false);
+			validCachedWeight = true;
+		}
+		return cachedWeight;
 	}
 
 	/**
+	 * Returns the alignment value.
+	 * 
 	 * @return the alignment
 	 */
 	public Alignment getAlign() {
-		return (Alignment) getStylePropertyValue(KuixConstants.ALIGN_STYLE_PROPERTY, false);
+		if (!validCachedAlignment) {
+			cachedAlignment = (Alignment) getStylePropertyValue(KuixConstants.ALIGN_STYLE_PROPERTY, false);
+			validCachedAlignment = true;
+		}
+		return cachedAlignment;
 	}
 
 	/**
@@ -1497,7 +1574,10 @@ public class Widget {
 	}
 	
 	/**
-	 * Invalidate the widget and propagate the information to its parent
+	 * Invalidate the widget's size and position and propagate the information
+	 * to its parent. Calling this method will generate a call to the
+	 * <code>doLayout()</code> and </code>paint()</code> method on all
+	 * invalidated widgets.
 	 */
 	public void invalidate() {
 		invalidated = true;
@@ -1525,7 +1605,8 @@ public class Widget {
 	}
 	
 	/**
-	 * Invalidate full widget's region.
+	 * Invalidate appearance of full widget's region. Calling this method will
+	 * generate a screen repaint with a specific region.
 	 */
 	public void invalidateAppearance() {
 		invalidateAppearanceRegion(0, 0, width, height);
@@ -1583,29 +1664,18 @@ public class Widget {
 	protected void drawBackground(Graphics g, int x, int y, int width, int height) {
 		
 		// Background Color
-		Object backgroundColorValue = getStylePropertyValue(KuixConstants.BACKGROUND_COLOR_STYLE_PROPERTY, false);
-		if (backgroundColorValue != null) {
-			g.setColor(((Color) backgroundColorValue).getRGB());
+		Color backgroundColor = getBackgroundColor();
+		if (backgroundColor != null) {
+			g.setColor(backgroundColor.getRGB());
 			g.fillRect(x, y, width, height);
 		}
 		
 		// Background Image
-		Object backgroundImageValue = getStylePropertyValue(KuixConstants.BACKGROUND_IMAGE_STYLE_PROPERTY, false);
-		if (backgroundImageValue != null) {
+		Image[] images = getBackgroundImage();
+		if (images != null) {
 			
-			Image[] images = (Image[]) backgroundImageValue;
-			
-			Alignment[] alignments = DEFAULT_BACKGROUND_ALIGN;
-			Object backgroundAlignValue = getStylePropertyValue(KuixConstants.BACKGROUND_ALIGN_STYLE_PROPERTY, false);
-			if (backgroundAlignValue != null) {
-				alignments = (Alignment[]) backgroundAlignValue;
-			}
-			
-			Repeat[] repeats = DEFAULT_BACKGROUND_REPEAT;
-			Object backgroundRepeatValue = getStylePropertyValue(KuixConstants.BACKGROUND_REPEAT_STYLE_PROPERTY, false);
-			if (backgroundRepeatValue != null) {
-				repeats = (Repeat[]) backgroundRepeatValue;
-			}
+			Alignment[] alignments = getBackgroundAlignment();
+			Repeat[] repeats = getBackgroundRepeat();
 			
 			int backgroundCount = Math.max(images.length, Math.max(alignments.length, repeats.length));
 			Repeat repeat;
@@ -1656,19 +1726,15 @@ public class Widget {
 		}
 		
 		// Border Color
-		Object borderColorValue = getStylePropertyValue(KuixConstants.BORDER_COLOR_STYLE_PROPERTY, false);
-		if (borderColorValue != null) {
-			g.setColor(((Color) borderColorValue).getRGB());
+		Color borderColor = getBorderColor();
+		if (borderColor != null) {
+			
+			g.setColor(borderColor.getRGB());
 			Insets border = getBorder();
 			
 			// Stroke is only possible if border thin is 1
 			if (border.top + border.right + border.bottom + border.left <= 4) {
-				Object strokeValue = getStylePropertyValue(KuixConstants.BORDER_STROKE_STYLE_PROPERTY, false);
-				if (strokeValue != null) {
-					g.setStrokeStyle(((Integer) strokeValue).intValue());
-				} else {
-					g.setStrokeStyle(Graphics.SOLID);
-				}
+				g.setStrokeStyle(getBorderStroke());
 			}
 			
 			if (border.top == 1) {
@@ -1695,56 +1761,50 @@ public class Widget {
 		}
 		
 		// Border Images
-		Object borderImagesValue = getStylePropertyValue(KuixConstants.BORDER_IMAGES_STYLE_PROPERTY, false);
-		if (borderImagesValue != null) {
+		Image[] borderImages = getBorderImages();
+		if (borderImages != null) {
 			
 			Insets border = getBorder();
-			Image[] images = (Image[]) borderImagesValue;
-			
-			Object borderAlignValue = getStylePropertyValue(KuixConstants.BORDER_ALIGN_STYLE_PROPERTY, false);
-			Alignment[] alignments = null;
-			if (borderAlignValue != null) {
-				alignments = (Alignment[]) borderAlignValue;
-			}
+			Alignment[] alignments = getBorderAlignments();
 			
 			// Top
-			if (images[0] != null) {
-				paintMosaicImage(g, images[0], x + border.left, y, width - border.left - border.right, border.top, extractBorderAlignment(0, alignments));
+			if (borderImages[0] != null) {
+				paintMosaicImage(g, borderImages[0], x + border.left, y, width - border.left - border.right, border.top, extractBorderAlignment(0, alignments));
 			}
 			
 			// Top right
-			if (images[1] != null) {
-				paintMosaicImage(g, images[1], x + width - border.right, y, border.right, border.top, extractBorderAlignment(1, alignments));
+			if (borderImages[1] != null) {
+				paintMosaicImage(g, borderImages[1], x + width - border.right, y, border.right, border.top, extractBorderAlignment(1, alignments));
 			}
 			
 			// Right
-			if (images[2] != null) {
-				paintMosaicImage(g, images[2], x + width - border.right, y + border.top, border.right, height - border.top - border.bottom, extractBorderAlignment(2, alignments));
+			if (borderImages[2] != null) {
+				paintMosaicImage(g, borderImages[2], x + width - border.right, y + border.top, border.right, height - border.top - border.bottom, extractBorderAlignment(2, alignments));
 			}
 			
 			// Bottom right
-			if (images[3] != null) {
-				paintMosaicImage(g, images[3], x + width - border.right, y + height - border.bottom, border.right, border.bottom, extractBorderAlignment(3, alignments));
+			if (borderImages[3] != null) {
+				paintMosaicImage(g, borderImages[3], x + width - border.right, y + height - border.bottom, border.right, border.bottom, extractBorderAlignment(3, alignments));
 			}
 			
 			// Bottom
-			if (images[4] != null) {
-				paintMosaicImage(g, images[4], x + border.left, y + height - border.bottom, width - border.left - border.right, border.bottom, extractBorderAlignment(4, alignments));
+			if (borderImages[4] != null) {
+				paintMosaicImage(g, borderImages[4], x + border.left, y + height - border.bottom, width - border.left - border.right, border.bottom, extractBorderAlignment(4, alignments));
 			}
 			
 			// Bottom left
-			if (images[5] != null) {
-				paintMosaicImage(g, images[5], x, y + height - border.bottom, border.left, border.bottom, extractBorderAlignment(5, alignments));
+			if (borderImages[5] != null) {
+				paintMosaicImage(g, borderImages[5], x, y + height - border.bottom, border.left, border.bottom, extractBorderAlignment(5, alignments));
 			}
 			
 			// Left
-			if (images[6] != null) {
-				paintMosaicImage(g, images[6], x, y + border.top, border.left, height - border.top - border.bottom, extractBorderAlignment(6, alignments));
+			if (borderImages[6] != null) {
+				paintMosaicImage(g, borderImages[6], x, y + border.top, border.left, height - border.top - border.bottom, extractBorderAlignment(6, alignments));
 			}
 			
 			// Top left
-			if (images[7] != null) {
-				paintMosaicImage(g, images[7], x, y, border.left, border.top, extractBorderAlignment(7, alignments));
+			if (borderImages[7] != null) {
+				paintMosaicImage(g, borderImages[7], x, y, border.left, border.top, extractBorderAlignment(7, alignments));
 			}
 			
 		}
@@ -1944,9 +2004,48 @@ public class Widget {
 				widget.clearCachedStyle(propagateToChildren);
 			}
 		}
+		invalidateStylePropertiesCache(true);
 		invalidate();
 	}
+	
+	/**
+	 * Invalidate all style properties cache.
+	 * 
+	 * @param propagateToChildren
+	 */
+	public void invalidateStylePropertiesCache(boolean propagateToChildren) {
+		
+		validCachedLayout = false;
+		validCachedLayoutData = false;
+		validCachedMargin = false;
+		validCachedBorder = false;
+		validCachedPadding = false;
+		validCachedInsets = false;
+		validCachedMinSize = false;
 
+		validCachedColor = false;
+		validCachedBorderColor = false;
+		validCachedBorderStroke = false;
+		validCachedBorderImages = false;
+		validCachedBorderAlignments = false;
+		validCachedBackgroundColor = false;
+		validCachedBackgroundImage = false;
+		validCachedBackgroundRepeat = false;
+		validCachedBackgroundAlignment = false;
+
+		validCachedGap = false;
+		validCachedSpan = false;
+		validCachedWeight = false;
+		validCachedAlignment = false;
+		
+		if (propagateToChildren) {
+			for (Widget widget = child; widget != null; widget = widget.next) {
+				widget.invalidateStylePropertiesCache(propagateToChildren);
+			}
+		}
+
+	}
+	
 	/**
 	 * Return the specified style property value repr�senting by the
 	 * <code>name</code>, or <code>null</code>.
@@ -2050,7 +2149,8 @@ public class Widget {
 	private Widget getCompatibleWidget(StyleSelector selector, Widget widget, boolean checkParents) {
 		for (; widget != null; widget = checkParents ? widget.parent: null) {
 			if (selector.hasTag()) {
-				if (!selector.getTag().equals(widget.getTag())) {
+				if (!selector.getTag().equals(widget.getTag())
+						&& !selector.getTag().equals(widget.getInheritedTag())) {
 					continue;
 				}
 			}

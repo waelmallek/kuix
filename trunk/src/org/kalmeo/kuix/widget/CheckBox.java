@@ -25,79 +25,11 @@ import org.kalmeo.kuix.core.KuixConstants;
 import org.kalmeo.util.BooleanUtil;
 
 /**
- * This class represent a check box.
- * 
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="5"><font size="+2"> Attributes </font></th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Attribute </th>
- * 		<th width="1%"> Object </th>
- * 		<th width="1%"> Set </th>
- * 		<th width="1%"> Get </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> selected </th>
- * 		<td> <code>No</code> </th>
- * 		<td> <code>Yes</code> </th>
- * 		<td> <code>Yes</code> </th>
- * 		<td> Define the checkBox selection state </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="5"> Inherited attributes : see {@link AbstractActionWidget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="4"> <font size="+2"> Style properties </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Property </th>
- * 		<th width="1%"> Default </th>
- * 		<th width="1%"> Inherit </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="4"> Inherited style properties : see {@link AbstractActionWidget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available style pseudo-classes </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Pseudo-class </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>selected</code> </td>
- * 		<td> Active when the checkBox is selected </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited style pseudo-classes : see {@link AbstractActionWidget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available internal widgets </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> internal widget </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited internal widgets : see {@link AbstractActionWidget} </td>
- * 	</tr>
- * </table>
+ * This class represents a check box.
  * 
  * @author bbeaulant
  */
-public class CheckBox extends AbstractActionWidget {
+public class CheckBox extends ActionWidget {
 
 	// Widget's pseudo class list
 	public static final String SELECTED_PSEUDO_CLASS = "selected";
@@ -164,6 +96,7 @@ public class CheckBox extends AbstractActionWidget {
 	 * @param selected the selected to set
 	 */
 	public void setSelected(boolean selected) {
+		invalidateStylePropertiesCache(true);
 		this.selected = selected;
 	}
 

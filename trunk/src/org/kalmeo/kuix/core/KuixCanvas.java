@@ -578,24 +578,28 @@ public final class KuixCanvas extends GameCanvas {
 	 * @param keyCode
 	 */
 	protected void processKeyEvent(byte type, int keyCode) {
-		int kuixKeyCode = adoptKeyCode(keyCode);
-		
-		// Intercept debugInfos key
-		if (type == KuixConstants.KEY_RELEASED_EVENT_TYPE) {
-			if ((debugInfosKuixKeyCode & kuixKeyCode) == kuixKeyCode) {
-				debugInfosKeyCounter++;
-				if (debugInfosKeyCounter >= 3) {
-					debugInfosEnabled = !debugInfosEnabled;
+		if (initialized) {
+			
+			int kuixKeyCode = adoptKeyCode(keyCode);
+			
+			// Intercept debugInfos key
+			if (type == KuixConstants.KEY_RELEASED_EVENT_TYPE) {
+				if ((debugInfosKuixKeyCode & kuixKeyCode) == kuixKeyCode) {
+					debugInfosKeyCounter++;
+					if (debugInfosKeyCounter >= 3) {
+						debugInfosEnabled = !debugInfosEnabled;
+						debugInfosKeyCounter = 0;
+						repaintNextFrame();
+					}
+				} else {
 					debugInfosKeyCounter = 0;
-					repaintNextFrame();
 				}
-			} else {
-				debugInfosKeyCounter = 0;
 			}
+			
+			// Add event to queue
+			keyEvents.addElement(new int[] { type, kuixKeyCode });
+			
 		}
-		
-		// Add event to queue
-		keyEvents.addElement(new int[] { type, kuixKeyCode });
 	}
 
 	/* (non-Javadoc)
@@ -639,7 +643,9 @@ public final class KuixCanvas extends GameCanvas {
 	 * @param y
 	 */
 	protected void processPointerEvent(final byte type, final int x, final int y) {
-		pointerEvents.addElement(new int[] { type, x, y });
+		if (initialized) {
+			pointerEvents.addElement(new int[] { type, x, y });
+		}
 	}
 
 	// KeyCode adapter support

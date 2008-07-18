@@ -37,101 +37,14 @@ import org.kalmeo.kuix.transition.Transition;
 import org.kalmeo.kuix.util.Insets;
 
 /**
- * This class represent the Kuix desktop.
- * 
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="5"><font size="+2"> Attributes </font></th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Attribute </th>
- * 		<th width="1%"> Object </th>
- * 		<th width="1%"> Set </th>
- * 		<th width="1%"> Get </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="5"> Inherited attributes : see {@link Widget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="4"> <font size="+2"> Style properties </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Property </th>
- * 		<th width="1%"> Default </th>
- * 		<th width="1%"> Inherit </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>border</code> </th>
- * 		<td> <code>0 0 0 0</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <b>Uneditable</b>, see {@link Widget} </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>layout</code> </th>
- * 		<td> <code>gridlayout(1,1)</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <b>Uneditable</b>, see {@link Widget} </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>layout-data</code> </th>
- * 		<td> <code>null</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <b>Uneditable</b>, see {@link Widget} </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>margin</code> </th>
- * 		<td> <code>0 0 0 0</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <b>Uneditable</b>, see {@link Widget} </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>padding</code> </th>
- * 		<td> <code>0 0 0 0</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <b>Uneditable</b>, see {@link Widget} </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="4"> Inherited style properties : see {@link Widget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available style pseudo-classes </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Pseudo-class </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited style pseudo-classes : see {@link Widget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available internal widgets </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> internal widget </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited internal widgets : see {@link Widget} </td>
- * 	</tr>
- * </table>
+ * This class represents the Kuix desktop.
  * 
  * @author bbeaulant
  */
 public class Desktop extends Widget {
 
 	/**
-	 * This class represent the popup content container
+	 * This class represents the popup content container
 	 */
 	private class PopupContainer extends Widget {
 		
@@ -186,7 +99,7 @@ public class Desktop extends Widget {
 	}
 	
 	/**
-	 * This class represent the dragged widget container
+	 * This class represents the dragged widget container
 	 */
 	private class DraggedWidgetContainer extends Widget {
 

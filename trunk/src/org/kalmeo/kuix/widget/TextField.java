@@ -37,99 +37,7 @@ import org.kalmeo.util.worker.Worker;
 import org.kalmeo.util.worker.WorkerTask;
 
 /**
- * This class represent a textfield.
- * 
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="5"><font size="+2"> Attributes </font></th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Attribute </th>
- * 		<th width="1%"> Object </th>
- * 		<th width="1%"> Set </th>
- * 		<th width="1%"> Get </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>title</code> </th>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the textbox title. The default value is <code>null</code>. </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>maxsize</code> </th>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the maximum number of characters. The default value is <code>1000</code>. </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>constraints</code> </th>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the textbox edit constraints. The value is a string representing the constraints ( <code>any, emailaddr, numeric, phonenumber, url, decimal, password, sensitive, non_predictive, initial_caps_work, initial_caps_sentence</code> ). The default value is <code>any</code>. </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>tooltip</code> </th>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the tooltip text. </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>onchange</code> </th>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> The change called method. </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="5"> Inherited attributes : see {@link Text} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="4"> <font size="+2"> Style properties </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Property </th>
- * 		<th width="1%"> Default </th>
- * 		<th width="1%"> Inherit </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="4"> Inherited style properties : see {@link Text} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available style pseudo-classes </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Pseudo-class </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited style pseudo-classes : see {@link Text} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available internal widgets </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> internal widget </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited internal widgets : see {@link Text} </td>
- * 	</tr>
- * </table>
+ * This class represents a textfield.
  * 
  * @author bbeaulant
  */
@@ -190,11 +98,7 @@ public class TextField extends Text implements CommandListener {
 	 */
 	public boolean setAttribute(String name, String value) {
 		if (KuixConstants.TOOLTIP_ATTRIBUTE.equals(name)) {
-			if (tooltipText == null) {
-				tooltipText = new Text();
-				tooltipText.setStyleClass(KuixConstants.TEXT_FIELD_TOOLTIP_STYLE_CLASS);
-			}
-			tooltipText.setText(value);
+			setTooltip(value);
 			return true;
 		}
 		if (KuixConstants.ON_CHANGE_ATTRIBUTE.equals(name)) {
@@ -285,6 +189,29 @@ public class TextField extends Text implements CommandListener {
 	public void setConstraints(int constraints) {
 		this.constraints = constraints;
 	}
+	
+	/**
+	 * @return th tooltip
+	 */
+	public String getTooltip() {
+		if (tooltipText != null) {
+			return tooltipText.getText();
+		}
+		return null;
+	}
+	
+	/**
+	 * Define the {@link TextField} tooltip text.
+	 * 
+	 * @param text
+	 */
+	public void setTooltip(String text) {
+		if (tooltipText == null) {
+			tooltipText = new Text();
+			tooltipText.setStyleClass(KuixConstants.TEXT_FIELD_TOOLTIP_STYLE_CLASS);
+		}
+		tooltipText.setText(text);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.FocusableWidget#isFocusable()
@@ -296,7 +223,7 @@ public class TextField extends Text implements CommandListener {
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.AbstractTextWidget#setText(java.lang.String)
 	 */
-	public AbstractTextWidget setText(String text) {
+	public TextWidget setText(String text) {
 		displayedText = null;
 		return super.setText(text != null ? text.substring(0, Math.min(text.length(), maxSize)) : null);
 	}

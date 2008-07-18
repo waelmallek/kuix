@@ -61,11 +61,10 @@ import org.kalmeo.kuix.widget.ListItem;
 import org.kalmeo.kuix.widget.Menu;
 import org.kalmeo.kuix.widget.MenuItem;
 import org.kalmeo.kuix.widget.Picture;
-import org.kalmeo.kuix.widget.PopupMenu;
 import org.kalmeo.kuix.widget.RadioButton;
 import org.kalmeo.kuix.widget.RadioGroup;
 import org.kalmeo.kuix.widget.ScrollBar;
-import org.kalmeo.kuix.widget.ScrollContainer;
+import org.kalmeo.kuix.widget.ScrollPane;
 import org.kalmeo.kuix.widget.TabFolder;
 import org.kalmeo.kuix.widget.TabItem;
 import org.kalmeo.kuix.widget.Text;
@@ -105,8 +104,8 @@ public class KuixConverter {
 		if (KuixConstants.CONTAINER_WIDGET_TAG.equals(tag)) {
 			return new Widget(KuixConstants.CONTAINER_WIDGET_TAG);
 		}
-		if (KuixConstants.SCROLL_CONTAINER_WIDGET_TAG.equals(tag)) {
-			return new ScrollContainer();
+		if (KuixConstants.SCROLL_PANE_WIDGET_TAG.equals(tag)) {
+			return new ScrollPane();
 		}
 		if (KuixConstants.DRAG_AND_DROP_CONTAINER_WIDGET_TAG.equals(tag)) {
 			return new DragAndDropContainer();
@@ -144,14 +143,8 @@ public class KuixConverter {
 		if (KuixConstants.TAB_ITEM_WIDGET_TAG.equals(tag)) {
 			return new TabItem();
 		}
-		if (KuixConstants.DEFAULT_TAB_ITEM_WIDGET_TAG.equals(tag)) {
-			return new TabItem(KuixConstants.DEFAULT_TAB_ITEM_WIDGET_TAG, null);
-		}
 		if (KuixConstants.MENU_WIDGET_TAG.equals(tag)) {
 			return new Menu();
-		}
-		if (KuixConstants.POPUP_MENU_WIDGET_TAG.equals(tag)) {
-			return new PopupMenu();
 		}
 		if (KuixConstants.MENU_ITEM_WIDGET_TAG.equals(tag)) {
 			return new MenuItem();
@@ -342,9 +335,9 @@ public class KuixConverter {
 		int style = Font.STYLE_PLAIN;
 		while (values.hasMoreTokens()) {
 			
-			String fontAttribute = ((String) values.nextElement()).toLowerCase();
+			String fontAttribute = values.nextToken().toLowerCase();
 			
-			// Style (plain|bold|italic|underline)
+			// Style (plain bold italic underline)
 			if ("bold".equals(fontAttribute)) {
 				style |= Font.STYLE_BOLD;
 			} else if ("italic".equals(fontAttribute)) {
@@ -454,7 +447,7 @@ public class KuixConverter {
 		if (isNone(rawData)) {
 			return null;
 		}
-		int[] intValues = convertIntArray(rawData, 1, StringTokenizer.DEFAULT_DELIM);
+		int[] intValues = convertIntArray(rawData.trim(), 1, StringTokenizer.DEFAULT_DELIM);
 		if (intValues != null) {
 			if (intValues.length == 1) {
 				return new Repeat(intValues[0], intValues[0]);
@@ -480,7 +473,7 @@ public class KuixConverter {
 			Repeat[] repeats = new Repeat[values.countTokens()];
 			for (int i = 0; values.hasMoreTokens(); ++i) {
 				try {
-					repeats[i] = convertRepeat((String) values.nextElement());
+					repeats[i] = convertRepeat(values.nextToken());
 					continue;
 				} catch (Exception e) {
 					return null;
@@ -529,10 +522,10 @@ public class KuixConverter {
 		if (isNone(rawData)) {
 			return null;
 		}
-		StringTokenizer values = new StringTokenizer(rawData);
+		StringTokenizer values = new StringTokenizer(rawData.trim());
 		while (values.hasMoreTokens()) {
 
-			String alignmentValue = ((String) values.nextElement()).toLowerCase();
+			String alignmentValue = values.nextToken().toLowerCase();
 
 			if ("top-left".equals(alignmentValue)) {
 				return Alignment.TOP_LEFT;
@@ -584,7 +577,7 @@ public class KuixConverter {
 			Alignment[] alignments = new Alignment[values.countTokens()];
 			for (int i = 0; values.hasMoreTokens(); ++i) {
 				try {
-					alignments[i] = convertAlignment((String) values.nextElement());
+					alignments[i] = convertAlignment(values.nextToken());
 					continue;
 				} catch (Exception e) {
 					return null;
@@ -607,7 +600,7 @@ public class KuixConverter {
 		}
 		String rawParams = null;
 		String imgSrc = null;
-		if ((rawParams = extractRawParams("url", rawData)) != null) {
+		if ((rawParams = extractRawParams("url", rawData.trim())) != null) {
 			StringTokenizer st = new StringTokenizer(rawParams, ",");
 			int numTokens = st.countTokens();
 			if (numTokens >= 1) {
@@ -678,7 +671,7 @@ public class KuixConverter {
 			Image[] images = new Image[values.countTokens()];
 			for (int i = 0; values.hasMoreTokens(); ++i) {
 				try {
-					images[i] = convertImage((String) values.nextElement());
+					images[i] = convertImage(values.nextToken());
 					continue;
 				} catch (Exception e) {
 					return null;

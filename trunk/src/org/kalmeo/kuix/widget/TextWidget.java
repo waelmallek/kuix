@@ -26,93 +26,11 @@ import javax.microedition.lcdui.Font;
 import org.kalmeo.kuix.core.KuixConstants;
 
 /**
- * This abstract class is base for all text widgets.
- * 
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="5"><font size="+2"> Attributes </font></th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Attribute </th>
- * 		<th width="1%"> Object </th>
- * 		<th width="1%"> Set </th>
- * 		<th width="1%"> Get </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>text</code> </th>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> Define the text value. </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="5"> Inherited attributes : see {@link Widget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="4"> <font size="+2"> Style properties </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Property </th>
- * 		<th width="1%"> Default </th>
- * 		<th width="1%"> Inherit </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>font-face</code> </th>
- * 		<td> <code>system</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the font face </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>font-style</code> </th>
- * 		<td> <code>plain</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the font style </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>font-size</code> </th>
- * 		<td> <code>medium</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the font size </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="4"> Inherited style properties : see {@link Widget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available style pseudo-classes </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Pseudo-class </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited style pseudo-classes : see {@link Widget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available internal widgets </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> internal widget </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited internal widgets : see {@link AbstractFocusableWidget} </td>
- * 	</tr>
- * </table>
+ * This class is base for all text widgets.
  * 
  * @author bbeaulant
  */
-public abstract class AbstractTextWidget extends AbstractFocusableWidget {
+public abstract class TextWidget extends FocusableWidget {
 
 	// The default Font value
 	private Integer defaultFontFace = null;
@@ -126,11 +44,11 @@ public abstract class AbstractTextWidget extends AbstractFocusableWidget {
 	private Font cachedFont;
 
 	/**
-	 * Construct a {@link AbstractTextWidget}
+	 * Construct a {@link TextWidget}
 	 * 
 	 * @param tag
 	 */
-	public AbstractTextWidget(String tag) {
+	public TextWidget(String tag) {
 		super(tag);
 	}
 	
@@ -202,13 +120,13 @@ public abstract class AbstractTextWidget extends AbstractFocusableWidget {
 	}
 
 	/**
-	 * Returns the instance of this {@link AbstractTextWidget}
+	 * Returns the instance of this {@link TextWidget}
 	 * Useful in this case :
 	 * <code>AbstractTextWidget text = new Text().setText("message");</code>
 	 * 
 	 * @param text the text to set
 	 */
-	public AbstractTextWidget setText(String text) {
+	public TextWidget setText(String text) {
 		this.text = text;
 		invalidate();
 		return this;

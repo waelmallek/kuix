@@ -39,87 +39,11 @@ import org.kalmeo.util.xml.LightXmlParser;
 import org.kalmeo.util.xml.LightXmlParserHandler;
 
 /**
- * This class represent a textarea.
- * 
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="5"><font size="+2"> Attributes </font></th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Attribute </th>
- * 		<th width="1%"> Object </th>
- * 		<th width="1%"> Set </th>
- * 		<th width="1%"> Get </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>styled</code> </th>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define if the text area use pseudo html style syntax. The value is a boolean (<code>true or false</code>). </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="5"> Inherited attributes : see {@link AbstractTextWidget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="4"> <font size="+2"> Style properties </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Property </th>
- * 		<th width="1%"> Default </th>
- * 		<th width="1%"> Inherit </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>layout</code> </th>
- * 		<td> <code>flowlayout(bottom)</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <b>Uneditable</b>, see {@link Widget} </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>gap</code> </th>
- * 		<td> <code> - </code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <b>Uneditable</b>, see {@link Widget} </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="4"> Inherited style properties : see {@link AbstractTextWidget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available style pseudo-classes </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Pseudo-class </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited style pseudo-classes : see {@link AbstractTextWidget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available internal widgets </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> internal widget </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited internal widgets : see {@link AbstractTextWidget} </td>
- * 	</tr>
- * </table>
+ * This class represents a textarea.
  * 
  * @author bbeaulant
  */
-public class TextArea extends AbstractTextWidget {
+public class TextArea extends TextWidget {
 
 	// Defaults
 	private static final Layout TEXTAREA_DEFAULT_LAYOUT = new FlowLayout(Alignment.BOTTOM);
@@ -155,7 +79,7 @@ public class TextArea extends AbstractTextWidget {
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Text#setText(java.lang.String)
 	 */
-	public AbstractTextWidget setText(String text) {
+	public TextWidget setText(String text) {
 		super.setText(text);
 		needToReflow = true;
 		return this;

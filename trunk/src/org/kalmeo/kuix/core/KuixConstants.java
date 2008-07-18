@@ -148,13 +148,16 @@ public interface KuixConstants {
 	// Style properties
 	
 	public static final String COLOR_STYLE_PROPERTY 						= "color";
+	
 	public static final String FONT_FACE_STYLE_PROPERTY 					= "font-face";
 	public static final String FONT_STYLE_STYLE_PROPERTY					= "font-style";
 	public static final String FONT_SIZE_STYLE_PROPERTY 					= "font-size";
+	
 	public static final String BACKGROUND_COLOR_STYLE_PROPERTY 				= "bg-color";
 	public static final String BACKGROUND_IMAGE_STYLE_PROPERTY 				= "bg-image";
 	public static final String BACKGROUND_ALIGN_STYLE_PROPERTY 				= "bg-align";
 	public static final String BACKGROUND_REPEAT_STYLE_PROPERTY 			= "bg-repeat";
+	
 	public static final String BORDER_COLOR_STYLE_PROPERTY 					= "border-color";
 	public static final String BORDER_IMAGES_STYLE_PROPERTY 				= "border-images";
 	public static final String BORDER_ALIGN_STYLE_PROPERTY 					= "border-align";
@@ -166,11 +169,14 @@ public interface KuixConstants {
 	public static final String MARGIN_STYLE_PROPERTY 						= "margin";
 	public static final String BORDER_STYLE_PROPERTY 						= "border";
 	public static final String PADDING_STYLE_PROPERTY 						= "padding";
+	
 	public static final String GAP_STYLE_PROPERTY 							= "gap";
 	public static final String SPAN_STYLE_PROPERTY 							= "span";
 	public static final String WEIGHT_STYLE_PROPERTY 						= "weight";
 	public static final String MIN_SIZE_STYLE_PROPERTY 						= "min-size";
+	
 	public static final String ALIGN_STYLE_PROPERTY 						= "align";
+	
 	public static final String TRANSITION_STYLE_PROPERTY					= "transition";
 	
 	/////////////////////////////////////////////////////////////////////////////////////////
@@ -186,8 +192,6 @@ public interface KuixConstants {
 	public static final String ALERT_WARNING_STYLE_CLASS					= "alertwarning";
 	public static final String ALERT_ERROR_STYLE_CLASS						= "alerterror";
 	public static final String ALERT_QUESTION_STYLE_CLASS					= "alertquestion";
-	
-	public static final String CHOICE_SCREEN_STYLE_CLASS					= "choicescreen";
 	
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Styled TextArea tags
@@ -208,7 +212,6 @@ public interface KuixConstants {
 	// Widgets tags
 	
 	public static final String DEFAULT_WIDGET_TAG 							= "widget";
-	public static final String BAR_WIDGET_TAG 								= "bar";
 	public static final String BREAK_WIDGET_TAG 							= "break";
 	public static final String BUTTON_WIDGET_TAG 							= "button";
 	public static final String HYPERLINK_WIDGET_TAG 						= "hyperlink";
@@ -216,37 +219,51 @@ public interface KuixConstants {
 	public static final String CONTAINER_WIDGET_TAG 						= "container";
 	public static final String DESKTOP_WIDGET_TAG 							= "desktop";
 	public static final String DRAG_AND_DROP_CONTAINER_WIDGET_TAG 			= "dndcontainer";
-	public static final String FIRST_MENU_WIDGET_TAG 						= "firstmenu";
 	public static final String LIST_WIDGET_TAG 								= "list";
 	public static final String LIST_ITEM_WIDGET_TAG 						= "listitem";
-	public static final String MENU_WIDGET_TAG 								= "menu";
 	public static final String MENU_ITEM_WIDGET_TAG 						= "menuitem";
 	public static final String PICTURE_WIDGET_TAG 							= "picture";
-	public static final String POPUP_BOX_WIDGET_TAG 						= "popupbox";
-	public static final String POPUP_BOX_CONTAINER_WIDGET_TAG 				= "popupboxcontainer";
-	public static final String POPUP_BOX_BUTTONS_CONTAINER_WIDGET_TAG 		= "popupboxbuttonscontainer";
-	public static final String POPUP_MENU_WIDGET_TAG 						= "popupmenu";
-	public static final String GAUGE_WIDGET_TAG 							= "gauge";
 	public static final String RADIO_BUTTON_WIDGET_TAG 						= "radiobutton";
 	public static final String RADIO_GROUP_WIDGET_TAG 						= "radiogroup";
-	public static final String SCREEN_WIDGET_TAG 							= "screen";
-	public static final String SCROLL_BAR_WIDGET_TAG 						= "scrollbar";
-	public static final String SCROLL_CONTAINER_WIDGET_TAG 					= "scrollcontainer";
-	public static final String SCROLL_CONTAINER_CONTAINER_WIDGET_TAG 		= "scrollcontainercontainer";
-	public static final String SECOND_MENU_WIDGET_TAG 						= "secondmenu";
-	public static final String TAB_BUTTON_WIDGET_TAG 						= "tabbutton";
-	public static final String TAB_BUTTONS_CONTAINER_WIDGET_TAG 			= "tabbuttonscontainer";
-	public static final String TAB_FOLDER_WIDGET_TAG 						= "tabfolder";
-	public static final String TAB_ITEM_WIDGET_TAG 							= "tabitem";
-	public static final String DEFAULT_TAB_ITEM_WIDGET_TAG 					= "defaulttabitem";
-	public static final String TAB_ITEM_CONTAINER_WIDGET_TAG 				= "tabitemcontainer";
 	public static final String TEXT_WIDGET_TAG 								= "text";
 	public static final String TEXT_AREA_WIDGET_TAG 						= "textarea";
 	public static final String TEXT_FIELD_WIDGET_TAG 						= "textfield";
-	public static final String TOP_BAR_WIDGET_TAG 							= "topbar";
-	public static final String BOTTOM_BAR_WIDGET_TAG 						= "bottombar";
+	
+	public static final String TAB_BUTTON_WIDGET_TAG 						= "tabbutton";
+	public static final String TAB_ITEM_WIDGET_TAG 							= "tabitem";
+	
+	public static final String TAB_FOLDER_WIDGET_TAG 						= "tabfolder";
+	public static final String TAB_FOLDER_DEFAULT_TAB_ITEM_WIDGET_TAG 		= "tabfolderdefaulttabitem";
+	public static final String TAB_FOLDER_BUTTONS_CONTAINER_WIDGET_TAG 		= "tabfolderbuttonscontainer";
+	public static final String TAB_FOLDER_CONTAINER_WIDGET_TAG 				= "tabfoldercontainer";
+	
+	public static final String GAUGE_WIDGET_TAG 							= "gauge";
+	public static final String GAUGE_BAR_WIDGET_TAG 						= "gaugebar";
+	
+	public static final String SCROLL_BAR_WIDGET_TAG 						= "scrollbar";
+	public static final String SCROLL_BAR_BAR_WIDGET_TAG 					= "scrollbarbar";
+	
+	public static final String MENU_WIDGET_TAG 								= "menu";
+	public static final String MENU_POPUP_WIDGET_TAG 						= "menupopup";
+	
+	public static final String SCREEN_WIDGET_TAG 							= "screen";
+	public static final String SCREEN_TOP_BAR_WIDGET_TAG 					= "screentopbar";
+	public static final String SCREEN_BOTTOM_BAR_WIDGET_TAG 				= "screenbottombar";
+	public static final String SCREEN_FIRST_MENU_WIDGET_TAG 				= "screenfirstmenu";
+	public static final String SCREEN_SECOND_MENU_WIDGET_TAG				= "screensecondmenu";
+	
+	public static final String SCROLL_PANE_WIDGET_TAG 						= "scrollpane";
+	public static final String SCROLL_PANE_CONTAINER_WIDGET_TAG 			= "scrollpanecontainer";
+	public static final String SCROLL_PANE_SCROLL_BAR_WIDGET_TAG 			= "scrollpanescrollbar";
+
+	public static final String POPUP_BOX_WIDGET_TAG 						= "popupbox";
+	public static final String POPUP_BOX_CONTAINER_WIDGET_TAG 				= "popupboxcontainer";
+	public static final String POPUP_BOX_BUTTONS_CONTAINER_WIDGET_TAG 		= "popupboxbuttonscontainer";
+
 	public static final String CHOICE_WIDGET_TAG 							= "choice";
 	public static final String CHOICE_CONTAINER_WIDGET_TAG 					= "choicecontainer";
+	public static final String CHOICE_SCREEN_WIDGET_TAG 					= "choicescreen";
+	public static final String CHOICE_RADIO_GROUP_WIDGET_TAG 				= "choiceradiogroup";
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Constants for platforms  names
