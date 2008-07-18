@@ -33,80 +33,11 @@ import org.kalmeo.util.worker.Worker;
 import org.kalmeo.util.worker.WorkerTask;
 
 /**
- * This class represent a popup box.
- * 
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="5"><font size="+2"> Attributes </font></th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Attribute </th>
- * 		<th width="1%"> Object </th>
- * 		<th width="1%"> Set </th>
- * 		<th width="1%"> Get </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="5"> Inherited attributes : see {@link AbstractActionWidget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="4"> <font size="+2"> Style properties </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Property </th>
- * 		<th width="1%"> Default </th>
- * 		<th width="1%"> Inherit </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>layout</code> </th>
- * 		<td> <code>borderlayout</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <b>Uneditable</b>, see {@link Widget} </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>layout-data</code> </th>
- * 		<td> <code>sld(center,-1,-1)</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> see {@link Widget} </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="4"> Inherited style properties : see {@link AbstractActionWidget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available style pseudo-classes </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Pseudo-class </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited style pseudo-classes : see {@link AbstractActionWidget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available internal widgets </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> internal widget </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited internal widgets : see {@link AbstractActionWidget} </td>
- * 	</tr>
- * </table>
+ * This class represents a popup box.
  * 
  * @author bbeaulant
  */
-public class PopupBox extends AbstractActionWidget {
+public class PopupBox extends ActionWidget {
 
 	// Defaults
 	private static final LayoutData POPUP_BOX_DEFAULT_LAYOUT_DATA = new StaticLayoutData(Alignment.CENTER);
@@ -118,36 +49,8 @@ public class PopupBox extends AbstractActionWidget {
 	private int duration = -1;
 	
 	// Internal widgets
-	private final Widget container = new Widget(KuixConstants.POPUP_BOX_CONTAINER_WIDGET_TAG) {
-
-		/* (non-Javadoc)
-		 * @see org.kalmeo.kuix.widget.Widget#getLayout()
-		 */
-		public Layout getLayout() {
-			return BorderLayout.instance;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.kalmeo.kuix.widget.Widget#getLayoutData()
-		 */
-		public LayoutData getLayoutData() {
-			return BorderLayoutData.instanceCenter;
-		}
-		
-	};
-	private final Widget buttonsContainer = new Widget(KuixConstants.POPUP_BOX_BUTTONS_CONTAINER_WIDGET_TAG) {
-
-		/* (non-Javadoc)
-		 * @see org.kalmeo.kuix.widget.Widget#getDefaultStylePropertyValue(java.lang.String)
-		 */
-		protected Object getDefaultStylePropertyValue(String name) {
-			if (KuixConstants.LAYOUT_DATA_STYLE_PROPERTY.equals(name)) {
-				return BorderLayoutData.instanceSouth;
-			}
-			return super.getDefaultStylePropertyValue(name);
-		}
-		
-	};
+	private final Widget container;
+	private final Widget buttonsContainer;
 	
 	// Widget include via setContent method
 	private Widget contentWidget;
@@ -161,7 +64,41 @@ public class PopupBox extends AbstractActionWidget {
 	public PopupBox() {
 		super(KuixConstants.POPUP_BOX_WIDGET_TAG);
 		
-		// Create FocusManager
+		// Create the content container
+		container = new Widget(KuixConstants.POPUP_BOX_CONTAINER_WIDGET_TAG) {
+
+			/* (non-Javadoc)
+			 * @see org.kalmeo.kuix.widget.Widget#getLayout()
+			 */
+			public Layout getLayout() {
+				return BorderLayout.instance;
+			}
+
+			/* (non-Javadoc)
+			 * @see org.kalmeo.kuix.widget.Widget#getLayoutData()
+			 */
+			public LayoutData getLayoutData() {
+				return BorderLayoutData.instanceCenter;
+			}
+			
+		};
+		
+		// Create the buttons container
+		buttonsContainer = new Widget(KuixConstants.POPUP_BOX_BUTTONS_CONTAINER_WIDGET_TAG) {
+
+			/* (non-Javadoc)
+			 * @see org.kalmeo.kuix.widget.Widget#getDefaultStylePropertyValue(java.lang.String)
+			 */
+			protected Object getDefaultStylePropertyValue(String name) {
+				if (KuixConstants.LAYOUT_DATA_STYLE_PROPERTY.equals(name)) {
+					return BorderLayoutData.instanceSouth;
+				}
+				return super.getDefaultStylePropertyValue(name);
+			}
+			
+		};
+		
+		// Create the FocusManager
 		focusManager = new FocusManager(this, false);
 		
 		// Define popupBox close shortcut key
@@ -171,6 +108,19 @@ public class PopupBox extends AbstractActionWidget {
 		// Add content containers
 		add(container);
 		add(buttonsContainer);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#getInternalChildInstance(java.lang.String)
+	 */
+	public Widget getInternalChildInstance(String tag) {
+		if (KuixConstants.POPUP_BOX_CONTAINER_WIDGET_TAG.equals(tag)) {
+			return container;
+		}
+		if (KuixConstants.POPUP_BOX_BUTTONS_CONTAINER_WIDGET_TAG.equals(tag)) {
+			return buttonsContainer;
+		}
+		return super.getInternalChildInstance(tag);
 	}
 
 	/* (non-Javadoc)

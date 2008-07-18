@@ -34,116 +34,12 @@ import org.kalmeo.util.BooleanUtil;
 import org.kalmeo.util.MathFP;
 
 /**
- * This class represent a scroll container.
- * 
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="5"><font size="+2"> Attributes </font></th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Attribute </th>
- * 		<th width="1%"> Object </th>
- * 		<th width="1%"> Set </th>
- * 		<th width="1%"> Get </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>horizontal</code> </th>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define if this scrollContainer is horizontal. Default value is <code>false</code>. </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>usemarkers</code> </th>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define if the top and bottom invisible but focusable markers are present. Set this attribute to <code>false</code> if the child of this scrollcontainer is a list or all other widget where its first and last child is focusable. </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>showscrollbar</code> </th>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define if the scrollBar is displayed. Default value <code>true</code>. </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="5"> Inherited attributes : see {@link Widget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="4"> <font size="+2"> Style properties </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Property </th>
- * 		<th width="1%"> Default </th>
- * 		<th width="1%"> Inherit </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>align</code> </th>
- * 		<td> <code>fill-top / fill-left</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <b>Uneditable</b>, see {@link Widget} </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>layout</code> </th>
- * 		<td> <code>inlinelayout(false,fill)</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <b>Uneditable</b>, see {@link Widget} </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="4"> Inherited style properties : see {@link Widget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available style pseudo-classes </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Pseudo-class </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited style pseudo-classes : see {@link Widget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available internal widgets </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> internal widget </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>scrollcontainercontainer</code> </th>
- * 		<td> The scroll container container (where content is added). </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>scrollbar</code> </th>
- * 		<td> The scroll container {@link ScrollBar}. </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited internal widgets : see {@link Widget} </td>
- * 	</tr>
- * </table>
+ * This class represents a scroll pane.
  * 
  * @author bbeaulant
  */
-public class ScrollContainer extends Widget {
+public class ScrollPane extends Widget {
 
-	/**
-	 * Markers class
-	 */
-	private class Marker extends AbstractFocusableWidget {
-	}
-	
 	// Defaults
 	private static final int MAX_INCREMENT_DIVIDER = 4;
 
@@ -154,8 +50,8 @@ public class ScrollContainer extends Widget {
 	private final ScrollBar scrollBar;
 	
 	// Markers
-	private final Marker firstMarker = new Marker();
-	private final Marker lastMarker = new Marker();
+	private final FocusableWidget firstMarker = new FocusableWidget();
+	private final FocusableWidget lastMarker = new FocusableWidget();
 
 	// Attributes
 	private boolean horizontal;
@@ -178,20 +74,20 @@ public class ScrollContainer extends Widget {
 	private int pressedYOffset = 0;
 	
 	/**
-	 * Construct a {@link ScrollContainer}
+	 * Construct a {@link ScrollPane}
 	 */
-	public ScrollContainer() {
-		this(KuixConstants.SCROLL_CONTAINER_WIDGET_TAG);
+	public ScrollPane() {
+		this(KuixConstants.SCROLL_PANE_WIDGET_TAG);
 	}
 	
 	/**
-	 * Construct a {@link ScrollContainer}
+	 * Construct a {@link ScrollPane}
 	 *
 	 * @param tag
 	 */
-	public ScrollContainer(String tag) {
+	public ScrollPane(String tag) {
 		super(tag);
-		container = new Widget(KuixConstants.SCROLL_CONTAINER_CONTAINER_WIDGET_TAG) {
+		container = new Widget(KuixConstants.SCROLL_PANE_CONTAINER_WIDGET_TAG) {
 			
 			private final InlineLayout layout = new InlineLayout(false, Alignment.FILL);
 			
@@ -275,7 +171,7 @@ public class ScrollContainer extends Widget {
 			 * @see org.kalmeo.kuix.widget.Widget#invalidateAppearanceRegion(int, int, int, int)
 			 */
 			protected void invalidateAppearanceRegion(int x, int y, int width, int height) {
-				super.invalidateAppearanceRegion(x + getX() - xOffset, y + getY() - yOffset, width, height);
+				super.invalidateAppearanceRegion(x - xOffset, y - yOffset, width, height);
 			}
 
 			/* (non-Javadoc)
@@ -289,7 +185,14 @@ public class ScrollContainer extends Widget {
 
 		};
 		super.add(container);
-		scrollBar = new ScrollBar() {
+		scrollBar = new ScrollBar(KuixConstants.SCROLL_PANE_SCROLL_BAR_WIDGET_TAG) {
+
+			/* (non-Javadoc)
+			 * @see org.kalmeo.kuix.widget.Widget#getInheritedTag()
+			 */
+			public String getInheritedTag() {
+				return KuixConstants.SCROLL_BAR_WIDGET_TAG;
+			}
 
 			/* (non-Javadoc)
 			 * @see org.kalmeo.kuix.widget.Widget#getDefaultStylePropertyValue(java.lang.String)
@@ -344,10 +247,10 @@ public class ScrollContainer extends Widget {
 	 * @see org.kalmeo.kuix.widget.Widget#getInternalChildInstance(java.lang.String)
 	 */
 	public Widget getInternalChildInstance(String tag) {
-		if (KuixConstants.SCROLL_CONTAINER_CONTAINER_WIDGET_TAG.equals(tag)) {
+		if (KuixConstants.SCROLL_PANE_CONTAINER_WIDGET_TAG.equals(tag)) {
 			return getContainer();
 		}
-		if (KuixConstants.SCROLL_BAR_WIDGET_TAG.equals(tag)) {
+		if (KuixConstants.SCROLL_PANE_SCROLL_BAR_WIDGET_TAG.equals(tag)) {
 			return getScrollBar();
 		}
 		return super.getInternalChildInstance(tag);

@@ -9,12 +9,14 @@
 - Bug fix : avoid a style inheritance bug when a widget was included in a same tag widget.
 - Bug fix : avoid invisible button bug on Error alert
 
+- Improve render speed by adding a cache system on style values
+
 - Add #inc (include) statement capabilities in XML files.
   - syntax : #inc(&lt;absolute file path&gt;) 
   - between two widget tags, include file's content is parsed as a normal xml file and add content to current widget.
   - between two attribute tags (name starts with '_'), include file's content is convert to string as attribute value. 
 - Add a new **Choice** widget (it extends the RadioGroup capabilities to be able to use it as comboBox)
-  - Usage : &lt;choice&gt;&lt;radioGroup&gt;&lt;radioButton&gt;Choice1&lt;/radioButton&gt;&lt;radioButton&gt;Choice2&lt;/radioButton&gt;&lt;/radioButton&gt;&lt;/choice&gt;
+  - Usage : &lt;choice&gt;&lt;choiceRadioGroup&gt;&lt;radioButton&gt;Choice1&lt;/radioButton&gt;&lt;radioButton&gt;Choice2&lt;/radioButton&gt;&lt;/choiceRadioGroup&gt;&lt;/choice&gt;
 - Add filter capabilities to DataProvider
 - Add a Kuix.loadWidget(String, Class, DataProvider) method
 - Add a getter on the CheckBox's selected attribute. Caution, a boolean string representation is returned and not a real boolean. Use org.kalmeo.util.BooleanUtil.parseBoolean(String) method to convert it.
@@ -25,6 +27,7 @@
 - Add a *min-size* style property
 - Add multi *bg-image* capabilities (e.g. container { bg-image: url(img1.png)|url(img2.png) }
 - Add *barsontop* attribute on Screen widget. It defines if topBar and bottomBar are displayed on top of screen's content.
+- Add a Widget.getInheritedTag() method that permit for a widget to have it's own tag and inherit all style properties from and other tag. In this case *choiceScreen* can now inherit style properties from *screen*. 
 
 - Change Kuix.parseMethod signature from Kuix.parseMethod(String data, Widget owner, Desktop desktop) to Kuix.parseMethod(String data, Widget owner)
 - Change Widget.clearCachedStyle() signature to Widget.clearCachedStyle(boolean propagateToChildren)
@@ -47,13 +50,36 @@
 - RadioGroup changes :
   - RadioGroup now extends List, to be able to build child RadioButtons from a DataProvider like lists (with renderer).
   
-- ScrollContainer changes :
-  - ScrollContainer can be horizontal
+- ScrollPane changes :
+  - ScrollPane can be horizontal
   - You can hide scrollBar through the *showScrollBar* attribute
-  - You can now access to the *ScrollContainerContainer* inner widget
+  - You can now access to the *ScrollPaneContainer* inner widget
   
 - Picture changes:
   - Picture now accept javax.microedition.lcdui.Image input imageData.
+
+- Class **refactoring** :
+  - AbstractFocusableWidget *become* FocusableWidget
+  - AbstractActionWidget *become* ActionWidget
+  - AbstractTextWidget *become* TextWidget
+  
+- Widget tags **refactoring** :
+  - scrollbar's bar *become* scrollbarbar
+
+  - scrollcontainer *become* scrollpane
+  - scrollcontainercontainer *become* scrollpanecontainer
+  
+  - screen's topbar *become* screentopbar
+  - screen's bottombar *become* screenbottombar
+  
+  - choice's screen *become* choicescreen
+  - choice's radiobutton *become* choiceradiobutton
+  
+  - tabbuttonscontainer *become* tabfolderbuttonscontainer
+  - defaulttabitem *become* tabfolderdefaulttabitem
+  - tabitemcontainer *become* tabfoldercontainer
+  
+  - popupmenu *become* menupopup
 
 ##Version 1.0.0RC3 (2008-05-27)
 

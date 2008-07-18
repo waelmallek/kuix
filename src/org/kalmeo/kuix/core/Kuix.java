@@ -37,7 +37,7 @@ import org.kalmeo.kuix.core.style.Style;
 import org.kalmeo.kuix.core.style.StyleProperty;
 import org.kalmeo.kuix.core.style.StyleSelector;
 import org.kalmeo.kuix.util.Method;
-import org.kalmeo.kuix.widget.AbstractTextWidget;
+import org.kalmeo.kuix.widget.TextWidget;
 import org.kalmeo.kuix.widget.Picture;
 import org.kalmeo.kuix.widget.Screen;
 import org.kalmeo.kuix.widget.Text;
@@ -54,6 +54,7 @@ import org.kalmeo.util.xml.LightXmlParserHandler;
  * 
  * TODO : Fix Table layout bug in ScrollContainer widget
  * TODO : fix setCurrentScreen after showPopupBox (problem with focusManager priority)
+ * TODO Doc : - add image - add inherited tag - show internal status
  * 
  * @author bbeaulant
  */
@@ -475,7 +476,7 @@ public final class Kuix {
 							
 							// If no attribute is defined
 							if (usedAttribute == null) {
-								if (widget instanceof AbstractTextWidget) {
+								if (widget instanceof TextWidget) {
 									usedAttribute = KuixConstants.TEXT_ATTRIBUTE;
 								} else if (widget instanceof Picture) {
 									usedAttribute = KuixConstants.SRC_ATTRIBUTE;
@@ -934,10 +935,10 @@ public final class Kuix {
 						while (currentWidget != null && !isCompatible) {
 
 							// Id
-							if (styleSelector.hasId() && currentWidget.getId() != null) {
+							if (styleSelector.hasId()) {
 								if (currentWidget.getId() != null && currentWidget.getId().equals(styleSelector.getId())) {
 									isCompatible = true;
-									score += 10000;
+									score += 1000000;
 								}
 							}
 							
@@ -950,21 +951,29 @@ public final class Kuix {
 										String styleClass = styleClasses[i];
 										if (styleClass != null && styleClass.equals(styleSelector.getStyleClass())) {
 											isCompatible = true;
-											score += 100;
+											score += 10000;
 											break;
 										}
 									}
 								}
 							}
 
-							// Tag
-							if (!isCompatible && currentWidget.getTag() != null) {
-								if (currentWidget.getTag().equals(styleSelector.getTag())) {
+							if (styleSelector.hasTag()) {
+								
+								// Tag
+								if (!isCompatible && currentWidget.getTag() != null && currentWidget.getTag().equals(styleSelector.getTag())) {
+									isCompatible = true;
+									score += 100;
+								}
+								
+								// Inherited tag
+								if (!isCompatible && currentWidget.getInheritedTag() != null && currentWidget.getInheritedTag().equals(styleSelector.getTag())) {
 									isCompatible = true;
 									score++;
 								}
+								
 							}
-
+							
 							if (!isCompatible && score == 0) {
 								return 0;
 							}
@@ -975,7 +984,7 @@ public final class Kuix {
 									for (int j = styleSelector.getPseudoClasses().length - 1; j>=0; --j) {
 										if (pseudoClasses[i].equals(styleSelector.getPseudoClasses()[j])) {
 											isCompatible = true;
-											score += 1000000;
+											score += 100000000;
 										}
 									}
 								}

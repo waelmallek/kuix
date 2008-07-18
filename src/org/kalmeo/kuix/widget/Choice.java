@@ -31,86 +31,11 @@ import org.kalmeo.kuix.util.Alignment;
 import org.kalmeo.kuix.util.Gap;
 
 /**
- * This class represent a choice.
- * 
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="5"><font size="+2"> Attributes </font></th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Attribute </th>
- * 		<th width="1%"> Object </th>
- * 		<th width="1%"> Set </th>
- * 		<th width="1%"> Get </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="5"> Inherited attributes : see {@link AbstractActionWidget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="4"> <font size="+2"> Style properties </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Property </th>
- * 		<th width="1%"> Default </th>
- * 		<th width="1%"> Inherit </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>layout</code> </th>
- * 		<td> <code>gridlayout(1,1)</code> </td>
- * 		<td> false </td>
- * 		<td> see {@link Widget} </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="4"> Inherited style properties : see {@link AbstractActionWidget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available style pseudo-classes </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Pseudo-class </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited style pseudo-classes : see {@link AbstractActionWidget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available internal widgets </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> internal widget </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>choicecontainer</code> </th>
- * 		<td> The inner <code>container</code> widget used to hold the selected <code>radiobutton</code> content in the <code>choice</code> widget. </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>screen</code> </th>
- * 		<td> The inner <code>screen</code> widget used to hold radiogroup. </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>radiogroup</code> </th>
- * 		<td> The inner <code>radiogroup</code> widget used to hold choice values. </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited internal widgets : see {@link AbstractActionWidget} </td>
- * 	</tr>
- * </table>
+ * This class represents a choice.
  * 
  * @author bbeaulant
  */
-public class Choice extends AbstractActionWidget {
+public class Choice extends ActionWidget {
 
 	// The internal choice container (hold the selected radio button content)
 	private final Widget choiceContainer;
@@ -172,7 +97,14 @@ public class Choice extends AbstractActionWidget {
 		super.add(choiceContainer);
 		
 		// Create the inner screen
-		screen = new Screen() {
+		screen = new Screen(KuixConstants.CHOICE_SCREEN_WIDGET_TAG) {
+
+			/* (non-Javadoc)
+			 * @see org.kalmeo.kuix.widget.Widget#getInheritedTag()
+			 */
+			public String getInheritedTag() {
+				return KuixConstants.SCREEN_WIDGET_TAG;
+			}
 
 			/* (non-Javadoc)
 			 * @see org.kalmeo.kuix.widget.Screen#processMenuAction(org.kalmeo.kuix.widget.Menu, boolean, boolean)
@@ -190,17 +122,23 @@ public class Choice extends AbstractActionWidget {
 			}
 			
 		};
-		screen.setStyleClass(KuixConstants.CHOICE_SCREEN_STYLE_CLASS);
 		screen.switchToInternalMenus();
 		screen.setTitle(Kuix.getMessage(KuixConstants.PLEASE_SELECT_I18N_KEY));
 		
 		// Create the inner scroll container
-		ScrollContainer scrollContainer = new ScrollContainer();
+		ScrollPane scrollContainer = new ScrollPane();
 		scrollContainer.setUseMarkers(false);
 		screen.add(scrollContainer);
 
 		// Create the inner radio group
-		radioGroup = new RadioGroup() {
+		radioGroup = new RadioGroup(KuixConstants.CHOICE_RADIO_GROUP_WIDGET_TAG) {
+
+			/* (non-Javadoc)
+			 * @see org.kalmeo.kuix.widget.Widget#getInheritedTag()
+			 */
+			public String getInheritedTag() {
+				return KuixConstants.RADIO_GROUP_WIDGET_TAG;
+			}
 
 			/* (non-Javadoc)
 			 * @see org.kalmeo.kuix.widget.RadioGroup#setSelectedRadioButton(org.kalmeo.kuix.widget.RadioButton, boolean)
@@ -236,12 +174,12 @@ public class Choice extends AbstractActionWidget {
 	 */
 	public Widget getInternalChildInstance(String tag) {
 		if (KuixConstants.CHOICE_CONTAINER_WIDGET_TAG.equals(tag)) {
+			return getChoiceContainer();
+		}
+		if (KuixConstants.CHOICE_SCREEN_WIDGET_TAG.equals(tag)) {
 			return getScreen();
 		}
-		if (KuixConstants.SCREEN_WIDGET_TAG.equals(tag)) {
-			return getScreen();
-		}
-		if (KuixConstants.RADIO_GROUP_WIDGET_TAG.equals(tag)) {
+		if (KuixConstants.CHOICE_RADIO_GROUP_WIDGET_TAG.equals(tag)) {
 			return getRadioGroup();
 		}
 		return super.getInternalChildInstance(tag);

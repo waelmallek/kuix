@@ -40,133 +40,7 @@ import org.kalmeo.util.BooleanUtil;
 import org.kalmeo.util.MathFP;
 
 /**
- * This class represent a Kuix screen.
- * 
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="5"><font size="+2"> Attributes </font></th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Attribute </th>
- * 		<th width="1%"> Object </th>
- * 		<th width="1%"> Set </th>
- * 		<th width="1%"> Get </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>title</code> </th>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the screen title. The value is a string text. </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>focusloop</code> </th>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the screen's focus manager 'loop' parameter. Default value is <code>false</code>. </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>firstisleft</code> </th>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define if the first menu is on the left or the right. Default value is <code>true</code> </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>cleanupwhenremoved</code> </th>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define if the <code>cleanUp</code> method is called when this {@link Screen} is removed from the widget tree. Activate this parameter if you don't want to see this Screen any more. Default value is <code>false</code>. </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>barsontop</code> </th>
- * 		<td> <code>No</code> </td>
- * 		<td> <code>Yes</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define if the <code>topBar</code> and <code>bottomBar</code> are displayed on top of screen's content. Default value is <code>false</code> </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="5"> Inherited attributes : see {@link AbstractActionWidget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="4"> <font size="+2"> Style properties </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Property </th>
- * 		<th width="1%"> Default </th>
- * 		<th width="1%"> Inherit </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>layout</code> </th>
- * 		<td> <code>gridlayout(1,1)</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> see {@link Widget} </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>layout-data</code> </th>
- * 		<td> <code>bld(center)</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> <b>Uneditable</b>, see {@link Widget} </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>transition</code> </th>
- * 		<td> <code>none</code> </td>
- * 		<td> <code>No</code> </td>
- * 		<td> Define the screen's appear transition. Default value is <code>none</code>. The value is a transition string (e.g. <code>slide(left)</code>). </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="4"> Inherited style properties : see {@link Widget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available style pseudo-classes </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> Pseudo-class </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited style pseudo-classes : see {@link Widget} </td>
- * 	</tr>
- * </table>
- * <br>
- * <table border="1" width="100%" cellpadding="3" cellspacing="0" >
- * 	<tr class="TableHeadingColor">
- * 		<th align="left" colspan="2"> <font size="+2"> Available internal widgets </font> </th>
- * 	</tr>
- * 	<tr class="TableRowColor">
- * 		<th width="1%"> internal widget </th>
- * 		<th> Description </th>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>topbar</code> </th>
- * 		<td> The screen's top bar used by default to display title </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>bottombar</code> </th>
- * 		<td> The screen's bottom bar used by default to display first and second menu </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>firstmenu</code> </th>
- * 		<td> The screen's first menu, by default displayed on the left in the bottom bar </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td> <code>secondmenu</code> </th>
- * 		<td> The screen's second menu, by default displayed on the right in the bottom bar </td>
- *	</tr>
- * 	<tr class="TableRowColor">
- * 		<td colspan="2"> Inherited internal widgets : see {@link Widget} </td>
- * 	</tr>
- * </table>
+ * This class represents a Kuix screen.
  * 
  * @author bbeaulant
  */
@@ -234,7 +108,7 @@ public class Screen extends Widget {
 			this.layoutData = layoutData;
 			this.internal = internal;
 		}
-
+		
 		/* (non-Javadoc)
 		 * @see org.kalmeo.kuix.widget.Widget#getLayoutData()
 		 */
@@ -306,7 +180,16 @@ public class Screen extends Widget {
 	 * Construct a {Screen}
 	 */
 	public Screen() {
-		super(KuixConstants.SCREEN_WIDGET_TAG);
+		this(KuixConstants.SCREEN_WIDGET_TAG);
+	}
+	
+	/**
+	 * Construct a {Screen}
+	 * 
+	 * @param tag
+	 */
+	public Screen(String tag) {
+		super(tag);
 		
 		// Init content's widgets
 		container = new Widget() {
@@ -387,16 +270,16 @@ public class Screen extends Widget {
 	 * @see org.kalmeo.kuix.widget.Widget#getInternalChildInstance(java.lang.String)
 	 */
 	public Widget getInternalChildInstance(String tag) {
-		if (KuixConstants.TOP_BAR_WIDGET_TAG.equals(tag)) {
+		if (KuixConstants.SCREEN_TOP_BAR_WIDGET_TAG.equals(tag)) {
 			return getTopBar();
 		}
-		if (KuixConstants.BOTTOM_BAR_WIDGET_TAG.equals(tag)) {
+		if (KuixConstants.SCREEN_BOTTOM_BAR_WIDGET_TAG.equals(tag)) {
 			return getBottomBar();
 		}
-		if (KuixConstants.FIRST_MENU_WIDGET_TAG.equals(tag)) {
+		if (KuixConstants.SCREEN_FIRST_MENU_WIDGET_TAG.equals(tag)) {
 			return getFirstMenu();
 		}
-		if (KuixConstants.SECOND_MENU_WIDGET_TAG.equals(tag)) {
+		if (KuixConstants.SCREEN_SECOND_MENU_WIDGET_TAG.equals(tag)) {
 			return getSecondMenu();
 		}
 		return super.getInternalChildInstance(tag);
@@ -529,7 +412,7 @@ public class Screen extends Widget {
 	 */
 	public ScreenBar getTopBar() {
 		if (topBar == null) {
-			topBar = new ScreenBar(KuixConstants.TOP_BAR_WIDGET_TAG, true);
+			topBar = new ScreenBar(KuixConstants.SCREEN_TOP_BAR_WIDGET_TAG, true);
 			super.add(topBar);
 		}
 		return topBar;
@@ -542,7 +425,7 @@ public class Screen extends Widget {
 	 */
 	public ScreenBar getBottomBar() {
 		if (bottomBar == null) {
-			bottomBar = new ScreenBar(KuixConstants.BOTTOM_BAR_WIDGET_TAG, false);
+			bottomBar = new ScreenBar(KuixConstants.SCREEN_BOTTOM_BAR_WIDGET_TAG, false);
 			super.add(bottomBar);
 		}
 		return bottomBar;
@@ -577,7 +460,7 @@ public class Screen extends Widget {
 	 */
 	public Menu getFirstMenu() {
 		if (firstMenu == null) {
-			firstMenu = new ScreenMenu(KuixConstants.FIRST_MENU_WIDGET_TAG, new StaticLayoutData(firstIsLeft ? Alignment.LEFT : Alignment.RIGHT), false);
+			firstMenu = new ScreenMenu(KuixConstants.SCREEN_FIRST_MENU_WIDGET_TAG, new StaticLayoutData(firstIsLeft ? Alignment.LEFT : Alignment.RIGHT), false);
 			getBottomBar().add(firstMenu);
 		}
 		return firstMenu;
@@ -590,7 +473,7 @@ public class Screen extends Widget {
 	 */
 	public Menu getSecondMenu() {
 		if (secondMenu == null) {
-			secondMenu = new ScreenMenu(KuixConstants.SECOND_MENU_WIDGET_TAG, new StaticLayoutData(firstIsLeft ? Alignment.RIGHT : Alignment.LEFT), false);
+			secondMenu = new ScreenMenu(KuixConstants.SCREEN_SECOND_MENU_WIDGET_TAG, new StaticLayoutData(firstIsLeft ? Alignment.RIGHT : Alignment.LEFT), false);
 			getBottomBar().add(secondMenu);
 		}
 		return secondMenu;
@@ -603,7 +486,7 @@ public class Screen extends Widget {
 	 */
 	protected ScreenMenu getFirstInternalMenu() {
 		if (firstInternalMenu == null) {
-			firstInternalMenu = new ScreenMenu(KuixConstants.FIRST_MENU_WIDGET_TAG, new StaticLayoutData(firstIsLeft ? Alignment.LEFT : Alignment.RIGHT), true);
+			firstInternalMenu = new ScreenMenu(KuixConstants.SCREEN_FIRST_MENU_WIDGET_TAG, new StaticLayoutData(firstIsLeft ? Alignment.LEFT : Alignment.RIGHT), true);
 			firstInternalMenu.add(new Text().setText(Kuix.getMessage(KuixConstants.SELECT_I18N_KEY)));
 			getBottomBar().add(firstInternalMenu);
 		}
@@ -617,7 +500,7 @@ public class Screen extends Widget {
 	 */
 	protected ScreenMenu getSecondInternalMenu() {
 		if (secondInternalMenu == null) {
-			secondInternalMenu = new ScreenMenu(KuixConstants.SECOND_MENU_WIDGET_TAG, new StaticLayoutData(firstIsLeft ? Alignment.RIGHT : Alignment.LEFT), true);
+			secondInternalMenu = new ScreenMenu(KuixConstants.SCREEN_SECOND_MENU_WIDGET_TAG, new StaticLayoutData(firstIsLeft ? Alignment.RIGHT : Alignment.LEFT), true);
 			secondInternalMenu.add(new Text().setText(Kuix.getMessage(KuixConstants.CANCEL_I18N_KEY)));
 			getBottomBar().add(secondInternalMenu);
 		}
