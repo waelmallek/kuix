@@ -26,7 +26,11 @@ import org.kalmeo.kuix.core.KuixConstants;
 import org.kalmeo.kuix.core.model.DataProvider;
 
 /**
- * This class represents a radio buttons group.
+ * This class represents a radio buttons group. <br>
+ * <br>
+ * <strong>For further informations, visit the <a
+ * href="http://www.kalmeo.org/files/kuix/widgetdoc/index.html"
+ * target="new">Kuix widgets reference page</a></strong>.
  * 
  * @author bbeaulant
  */

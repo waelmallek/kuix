@@ -26,7 +26,11 @@ import javax.microedition.lcdui.Font;
 import org.kalmeo.kuix.core.KuixConstants;
 
 /**
- * This class is base for all text widgets.
+ * This class is base for all text widgets. <br>
+ * <br>
+ * <strong>For further informations, visit the <a
+ * href="http://www.kalmeo.org/files/kuix/widgetdoc/index.html"
+ * target="new">Kuix widgets reference page</a></strong>.
  * 
  * @author bbeaulant
  */

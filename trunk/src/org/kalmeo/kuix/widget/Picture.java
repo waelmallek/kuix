@@ -32,7 +32,11 @@ import org.kalmeo.kuix.util.Metrics;
 import org.kalmeo.util.resource.ImageManager;
 
 /**
- * This class represents a picture.
+ * This class represents a picture. <br>
+ * <br>
+ * <strong>For further informations, visit the <a
+ * href="http://www.kalmeo.org/files/kuix/widgetdoc/index.html"
+ * target="new">Kuix widgets reference page</a></strong>.
  * 
  * @author bbeaulant
  */

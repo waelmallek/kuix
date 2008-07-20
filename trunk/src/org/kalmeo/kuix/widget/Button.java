@@ -27,7 +27,11 @@ import org.kalmeo.kuix.layout.Layout;
 import org.kalmeo.kuix.util.Alignment;
 
 /**
- * This class represents a button.
+ * This class represents a button. <br>
+ * <br>
+ * <strong>For further informations, visit the <a
+ * href="http://www.kalmeo.org/files/kuix/widgetdoc/index.html"
+ * target="new">Kuix widgets reference page</a></strong>.
  * 
  * @author bbeaulant
  */

@@ -39,7 +39,11 @@ import org.kalmeo.util.xml.LightXmlParser;
 import org.kalmeo.util.xml.LightXmlParserHandler;
 
 /**
- * This class represents a textarea.
+ * This class represents a textarea. <br>
+ * <br>
+ * <strong>For further informations, visit the <a
+ * href="http://www.kalmeo.org/files/kuix/widgetdoc/index.html"
+ * target="new">Kuix widgets reference page</a></strong>.
  * 
  * @author bbeaulant
  */

@@ -31,7 +31,11 @@ import org.kalmeo.kuix.layout.LayoutData;
 import org.kalmeo.kuix.layout.StaticLayout;
 
 /**
- * This class represents a tab folder.
+ * This class represents a tab folder. <br>
+ * <br>
+ * <strong>For further informations, visit the <a
+ * href="http://www.kalmeo.org/files/kuix/widgetdoc/index.html"
+ * target="new">Kuix widgets reference page</a></strong>.
  * 
  * @author bbeaulant
  */
