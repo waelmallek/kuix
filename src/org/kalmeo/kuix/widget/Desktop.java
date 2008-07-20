@@ -37,7 +37,11 @@ import org.kalmeo.kuix.transition.Transition;
 import org.kalmeo.kuix.util.Insets;
 
 /**
- * This class represents the Kuix desktop.
+ * This class represents the Kuix desktop. <br>
+ * <br>
+ * <strong>For further informations, visit the <a
+ * href="http://www.kalmeo.org/files/kuix/widgetdoc/index.html"
+ * target="new">Kuix widgets reference page</a></strong>.
  * 
  * @author bbeaulant
  */

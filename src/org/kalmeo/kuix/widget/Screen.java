@@ -40,7 +40,11 @@ import org.kalmeo.util.BooleanUtil;
 import org.kalmeo.util.MathFP;
 
 /**
- * This class represents a Kuix screen.
+ * This class represents a Kuix screen. <br>
+ * <br>
+ * <strong>For further informations, visit the <a
+ * href="http://www.kalmeo.org/files/kuix/widgetdoc/index.html"
+ * target="new">Kuix widgets reference page</a></strong>.
  * 
  * @author bbeaulant
  */

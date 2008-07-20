@@ -34,7 +34,11 @@ import org.kalmeo.util.worker.Worker;
 import org.kalmeo.util.worker.WorkerTask;
 
 /**
- * This class represents a text.
+ * This class represents a text. <br>
+ * <br>
+ * <strong>For further informations, visit the <a
+ * href="http://www.kalmeo.org/files/kuix/widgetdoc/index.html"
+ * target="new">Kuix widgets reference page</a></strong>.
  * 
  * @author bbeaulant
  */

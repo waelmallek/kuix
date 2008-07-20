@@ -31,7 +31,11 @@ import org.kalmeo.kuix.util.Alignment;
 import org.kalmeo.kuix.util.Gap;
 
 /**
- * This class represents a choice.
+ * This class represents a choice. <br>
+ * <br>
+ * <strong>For further informations, visit the <a
+ * href="http://www.kalmeo.org/files/kuix/widgetdoc/index.html"
+ * target="new">Kuix widgets reference page</a></strong>.
  * 
  * @author bbeaulant
  */

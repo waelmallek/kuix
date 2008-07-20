@@ -25,7 +25,11 @@ import org.kalmeo.kuix.core.KuixConstants;
 import org.kalmeo.util.BooleanUtil;
 
 /**
- * This class represents a check box.
+ * This class represents a check box. <br>
+ * <br>
+ * <strong>For further informations, visit the <a
+ * href="http://www.kalmeo.org/files/kuix/widgetdoc/index.html"
+ * target="new">Kuix widgets reference page</a></strong>.
  * 
  * @author bbeaulant
  */

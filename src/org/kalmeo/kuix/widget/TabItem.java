@@ -32,7 +32,11 @@ import org.kalmeo.kuix.widget.TabFolder.TabButton;
 import org.kalmeo.util.BooleanUtil;
 
 /**
- * This class represents a tab item.
+ * This class represents a tab item. <br>
+ * <br>
+ * <strong>For further informations, visit the <a
+ * href="http://www.kalmeo.org/files/kuix/widgetdoc/index.html"
+ * target="new">Kuix widgets reference page</a></strong>.
  * 
  * @author bbeaulant
  */

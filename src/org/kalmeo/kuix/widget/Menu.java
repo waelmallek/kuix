@@ -30,7 +30,11 @@ import org.kalmeo.kuix.layout.StaticLayoutData;
 import org.kalmeo.kuix.util.Metrics;
 
 /**
- * This class represents a menu.
+ * This class represents a menu. <br>
+ * <br>
+ * <strong>For further informations, visit the <a
+ * href="http://www.kalmeo.org/files/kuix/widgetdoc/index.html"
+ * target="new">Kuix widgets reference page</a></strong>.
  * 
  * @author bbeaulant
  */

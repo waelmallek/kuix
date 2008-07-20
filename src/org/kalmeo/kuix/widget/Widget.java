@@ -53,7 +53,11 @@ import org.kalmeo.util.NumberUtil;
 import org.kalmeo.util.LinkedList.LinkedListEnumeration;
 
 /**
- * This class is the base of all Kuix widgets.
+ * This class is the base of all Kuix widgets. <br>
+ * <br>
+ * <strong>For further informations, visit the <a
+ * href="http://www.kalmeo.org/files/kuix/widgetdoc/index.html"
+ * target="new">Kuix widgets reference page</a></strong>.
  * 
  * @author bbeaulant
  */

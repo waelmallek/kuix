@@ -27,7 +27,11 @@ import org.kalmeo.kuix.core.focus.FocusManager;
 import org.kalmeo.util.BooleanUtil;
 
 /**
- * This class is base for all focusable widgets.
+ * This class is base for all focusable widgets. <br>
+ * <br>
+ * <strong>For further informations, visit the <a
+ * href="http://www.kalmeo.org/files/kuix/widgetdoc/index.html"
+ * target="new">Kuix widgets reference page</a></strong>.
  * 
  * @author bbeaulant
  */
