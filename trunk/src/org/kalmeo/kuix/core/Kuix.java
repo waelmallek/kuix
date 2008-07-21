@@ -37,10 +37,10 @@ import org.kalmeo.kuix.core.style.Style;
 import org.kalmeo.kuix.core.style.StyleProperty;
 import org.kalmeo.kuix.core.style.StyleSelector;
 import org.kalmeo.kuix.util.Method;
-import org.kalmeo.kuix.widget.TextWidget;
 import org.kalmeo.kuix.widget.Picture;
 import org.kalmeo.kuix.widget.Screen;
 import org.kalmeo.kuix.widget.Text;
+import org.kalmeo.kuix.widget.TextWidget;
 import org.kalmeo.kuix.widget.Widget;
 import org.kalmeo.util.Filter;
 import org.kalmeo.util.LinkedList;
@@ -224,13 +224,18 @@ public final class Kuix {
 	}
 	
 	/**
-	 * Parse an load a CSS style definitions and register it into the
-	 * StyleManager.
+	 * Parse an load a CSS style definitions and register them.
 	 * 
 	 * @param inputStream
 	 */
 	public static void loadCss(InputStream inputStream) {
 		parseCss(converter, inputStream);
+		try {
+			// Clear all style caches to use new loaded styles
+			clearStyleCache(KuixMIDlet.getDefault().getCanvas().getDesktop(), true);
+		} catch (Exception e) {
+			// Do nothing
+		}
 	}
 
 	/**
@@ -424,14 +429,14 @@ public final class Kuix {
 									StringTokenizer st = new StringTokenizer(rawParams, ", ");
 									if (st.hasMoreElements()) {
 										fileName = st.nextToken();
-										if (st.countTokens() >= 2) {
+										if (st.countTokens() >= 1) {
 											dataProviderProperty = st.nextToken().trim();
 										}
 										if (fileName != null) {
 											// File names accept parse properties
 											fileName = convertParsePropertyStringValues(fileName.trim());
 										}
-										InputStream inputStream = getClass().getResourceAsStream(fileName);
+										InputStream inputStream = getXmlResourceInputStream(fileName);
 										if (inputStream != null) {
 											try {
 												if (usedAttribute != null) {
@@ -443,7 +448,7 @@ public final class Kuix {
 													
 												} else {
 													
-													// Parse property variable ?
+													// Parse property variable to define a new dataProvider ?
 													DataProvider includeDataProvider = dataProvider;
 													if (dataProviderProperty != null && dataProvider != null) {
 														if (dataProviderProperty.startsWith(KuixConstants.PARSE_PROPERTY_START_PATTERN)) {
@@ -475,6 +480,7 @@ public final class Kuix {
 							}
 							
 							// If no attribute is defined
+							boolean defaultTextWidget = false;
 							if (usedAttribute == null) {
 								if (widget instanceof TextWidget) {
 									usedAttribute = KuixConstants.TEXT_ATTRIBUTE;
@@ -484,6 +490,7 @@ public final class Kuix {
 									usedAttribute = KuixConstants.TEXT_ATTRIBUTE;
 									usedWidget = new Text();
 									widget.add(usedWidget);
+									defaultTextWidget = true;
 								}
 							}
 							
@@ -523,6 +530,10 @@ public final class Kuix {
 									String[] properties = extractBindProperties(characters);
 									if (properties != null) {
 										usedWidget.setAttributeBindInstruction(usedAttribute, properties, characters);
+										// Special case for default text widget
+										if (defaultTextWidget && dataProvider != null) {
+											dataProvider.bind(usedWidget);
+										}
 										return;
 									} else {
 										characters = processI18nPattern(characters);
@@ -689,7 +700,8 @@ public final class Kuix {
 						if (c == '*') {
 							if ((c = reader.read()) == '/') {
 								commentCapture = false;
-								c = reader.read();
+							} else {
+								continue;
 							}
 						}
 					} else {
@@ -698,10 +710,11 @@ public final class Kuix {
 							throw new IllegalArgumentException("Invalid css comment block");
 						}
 	
-						if (c == '/') {	// Caution that all '/' character ar ignored
+						if (c == '/') {	// Caution that all '/' character are ignored
 							if ((c = reader.read()) == '*') {
 								commentCapture = true;
 								c = reader.read();
+								continue;
 							}
 						}
 	
