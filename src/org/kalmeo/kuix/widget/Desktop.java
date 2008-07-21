@@ -470,8 +470,10 @@ public class Desktop extends Widget {
 	 * @see org.kalmeo.kuix.widget.Widget#paintImpl(javax.microedition.lcdui.Graphics)
 	 */
 	public void paintImpl(Graphics g) {
-		g.setColor(0xFFFFFF);
-		g.fillRect(0, 0, getWidth(), getHeight());
+		if (getBackgroundColor() == null) {
+			g.setColor(0xFFFFFF);
+			g.fillRect(0, 0, getWidth(), getHeight());
+		}
 		super.paintImpl(g);
 		popupContainer.paintImpl(g);
 	}
