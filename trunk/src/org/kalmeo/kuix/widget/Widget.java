@@ -614,14 +614,23 @@ public class Widget {
 	public Style getAuthorStyle() {
 		return authorStyle;
 	}
-
+	
 	/**
 	 * @param authorStyle the authorStyle to set
+	 */
+	public void setAuthorStyle(Style authorStyle) {
+		this.authorStyle = authorStyle;
+	}
+
+	/**
+	 * Set new author style by parsing <code>rawAuthorStyle</code> string.
+	 * 
+	 * @param authorStyle the authorStyle to parse
 	 */
 	public void parseAuthorStyle(String rawAuthorStyle) {
 		Style[] styles = Kuix.extractStyleSheets(Kuix.getConverter(), getTag(), rawAuthorStyle);
 		if (styles.length > 0) {
-			this.authorStyle = styles[0];
+			setAuthorStyle(styles[0]);
 		}
 	}
 	

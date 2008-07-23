@@ -101,14 +101,6 @@ public class TextField extends Text implements CommandListener {
 	 * @see org.kalmeo.kuix.widget.Text#setAttribute(java.lang.String, java.lang.String)
 	 */
 	public boolean setAttribute(String name, String value) {
-		if (KuixConstants.TOOLTIP_ATTRIBUTE.equals(name)) {
-			setTooltip(value);
-			return true;
-		}
-		if (KuixConstants.ON_CHANGE_ATTRIBUTE.equals(name)) {
-			onChange = value;
-			return true;
-		}
 		if (KuixConstants.TITLE_ATTRIBUTE.equals(name)) {
 			setTitle(value);
 			return true;
@@ -144,6 +136,14 @@ public class TextField extends Text implements CommandListener {
 					constraints |= javax.microedition.lcdui.TextField.INITIAL_CAPS_SENTENCE;
 				}
 			}
+			return true;
+		}
+		if (KuixConstants.TOOLTIP_ATTRIBUTE.equals(name)) {
+			setTooltip(value);
+			return true;
+		}
+		if (KuixConstants.ON_CHANGE_ATTRIBUTE.equals(name)) {
+			setOnChange(value);
 			return true;
 		}
 		return super.setAttribute(name, value);
@@ -215,6 +215,20 @@ public class TextField extends Text implements CommandListener {
 			tooltipText.setStyleClass(KuixConstants.TEXT_FIELD_TOOLTIP_STYLE_CLASS);
 		}
 		tooltipText.setText(text);
+	}
+	
+	/**
+	 * @return the onChange
+	 */
+	public String getOnChange() {
+		return onChange;
+	}
+
+	/**
+	 * @param onChange the onChange to set
+	 */
+	public void setOnChange(String onChange) {
+		this.onChange = onChange;
 	}
 
 	/* (non-Javadoc)

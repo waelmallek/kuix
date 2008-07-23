@@ -90,7 +90,7 @@ public class Gauge extends FocusableWidget {
 			return true;
 		}
 		if (KuixConstants.ON_CHANGE_ATTRIBUTE.equals(name)) {
-			onChange = value;
+			setOnChange(value);
 			return true;
 		}
 		return super.setAttribute(name, value);
@@ -166,6 +166,20 @@ public class Gauge extends FocusableWidget {
 	 */
 	public void setIncrement(int increment) {
 		this.increment = increment;
+	}
+	
+	/**
+	 * @return the onChange
+	 */
+	public String getOnChange() {
+		return onChange;
+	}
+
+	/**
+	 * @param onChange the onChange to set
+	 */
+	public void setOnChange(String onChange) {
+		this.onChange = onChange;
 	}
 
 	/* (non-Javadoc)

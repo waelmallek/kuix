@@ -73,7 +73,7 @@ public class TextArea extends TextWidget {
 	 */
 	public boolean setAttribute(String name, String value) {
 		if (KuixConstants.STYLED_ATTRIBUTE.equals(name)) {
-			styled = BooleanUtil.parseBoolean(value);
+			setStyled(BooleanUtil.parseBoolean(value));
 			needToReflow = true;
 			return true;
 		}
@@ -87,6 +87,21 @@ public class TextArea extends TextWidget {
 		super.setText(text);
 		needToReflow = true;
 		return this;
+	}
+	
+	/**
+	 * @return the styled
+	 */
+	public boolean isStyled() {
+		return styled;
+	}
+
+	/**
+	 * @param styled the styled to set
+	 */
+	public void setStyled(boolean styled) {
+		this.styled = styled;
+		needToReflow = true;
 	}
 
 	/* (non-Javadoc)
