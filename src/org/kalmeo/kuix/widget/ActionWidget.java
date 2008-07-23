@@ -59,6 +59,13 @@ public class ActionWidget extends FocusableWidget {
 	}
 	
 	/**
+	 * @return the onAction
+	 */
+	public String getOnAction() {
+		return onAction;
+	}
+
+	/**
 	 * @param onAction
 	 */
 	public void setOnAction(String onAction) {

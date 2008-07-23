@@ -70,7 +70,7 @@ public class RadioGroup extends List {
 			return true;
 		}
 		if (KuixConstants.ON_CHANGE_ATTRIBUTE.equals(name)) {
-			onChange = value;
+			setOnChange(value);
 			return true;
 		}
 		return super.setAttribute(name, value);
@@ -119,6 +119,20 @@ public class RadioGroup extends List {
 		wantedValue = value;
 	}
 	
+	/**
+	 * @return the onChange
+	 */
+	public String getOnChange() {
+		return onChange;
+	}
+
+	/**
+	 * @param onChange the onChange to set
+	 */
+	public void setOnChange(String onChange) {
+		this.onChange = onChange;
+	}
+
 	/**
 	 * @return the selectedButton
 	 */

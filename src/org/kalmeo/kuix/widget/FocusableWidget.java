@@ -79,11 +79,11 @@ public class FocusableWidget extends Widget {
 	 */
 	public boolean setAttribute(String name, String value) {
 		if (KuixConstants.ON_FOCUS_ATTRIBUTE.equals(name)) {
-			onFocus = value;
+			setOnFocus(value);
 			return true;
 		}
 		if (KuixConstants.ON_LOST_FOCUS_ATTRIBUTE.equals(name)) {
-			onLostFocus = value;
+			setOnLostFocus(value);
 			return true;
 		}
 		if (KuixConstants.ENABLED_ATTRIBUTE.equals(name)) {
@@ -153,6 +153,34 @@ public class FocusableWidget extends Widget {
 		if (!enabled) {
 			giveFocusToNearestWidget();
 		}
+	}
+	
+	/**
+	 * @return the onFocus
+	 */
+	public String getOnFocus() {
+		return onFocus;
+	}
+
+	/**
+	 * @param onFocus the onFocus to set
+	 */
+	public void setOnFocus(String onFocus) {
+		this.onFocus = onFocus;
+	}
+
+	/**
+	 * @return the onLostFocus
+	 */
+	public String getOnLostFocus() {
+		return onLostFocus;
+	}
+
+	/**
+	 * @param onLostFocus the onLostFocus to set
+	 */
+	public void setOnLostFocus(String onLostFocus) {
+		this.onLostFocus = onLostFocus;
 	}
 
 	/* (non-Javadoc)

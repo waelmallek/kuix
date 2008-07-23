@@ -127,6 +127,13 @@ public class List extends Widget {
 	}
 	
 	/**
+	 * @return the renderer
+	 */
+	public ByteArrayInputStream getRenderer() {
+		return renderer;
+	}
+
+	/**
 	 * @param renderer the renderer to set
 	 */
 	public void setRenderer(ByteArrayInputStream renderer) {

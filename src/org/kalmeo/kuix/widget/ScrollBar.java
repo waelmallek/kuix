@@ -186,15 +186,6 @@ public class ScrollBar extends Widget {
 		setSelection(selection);	// Reapply the selection to switch direction
 	}
 	
-	/**
-	 * Check the bar visibility.
-	 * 
-	 * @return <code>true</code> if the bar is visible.
-	 */
-	public boolean isBarVisible() {
-		return bar.isVisible();
-	}
-
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#getLayout()
 	 */

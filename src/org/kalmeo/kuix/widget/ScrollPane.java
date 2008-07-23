@@ -287,6 +287,13 @@ public class ScrollPane extends Widget {
 	}
 
 	/**
+	 * @return <code>true</code> if the top and bottom markers are used
+	 */
+	public boolean isUseMarkers() {
+		return useMarkers;
+	}
+	
+	/**
 	 * @param useMarkers the useMarkers to set
 	 */
 	public void setUseMarkers(boolean useMarkers) {
@@ -304,13 +311,6 @@ public class ScrollPane extends Widget {
 		}
 	}
 
-	/**
-	 * @return <code>true</code> if the top and bottom markers are used
-	 */
-	public boolean isUseMarkers() {
-		return useMarkers;
-	}
-	
 	/**
 	 * @return the autoHideScrollBar
 	 */

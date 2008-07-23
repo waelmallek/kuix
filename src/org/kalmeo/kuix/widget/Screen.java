@@ -163,7 +163,7 @@ public class Screen extends Widget {
 	private ScreenBar bottomBar;
 	
 	// Text widget for title
-	private Text title;
+	private Text titleText;
 	
 	// Used to determine if this screen call its cleanUp method when removed from its parent
 	public boolean cleanUpWhenRemoved = false;
@@ -302,20 +302,91 @@ public class Screen extends Widget {
 			return true;
 		}
 		if (KuixConstants.FIRST_IS_LEFT_ATTRIBUTE.equals(name)) {
-			firstIsLeft = BooleanUtil.parseBoolean(value);
+			setFirstIsLeft(BooleanUtil.parseBoolean(value));
 			return true;
 		}
 		if (KuixConstants.CLEAN_UP_WHEN_REMOVED_ATTRIBUTE.equals(name)) {
-			cleanUpWhenRemoved = BooleanUtil.parseBoolean(value);
+			setCleanUpWhenRemoved(BooleanUtil.parseBoolean(value));
 			return true;
 		}
 		if (KuixConstants.BARS_ON_TOP_ATTRIBUTE.equals(name)) {
-			barsOnTop = BooleanUtil.parseBoolean(value);
+			setBarsOnTop(BooleanUtil.parseBoolean(value));
 			return true;
 		}
 		return super.setAttribute(name, value);
 	}
 	
+	/**
+	 * @return the title
+	 */
+	public String getTitleText() {
+		return titleText != null ? titleText.getText() : null;
+	}
+	
+	/**
+	 * Define the desktop title
+	 * 
+	 * @param title
+	 */
+	public void setTitle(String title) {
+		if (title == null) {
+			if (titleText != null) {
+				titleText.remove();
+				titleText = null;
+			}
+		} else {
+			if (titleText == null) {
+				titleText = new Text();
+				getTopBar().add(titleText);
+			}
+			titleText.setText(title);
+		}
+	}
+	
+	/**
+	 * @return the cleanUpWhenRemoved
+	 */
+	public boolean isCleanUpWhenRemoved() {
+		return cleanUpWhenRemoved;
+	}
+
+	/**
+	 * @param cleanUpWhenRemoved the cleanUpWhenRemoved to set
+	 */
+	public void setCleanUpWhenRemoved(boolean cleanUpWhenRemoved) {
+		this.cleanUpWhenRemoved = cleanUpWhenRemoved;
+	}
+
+	/**
+	 * @return the firstIsLeft
+	 */
+	public boolean isFirstIsLeft() {
+		return firstIsLeft;
+	}
+
+	/**
+	 * @param firstIsLeft the firstIsLeft to set
+	 */
+	public void setFirstIsLeft(boolean firstIsLeft) {
+		this.firstIsLeft = firstIsLeft;
+		invalidate();
+	}
+
+	/**
+	 * @return the barsOnTop
+	 */
+	public boolean isBarsOnTop() {
+		return barsOnTop;
+	}
+
+	/**
+	 * @param barsOnTop the barsOnTop to set
+	 */
+	public void setBarsOnTop(boolean barsOnTop) {
+		this.barsOnTop = barsOnTop;
+		invalidate();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#getFocusManager()
 	 */
@@ -387,26 +458,6 @@ public class Screen extends Widget {
 			return GridLayout.instanceOneByOne;
 		}
 		return super.getDefaultStylePropertyValue(name);
-	}
-	
-	/**
-	 * Define the desktop title
-	 * 
-	 * @param text
-	 */
-	public void setTitle(String text) {
-		if (text == null) {
-			if (title != null) {
-				title.remove();
-				title = null;
-			}
-		} else {
-			if (title == null) {
-				title = new Text();
-				getTopBar().add(title);
-			}
-			title.setText(text);
-		}
 	}
 	
 	/**
