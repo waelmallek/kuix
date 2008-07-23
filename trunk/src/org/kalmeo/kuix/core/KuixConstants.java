@@ -289,23 +289,22 @@ public interface KuixConstants {
 	
 	public static final int KUIX_KEY_SOFT_LEFT 								= 1 << 5;
 	public static final int KUIX_KEY_SOFT_RIGHT 							= 1 << 6;
-	public static final int KUIX_KEY_SOFT_MIDDLE_INTERNET 					= 1 << 7;
-	public static final int KUIX_KEY_PENCIL 								= 1 << 8; // This key is present on Nokia s60
-	public static final int KUIX_KEY_DELETE 								= 1 << 9;
-	public static final int KUIX_KEY_BACK 									= 1 << 10;
+	public static final int KUIX_KEY_DELETE 								= 1 << 7;
+	public static final int KUIX_KEY_BACK 									= 1 << 8;
+	public static final int KUIX_KEY_PENCIL 								= 1 << 9; // This key is present on Nokia s60
 	
-	public static final int KUIX_KEY_1 										= 1 << 11;
-	public static final int KUIX_KEY_2 										= 1 << 12;
-	public static final int KUIX_KEY_3 										= 1 << 13;
-	public static final int KUIX_KEY_4 										= 1 << 14;
-	public static final int KUIX_KEY_5 										= 1 << 15;
-	public static final int KUIX_KEY_6 										= 1 << 16;
-	public static final int KUIX_KEY_7 										= 1 << 17;
-	public static final int KUIX_KEY_8 										= 1 << 18;
-	public static final int KUIX_KEY_9 										= 1 << 19;
-	public static final int KUIX_KEY_0 										= 1 << 20;
-	public static final int KUIX_KEY_POUND 									= 1 << 21;
-	public static final int KUIX_KEY_STAR 									= 1 << 22;
+	public static final int KUIX_KEY_1 										= 1 << 10;
+	public static final int KUIX_KEY_2 										= 1 << 11;
+	public static final int KUIX_KEY_3 										= 1 << 12;
+	public static final int KUIX_KEY_4 										= 1 << 13;
+	public static final int KUIX_KEY_5 										= 1 << 14;
+	public static final int KUIX_KEY_6 										= 1 << 15;
+	public static final int KUIX_KEY_7 										= 1 << 16;
+	public static final int KUIX_KEY_8 										= 1 << 17;
+	public static final int KUIX_KEY_9 										= 1 << 18;
+	public static final int KUIX_KEY_0 										= 1 << 19;
+	public static final int KUIX_KEY_POUND 									= 1 << 20;
+	public static final int KUIX_KEY_STAR 									= 1 << 21;
 
 	public static final int NOT_DEFINED_KEY 								= 1 << 30;
 

@@ -59,15 +59,28 @@ public class DataProvider implements LinkedListItem {
 	private DataProvider next;
 
 	/**
-	 * Returns the value corresponding the given <code>property</code>.
-	 * Override the method to returns your custums values.<br> Be careful to
-	 * always call the <code>super.getValue(property)</code>.
+	 * Returns the value (user defined values and items values) corresponding the
+	 * given <code>property</code>.
 	 * 
 	 * @param property
-	 * @return the <code>property</code> value
+	 * @return the value associated with the given <code>property</code>.
 	 */
-	public Object getValue(String property) {
-		return enumerateItems(property, true);
+	public final Object getValue(String property) {
+		Object customValue = getUserDefinedValue(property);
+		if (customValue == null) {
+			return enumerateItems(property, true);
+		}
+		return customValue;
+	}
+	
+	/**
+	 * Returns the user defined value corresponding the given <code>property</code>.<br>
+	 * Override the method to returns your customs values.
+	 * 
+	 * @return the user defined value associated with the given <code>property</code>.
+	 */
+	protected Object getUserDefinedValue(String property) {
+		return null;
 	}
 
 	/**

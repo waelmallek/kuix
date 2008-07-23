@@ -180,7 +180,6 @@ public final class KuixCanvas extends GameCanvas {
 		platformName = getPlatform();
 		softKeyLeft = getLeftSoftkeyCode();
 		softKeyRight = getRightSoftkeyCode();
-		softKeyMiddleInternet = getMidleORInternetSoftkeyCode();
 		softKeyDelete = getDeleteKeyCode();
 		softKeyBack = getBackKeyCode();
 		
@@ -657,7 +656,6 @@ public final class KuixCanvas extends GameCanvas {
 	// Current platform codeofSoftkey
 	private int softKeyLeft;
 	private int softKeyRight;
-	private int softKeyMiddleInternet;
 	private int softKeyDelete;
 	private int softKeyBack;
 
@@ -669,7 +667,6 @@ public final class KuixCanvas extends GameCanvas {
 	private static final int SOFT_KEY_LEFT_SE 			= -6;
 	private static final int SOFT_KEY_RIGHT_SE 			= -7;
 	private static final int DELETE_KEY_SE 				= -8;
-	private static final int INTERNET_KEY_SE 			= -10;
 	private static final int BACK_KEY_SE 				= -11;
 	
 	private static final int SOFT_KEY_LEFT_SAMSUNG 		= -6;
@@ -683,14 +680,12 @@ public final class KuixCanvas extends GameCanvas {
 	private static final int SOFT_KEY_RIGHT_NOKIA 		= -7;
 	private static final int DELETE_KEY_NOKIA 			= -8;
 	private static final int PENCIL_KEY_NOKIA 			= -50;
-	private static final int SOFT_KEY_MIDLE_NOKIA 		= -5;
 	
 	private static final int SOFT_KEY_LEFT_MOTOROLA 	= -21;
 	private static final int SOFT_KEY_RIGHT_MOTOROLA 	= -22;
 	private static final int SOFT_KEY_LEFT_MOTOROLA2 	= -20;
 	private static final int SOFT_KEY_LEFT_MOTOROLA1 	= 21;
 	private static final int SOFT_KEY_RIGHT_MOTOROLA1 	= 22;
-	private static final int SOFT_KEY_MIDLE_MOTOROLA 	= -23;
 
 	private static final int SOFT_KEY_LEFT_INTENT 		= 57345;
 	private static final int SOFT_KEY_RIGHT_INTENT 		= 57346;
@@ -969,29 +964,6 @@ public final class KuixCanvas extends GameCanvas {
 	}
 
 	/**
-	 * define real middle soft key code for current platform
-	 * 
-	 * @return code
-	 */
-	private int getMidleORInternetSoftkeyCode() {
-		try {
-			if (platformName.equals(KuixConstants.PLATFORM_MOTOROLA)) {
-				if (getKeyName(SOFT_KEY_MIDLE_MOTOROLA).toUpperCase().indexOf(SOFT_WORD) >= 0) {
-					return SOFT_KEY_MIDLE_MOTOROLA;
-				}
-			} else if (platformName.equals(KuixConstants.PLATFORM_NOKIA)) {
-				if (getKeyName(SOFT_KEY_MIDLE_NOKIA).toUpperCase().indexOf(SOFT_WORD) >= 0) {
-					return SOFT_KEY_MIDLE_NOKIA;
-				}
-			} else if (platformName.equals(KuixConstants.PLATFORM_SONY_ERICSSON)) {
-				return INTERNET_KEY_SE;
-			}
-		} catch (Throwable e) {
-		}
-		return 0;
-	}
-
-	/**
 	 * define real key's C or DELETE code for current platform
 	 * 
 	 * @return code
@@ -1103,8 +1075,6 @@ public final class KuixCanvas extends GameCanvas {
 					return KuixConstants.KUIX_KEY_DELETE;
 				} else if (keyCode == softKeyBack) {
 					return KuixConstants.KUIX_KEY_BACK;
-				} else if (keyCode == softKeyMiddleInternet) {
-					return KuixConstants.KUIX_KEY_SOFT_MIDDLE_INTERNET;
 				} else if (keyCode == PENCIL_KEY_NOKIA) {
 					return KuixConstants.KUIX_KEY_PENCIL;
 				} else {

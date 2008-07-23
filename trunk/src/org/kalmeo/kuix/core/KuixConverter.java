@@ -856,10 +856,12 @@ public class KuixConverter {
 				kuixKeyCode = KuixConstants.KUIX_KEY_DOWN;
 			} else if ("fire".equals(value)) {
 				kuixKeyCode = KuixConstants.KUIX_KEY_FIRE;
-			} else if ("back".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_BACK;
 			} else if ("delete".equals(value)) {
 				kuixKeyCode = KuixConstants.KUIX_KEY_DELETE;
+			} else if ("back".equals(value)) {
+				kuixKeyCode = KuixConstants.KUIX_KEY_BACK;
+			} else if ("pencil".equals(value)) {
+				kuixKeyCode = KuixConstants.KUIX_KEY_PENCIL;
 			}
 			
 			if (kuixKeyCode != 0) {

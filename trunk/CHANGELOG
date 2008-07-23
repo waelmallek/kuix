@@ -63,6 +63,9 @@
   - AbstractActionWidget *become* ActionWidget
   - AbstractTextWidget *become* TextWidget
   
+- Method **refactoring** :
+  - DataProvider.getValue(String property) is now final. Override DataProvider.getUserDefinedValue(String property) instead.
+  
 - Widget tags **refactoring** :
   - scrollbar's bar *become* scrollbarbar
 
