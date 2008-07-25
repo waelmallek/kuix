@@ -106,7 +106,7 @@ public interface KuixConstants {
 	public static final String PACKAGE_ATTRIBUTE 							= "package";
 	public static final String STYLE_ATTRIBUTE 								= "style";
 	public static final String SRC_ATTRIBUTE 								= "src";
-	public static final String IMAGE_DATA_ATTRIBUTE 						= "imagedata";
+	public static final String IMAGE_ATTRIBUTE 								= "image";
 	public static final String SELECTED_ATTRIBUTE 							= "selected";
 	public static final String VALUE_ATTRIBUTE 								= "value";
 	public static final String INCREMENT_ATTRIBUTE 							= "increment";
@@ -159,7 +159,7 @@ public interface KuixConstants {
 	public static final String BACKGROUND_REPEAT_STYLE_PROPERTY 			= "bg-repeat";
 	
 	public static final String BORDER_COLOR_STYLE_PROPERTY 					= "border-color";
-	public static final String BORDER_IMAGES_STYLE_PROPERTY 				= "border-images";
+	public static final String BORDER_IMAGE_STYLE_PROPERTY 					= "border-image";
 	public static final String BORDER_ALIGN_STYLE_PROPERTY 					= "border-align";
 	public static final String BORDER_STROKE_STYLE_PROPERTY 				= "border-stroke";
 

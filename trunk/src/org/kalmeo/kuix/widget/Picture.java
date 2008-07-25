@@ -81,17 +81,11 @@ public class Picture extends Widget {
 	 * @see org.kalmeo.kuix.widget.Widget#setObjectAttribute(java.lang.String, java.lang.Object)
 	 */
 	public boolean setObjectAttribute(String name, Object value) {
-		if (KuixConstants.IMAGE_DATA_ATTRIBUTE.equals(name)) {
+		if (KuixConstants.IMAGE_ATTRIBUTE.equals(name)) {
 			if (value instanceof Image) {
-				setImageData((Image) value);
-			} else if (value instanceof byte[]) {
-				setImageData((byte[]) value);
+				setImage((Image) value);
 			} else {
-				boolean needToInvalidate = image == null;
-				image = null;
-				if (needToInvalidate) {
-					invalidate();
-				}
+				setImage(null);
 			}
 			return true;
 		}
@@ -102,10 +96,20 @@ public class Picture extends Widget {
 	 * @see org.kalmeo.kuix.widget.Widget#isObjectAttribute(java.lang.String)
 	 */
 	public boolean isObjectAttribute(String name) {
-		if (KuixConstants.IMAGE_DATA_ATTRIBUTE.equals(name)) {
+		if (KuixConstants.IMAGE_ATTRIBUTE.equals(name)) {
 			return true;
 		}
 		return super.isObjectAttribute(name);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#getAttribute(java.lang.String)
+	 */
+	public Object getAttribute(String name) {
+		if (KuixConstants.IMAGE_ATTRIBUTE.equals(name)) {
+			getImage();
+		}
+		return super.getAttribute(name);
 	}
 
 	/**
@@ -130,21 +134,10 @@ public class Picture extends Widget {
 	}
 	
 	/**
-	 * Define the image data. The data could be extract from image file stream,
-	 * like png, gif or jpeg.<br/> Implementations are required to support
-	 * images stored in the PNG format.
-	 * 
-	 * @param imageData the array of image data in a supported image format
-	 * @return The instance of this {@link Picture}
+	 * @return the associated {@link Image} instance.
 	 */
-	public Picture setImageData(byte[] imageData) {
-		if (imageData == null) {
-			image = null;
-		} else {
-			image = Image.createImage(imageData, 0, imageData.length);
-		}
-		invalidate();
-		return this;
+	public Image getImage() {
+		return image;
 	}
 	
 	/**
@@ -153,7 +146,7 @@ public class Picture extends Widget {
 	 * @param image the {@link Image} instance to use in this {@link Picture}.
 	 * @return The instance of this {@link Picture}
 	 */
-	public Picture setImageData(Image image) {
+	public Picture setImage(Image image) {
 		this.image = image;
 		invalidate();
 		return this;

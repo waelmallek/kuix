@@ -271,7 +271,7 @@ public class List extends Widget {
 	 * Remove all items
 	 */
 	public void removeAllItems() {
-		cleanUpAll();
+		cleanUpChildren();
 		removeAll();
 		dataProvidersMapping.clear();
 	}
