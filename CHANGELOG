@@ -1,6 +1,6 @@
 # Kuix Changelog
 
-##Version 1.0.0 (2008-XX-XX)
+##Version 1.0.0 (2008-07-25)
 
 - Bug fix : avoid a NoClassDefFoundException on SonyEricsson
 - Bug fix : avoid an exception when loading a CCS file with comment on SonyEricsson
@@ -39,7 +39,7 @@
 - Menu / PopupMenu changes : 
   - PopupMenu now extends List, to be able to build PopupMenu content from a DataProvider like lists (create only MenuItem, not Menu).
   - MenuItem now extends ListItem.
-  - Right key shortcut to open  a submenu now search forward and backward submenus.
+  - Right key shortcut to open a submenu now search forward and backward submenus.
   
 - TabFolder changes :
   - TabFolder now extends List, to be able to build child TabItems from a DataProvider like lists (with renderer).
@@ -56,7 +56,7 @@
   - You can now access to the *ScrollPaneContainer* inner widget
   
 - Picture changes:
-  - Picture now accept javax.microedition.lcdui.Image input imageData.
+  - Picture now accept javax.microedition.lcdui.Image input image.
 
 - Class **refactoring** :
   - AbstractFocusableWidget *become* FocusableWidget
@@ -65,7 +65,12 @@
   
 - Method **refactoring** :
   - DataProvider.getValue(String property) is now final. Override DataProvider.getUserDefinedValue(String property) instead.
+  - Widget.cleanUpAll() *become* Widget.cleanUpChildren().
+  - Picture.setImageData(byte[]) *become* Picture.setImage(Image).
   
+- Style properties **refactoring** :
+  - border-images *become* border-image
+
 - Widget tags **refactoring** :
   - scrollbar's bar *become* scrollbarbar
 

@@ -66,11 +66,11 @@ public class DataProvider implements LinkedListItem {
 	 * @return the value associated with the given <code>property</code>.
 	 */
 	public final Object getValue(String property) {
-		Object customValue = getUserDefinedValue(property);
-		if (customValue == null) {
+		Object userDefinedValue = getUserDefinedValue(property);
+		if (userDefinedValue == null) {
 			return enumerateItems(property, true);
 		}
-		return customValue;
+		return userDefinedValue;
 	}
 	
 	/**

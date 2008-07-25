@@ -976,7 +976,7 @@ public class Widget {
 	 */
 	public Image[] getBorderImages() {
 		if (!validCachedBorderImages) {
-			Object borderImagesValue = getStylePropertyValue(KuixConstants.BORDER_IMAGES_STYLE_PROPERTY, false);
+			Object borderImagesValue = getStylePropertyValue(KuixConstants.BORDER_IMAGE_STYLE_PROPERTY, false);
 			if (borderImagesValue != null) {
 				cachedBorderImages = (Image[]) borderImagesValue;
 			} else {
@@ -1558,9 +1558,9 @@ public class Widget {
 	}
 	
 	/**
-	 * CleanUp all widget's link.<br/><b>Caution</b> : This method do NOT
-	 * remove the widget from widget tree. It only clean external references
-	 * like dataBinding, menu cache, etc...
+	 * CleanUp all widget's link and propagate the action on its children.<br>
+	 * <b>Caution</b> : This method do NOT remove the widget from widget tree.
+	 * It only clean external references like dataBinding, menu cache, etc...
 	 */
 	public void cleanUp() {
 		
@@ -1570,16 +1570,16 @@ public class Widget {
 		}
 		
 		// Propagate cleanUp to all children
-		cleanUpAll();
+		cleanUpChildren();
 		
 	}
 	
 	/**
-	 * CleanUp all children.<br/><b>Caution</b> : This method do NOT remove
-	 * child widgets from widget tree. It only clean external references like
-	 * dataBinding, etc...
+	 * CleanUp all children.<br>
+	 * <b>Caution</b> : This method do NOT remove child widgets from widget
+	 * tree. It only clean external references like dataBinding, etc...
 	 */
-	public void cleanUpAll() {
+	public void cleanUpChildren() {
 		// dispose to children
 		for (Widget widget = child; widget != null; widget = widget.next) {
 			widget.cleanUp();

@@ -24,7 +24,6 @@ package org.kalmeo.kuix.core;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Hashtable;
 
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
@@ -236,8 +235,8 @@ public class KuixConverter {
 		if (KuixConstants.BACKGROUND_IMAGE_STYLE_PROPERTY.equals(name)) {
 			return convertImageArray(rawData, 1, "|");
 		}
-		if (KuixConstants.BORDER_IMAGES_STYLE_PROPERTY.equals(name)) {
-			return convertImageArray(rawData, 8, StringTokenizer.DEFAULT_DELIM);
+		if (KuixConstants.BORDER_IMAGE_STYLE_PROPERTY.equals(name)) {
+			return convertBorderImage(rawData);
 		}
 		
 		// Layout
@@ -355,13 +354,17 @@ public class KuixConverter {
 	 * @return The converted font size
 	 */
 	protected Integer convertFontSize(String rawData) {
-		int size = Font.SIZE_MEDIUM;
 			
 		// Size (medium|large|small)
+		int size;
 		if ("large".equals(rawData)) {
 			size = Font.SIZE_LARGE;
 		} else if ("small".equals(rawData)) {
 			size = Font.SIZE_SMALL;
+		} else if ("medium".equals(rawData)) {
+			size = Font.SIZE_MEDIUM;
+		} else {
+			throw new IllegalArgumentException("Invalid font-size value : " + rawData);
 		}
 		
 		return new Integer(size);
@@ -372,11 +375,15 @@ public class KuixConverter {
 	 * @return The converted stoke
 	 */
 	protected Integer convertStroke(String rawData) {
-		int stroke = Graphics.SOLID;
 		
 		// Size (solid|dotted)
+		int stroke;
 		if ("dotted".equals(rawData)) {
 			stroke = Graphics.DOTTED;
+		} else if ("solid".equals(rawData)) {
+			stroke = Graphics.SOLID;
+		} else {
+			throw new IllegalArgumentException("Invalid stroke value : " + rawData);
 		}
 		
 		return new Integer(stroke);
@@ -684,6 +691,89 @@ public class KuixConverter {
 	
 	/**
 	 * @param rawData
+	 * @param wantedSize
+	 * @param delim
+	 * @return The converted Image[]
+	 */
+	protected Image[] convertBorderImage(String rawData) {
+		if (isNone(rawData)) {
+			return null;
+		}
+		StringTokenizer values = new StringTokenizer(rawData);
+		int numValues = values.countTokens();
+		if (numValues == 1) {
+			Image[] images = new Image[8];
+			Image image = convertImage(rawData);
+			if (image != null) {
+				for (int i = 0; i < 8; ++i) {
+					images[i] = image;
+				}
+			}
+			return images;
+		}
+		if (numValues == 5) {
+			Image[] images = new Image[8];
+			Image image = convertImage(values.nextToken());
+			if (image != null) {
+				try {
+					
+					int imageWidth = image.getWidth();
+					int imageHeight = image.getHeight();
+					int top = Integer.parseInt(values.nextToken().trim());
+					int right = Integer.parseInt(values.nextToken().trim());
+					int bottom = Integer.parseInt(values.nextToken().trim());
+					int left = Integer.parseInt(values.nextToken().trim());
+					
+					if (top != 0) {
+						images[0] = Image.createImage(image, left, 0, imageWidth - left - right, top, 0);							// top
+						if (right != 0) {
+							images[1] = Image.createImage(image, imageWidth - right, 0, right, top, 0);								// top-right
+						}
+					}
+					if (right != 0) {
+						images[2] = Image.createImage(image, imageWidth - right, top, right, imageHeight - top - bottom, 0);		// right
+						if (bottom != 0) {
+							images[3] = Image.createImage(image, imageWidth - right, imageHeight - bottom, right, bottom, 0);		// bottom-right
+						}
+					}
+					if (bottom != 0) {
+						images[4] = Image.createImage(image, left, imageHeight - bottom, imageWidth - left - right, bottom, 0);		// bottom
+						if (left != 0) {
+							images[5] = Image.createImage(image, 0, imageHeight - bottom, left, bottom, 0);							// bottom-left
+						}
+					}
+					if (left != 0) {
+						images[6] = Image.createImage(image, 0, top, left, imageHeight - top - bottom, 0);							// left
+						if (top != 0) {
+							images[7] = Image.createImage(image, 0, 0, left, top, 0);												// top-left
+						}
+					}
+					
+				} catch (Exception e) {
+					throw new IllegalArgumentException("Bad top, right, bottom or left value");
+				}
+			} else {
+				throw new IllegalArgumentException("Bad image value");
+			}
+			return images;
+		}
+		if (numValues == 8) {
+			Image[] images = new Image[8];
+			for (int i = 0; values.hasMoreTokens(); ++i) {
+				try {
+					images[i] = convertImage(values.nextToken());
+					continue;
+				} catch (Exception e) {
+					return null;
+				}
+			}
+			return images;
+		}
+		throw new IllegalArgumentException("Bad border-image value");
+	}
+	
+	/**
+	 * @param rawData
 	 * @return The converted {@link Layout}
 	 */
 	protected Layout convertLayout(String rawData) {
@@ -692,7 +782,7 @@ public class KuixConverter {
 		}
 		String rawParams = null;
 		if ((rawParams = extractRawParams("inlinelayout", rawData)) != null) {
-			StringTokenizer st = new StringTokenizer(rawParams, ", ");
+			StringTokenizer st = new StringTokenizer(rawParams, ",");
 			if (st.countTokens() >= 2) {
 				boolean horizontal = BooleanUtil.parseBoolean(st.nextToken());
 				Alignment alignment = convertAlignment(st.nextToken());
@@ -713,10 +803,10 @@ public class KuixConverter {
 		} else if (rawData.startsWith("borderlayout")) {
 			return BorderLayout.instance;
 		} else if ((rawParams = extractRawParams("gridlayout", rawData)) != null) {
-			StringTokenizer st = new StringTokenizer(rawParams, ", ");
+			StringTokenizer st = new StringTokenizer(rawParams, ",");
 			if (st.countTokens() >= 2) {
-				int numCols = Integer.valueOf(st.nextToken()).intValue();
-				int numRows = Integer.valueOf(st.nextToken()).intValue();
+				int numCols = Integer.parseInt(st.nextToken().trim());
+				int numRows = Integer.parseInt(st.nextToken().trim());
 				return new GridLayout(numCols, numRows);
 			}
 		} else if (rawData.startsWith("staticlayout")) {
@@ -744,8 +834,10 @@ public class KuixConverter {
 				return BorderLayoutData.instanceEast;
 			} else if ("south".equals(rawParams)) {
 				return BorderLayoutData.instanceSouth;
+			} else if ("center".equals(rawParams)) {
+				return BorderLayoutData.instanceCenter;
 			}
-			return BorderLayoutData.instanceCenter;
+			throw new IllegalArgumentException("Invalid bld value : " + rawParams);
 		}
 		// StaticLayoutData
 		if ((rawParams = extractRawParams("sld", rawData)) != null) {
@@ -753,14 +845,14 @@ public class KuixConverter {
 			if (pos != -1) {
 				try {
 					Alignment alignment = convertAlignment(rawParams.substring(0, pos));
-					int[] values = convertFPArray(rawParams.substring(pos + 1), 2, ", ");
+					int[] values = convertFPArray(rawParams.substring(pos + 1), 2, ",");
 					if (values != null) {
 						return new StaticLayoutData(alignment, values[0], values[1]);
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
 				}
 			}
+			throw new IllegalArgumentException("Invalid sld value : " + rawParams);
 		}
 		throw new IllegalArgumentException("Bad layout data value");
 	}
@@ -890,33 +982,6 @@ public class KuixConverter {
 	}
 	
 	/**
-	 * Fill <code>binds</code> hastable with converted binds instructions.
-	 * 
-	 * @param rawData
-	 * @return the <code>binds</code> hastable
-	 */
-	public Hashtable convertBinds(String rawData, Hashtable binds) {
-		if (binds != null) {
-			binds.clear();
-		} else {
-			binds = new Hashtable();
-		}
-		StringTokenizer bindInstructions = new StringTokenizer(rawData, "; ");
-		while (bindInstructions.hasMoreTokens()) {
-			String bindInstruction = bindInstructions.nextToken();
-			if (bindInstruction.length() >= 3) {
-				int separatorPos = bindInstruction.indexOf(':');
-				if (separatorPos != -1) {
-					String attribute = bindInstruction.substring(0, separatorPos);
-					String property = bindInstruction.substring(separatorPos + 1);
-					binds.put(property, attribute);
-				}
-			}
-		}
-		return binds;
-	}
-	
-	/**
 	 * Extract parameters from a prefix(params) syntaxed string
 	 *  
 	 * @param prefix
@@ -969,7 +1034,7 @@ public class KuixConverter {
 			int[] fpValues = new int[values.countTokens()];
 			for (int i = 0; values.hasMoreTokens(); ++i) {
 				try {
-					fpValues[i] = MathFP.toFP(values.nextToken());
+					fpValues[i] = MathFP.toFP(values.nextToken().trim());
 					continue;
 				} catch (Exception e) {
 					return null;

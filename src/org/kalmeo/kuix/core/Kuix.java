@@ -51,11 +51,6 @@ import org.kalmeo.util.xml.LightXmlParser;
 import org.kalmeo.util.xml.LightXmlParserHandler;
 
 /**
- * 
- * TODO : Fix Table layout bug in ScrollContainer widget
- * TODO : fix setCurrentScreen after showPopupBox (problem with focusManager priority)
- * TODO Doc : - add image - add inherited tag - show internal status
- * 
  * @author bbeaulant
  */
 public final class Kuix {
@@ -752,7 +747,15 @@ public final class Kuix {
 					c = reader.read();
 	
 				}
-	
+				
+				if (commentCapture) {
+					throw new IllegalArgumentException("CSS : Invalide comment block");
+				}
+				
+				if (!selectorsCapture) {
+					throw new IllegalArgumentException("CSS : Invalid selector block");
+				}
+				
 				return;
 				
 			} catch (IOException e) {
@@ -1238,7 +1241,7 @@ public final class Kuix {
 					argsValues = new String[args.countTokens()];
 					int i = 0;
 					while (args.hasMoreTokens()) {
-						argsValues[i++] = args.nextToken();
+						argsValues[i++] = args.nextToken().trim();
 					}
 					keyEndIndex = argStartIndex;
 				}

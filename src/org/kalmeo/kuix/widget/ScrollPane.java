@@ -380,6 +380,7 @@ public class ScrollPane extends Widget {
 	public boolean bestScrollToChild(Widget child, boolean useIncrementLimit) {
 		boolean widgetIsVisible = true;
 		if (horizontal) {
+			useIncrementLimit &= innerWidth > 0;
 			int childX = child.getX() - this.container.getInsets().left;
 			Widget container;
 			for (container = child.parent; container != null && container != this.container; container = container.parent) {
@@ -407,6 +408,7 @@ public class ScrollPane extends Widget {
 				}
 			}
 		} else {
+			useIncrementLimit &= innerHeight > 0;
 			int childY = child.getY() - this.container.getInsets().top;
 			Widget container;
 			for (container = child.parent; container != null && container != this.container; container = container.parent) {
