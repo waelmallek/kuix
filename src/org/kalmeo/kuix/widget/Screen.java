@@ -643,7 +643,7 @@ public class Screen extends Widget {
 					switchToDefaultMenu = tmpFocusManager.processKeyEvent(KuixConstants.KEY_PRESSED_EVENT_TYPE, KuixConstants.KUIX_KEY_FIRE) && !(tmpFocusManager.getFocusedWidget() instanceof Menu);
 				}
 			} else {
-				Menu.hideAllPopupMenu();
+				Menu.hideAllMenuPopups();
 			}
 			if (switchToDefaultMenu) {
 				switchToDefaultMenus();

@@ -48,7 +48,7 @@ public class Menu extends MenuItem {
 		// The associated FocusManager
 		private final FocusManager focusManager;
 		
-		// Instance of PopupMenu StaticLayoutData
+		// Instance of MenuPopup StaticLayoutData
 		private final StaticLayoutData layoutData = new StaticLayoutData(null, -1, -1);
 		
 		/**
@@ -57,7 +57,7 @@ public class Menu extends MenuItem {
 		public MenuPopup() {
 			super(KuixConstants.MENU_POPUP_WIDGET_TAG);
 			
-			// Used as a workaround CLDC 1.0 limitation on PopupMenu.class
+			// Used as a workaround CLDC 1.0 limitation on MenuPopup.class
 			if (menuPopupClass == null) {
 				menuPopupClass = getClass();
 			}
@@ -78,7 +78,7 @@ public class Menu extends MenuItem {
 								
 								case KuixConstants.KUIX_KEY_BACK:
 								case KuixConstants.KUIX_KEY_LEFT:
-									hidePopupMenu();
+									hideMenuPopup();
 									return true;
 
 								case KuixConstants.KUIX_KEY_RIGHT:
@@ -117,7 +117,7 @@ public class Menu extends MenuItem {
 					boolean superProcess = super.processPointerEvent(type, x, y);
 					if (type == KuixConstants.POINTER_RELEASED_EVENT_TYPE) {
 						if (!superProcess) {
-							hidePopupMenu();
+							hideMenuPopup();
 							return true;
 						}
 					}
@@ -125,9 +125,9 @@ public class Menu extends MenuItem {
 				}	
 				
 				/**
-				 * Hide the associated {@link PopupMenu}
+				 * Hide the associated {@link MenuPopup}
 				 */
-				private void hidePopupMenu() {
+				private void hideMenuPopup() {
 					MenuPopup menuPopup = ((MenuPopup) rootWidget);
 					if (getMenu() != null && !(getMenu().parent instanceof MenuPopup)) {
 						getMenu().hideMenuTree();
@@ -169,7 +169,7 @@ public class Menu extends MenuItem {
 		}
 
 		/**
-		 * Display the {@link PopupMenu}
+		 * Display the {@link MenuPopup}
 		 * 
 		 * @param desktop
 		 * @param displayX
@@ -201,7 +201,7 @@ public class Menu extends MenuItem {
 		}
 		
 		/**
-		 * Hide this popupMenu
+		 * Hide this {@link MenuPopup}
 		 */
 		public void hide() {
 			if (parent == null) {
@@ -226,7 +226,7 @@ public class Menu extends MenuItem {
 		
 	}
 	
-	// Used as a workaround CLDC 1.0 limitation on PopupMenu.class
+	// Used as a workaround CLDC 1.0 limitation on MenuPopup.class
 	private static Class menuPopupClass;
 
 	// The associated menuPopup
@@ -289,21 +289,21 @@ public class Menu extends MenuItem {
 	}
 
 	/**
-	 * Open the popupMenu
+	 * Open the menuPopup
 	 */
 	public void showPopup() {
 		showPopup(getDisplayX() + getWidth(), getDisplayY() + getHeight());
 	}
 
 	/**
-	 * Open the popupMenu
+	 * Open the menuPopup
 	 * 
 	 * @param displayX
 	 * @param displayY
 	 */
 	public void showPopup(int displayX, int displayY) {
 		if (getDepth() == 0) {
-			hideAllPopupMenu();
+			hideAllMenuPopups();
 		}
 		if (popup != null) {
 			popup.show(getDesktop(), displayX, displayY);
@@ -311,7 +311,7 @@ public class Menu extends MenuItem {
 	}
 	
 	/**
-	 * Close the popupMenu
+	 * Close the menuPopup
 	 */
 	public void hidePopup() {
 		if (popup != null) {
@@ -331,9 +331,9 @@ public class Menu extends MenuItem {
 	}
 
 	/**
-	 * Hide all visible popupMenus
+	 * Hide all visible menuPopups
 	 */
-	protected static void hideAllPopupMenu() {
+	protected static void hideAllMenuPopups() {
 		if (menuPopupClass != null) {
 			KuixMIDlet.getDefault().getCanvas().getDesktop().removeAllPopupInstanceOf(menuPopupClass);
 		}
