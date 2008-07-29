@@ -368,29 +368,35 @@ public abstract class KuixMIDlet extends MIDlet {
 	 */
 	protected void startApp() throws MIDletStateChangeException {
 		
-		// Try to extract the Worker frame duration from the JAD file
-		String frameDurationValue = getAppProperty(KuixConstants.KUIX_FRAME_DURATION_APP_PROPERTY);
-		if (frameDurationValue != null) {
-			int frameDuration = Integer.valueOf(frameDurationValue).intValue();
-			Worker.instance.setFrameDuration(frameDuration);
+		// Canvas == null => first start : this code is a workaround for WTK emulator bug when pausing app twice
+		if (canvas == null) {
+			
+			// Try to extract the Worker frame duration from the JAD file
+			String frameDurationValue = getAppProperty(KuixConstants.KUIX_FRAME_DURATION_APP_PROPERTY);
+			if (frameDurationValue != null) {
+				int frameDuration = Integer.valueOf(frameDurationValue).intValue();
+				Worker.instance.setFrameDuration(frameDuration);
+			}
+			
 		}
 		
 		// Start the worker
 		Worker.instance.start();
-		
+			
 		if (paused) {
 			paused = false;
 			if (canvas != null) {
 				canvas.repaintNextFrame();
 			}
 			onResumed();
-		} else {
+		} else if (canvas == null) {
 			// Create an initialize a new KuixCanvas instance
 			canvas = new KuixCanvas(this, isFullscreen());
 			canvas.initialize();
 			// Call the onStarted event
 			onStarted();
 		}
+		
 	}
 
 	/* (non-Javadoc)

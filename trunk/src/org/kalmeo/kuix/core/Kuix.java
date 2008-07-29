@@ -171,7 +171,6 @@ public final class Kuix {
 	 * @param rootWidget
 	 * @param inputStream
 	 * @param dataProvider
-	 * @return the rootWidget instance
 	 * @throws Exception
 	 */
 	public static void loadXml(Widget rootWidget, InputStream inputStream, DataProvider dataProvider) {
@@ -1063,8 +1062,7 @@ public final class Kuix {
 	 * 
 	 * You can call this method explicitly to see whether there was any problem
 	 * with initialization of the i18n support. Method returns a status
-	 * of the successfulness. If there was any problem with initialization, you
-	 * can get reason by using {@link #getI18nErrorMessage()} method.
+	 * of the successfulness.
 	 * 
 	 * @return true if the intialization was succesfull, false if there was any
 	 *         problem.
@@ -1087,10 +1085,6 @@ public final class Kuix {
 	 * <CODE>initI18nSupport("fr");</CODE>) before using
 	 * {@link #getMessage(java.lang.String)} method for the first time.
 	 * 
-	 * Method returns a status of the successfulness. If there was any problem
-	 * with the initialization, you can get explanation by using
-	 * {@link #getI18nErrorMessage()} method.
-	 * 
 	 * @param locale locale which will be used to determine which message file
 	 *            from bundle will be used
 	 * @return true if the intialization was succesfull, false if there was any
@@ -1108,10 +1102,6 @@ public final class Kuix {
 	 * initialize the i18n support (by calling
 	 * <CODE>initI18nSupport("fr");</CODE>) before using
 	 * {@link #getMessage(java.lang.String)} method for the first time.
-	 * 
-	 * Method returns a status of the successfulness. If there was any problem
-	 * with the initialization, you can get explanation by using
-	 * {@link #getI18nErrorMessage()} method.
 	 * 
 	 * @param messageBundle full custom messages bundle path
 	 * @param locale locale which will be used to determine which message file

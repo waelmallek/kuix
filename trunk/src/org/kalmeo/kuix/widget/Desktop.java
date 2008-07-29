@@ -171,7 +171,7 @@ public class Desktop extends Widget {
 		
 	};
 	
-	// Instance of PopupMenu StaticLayoutData
+	// Instance of Desktop StaticLayoutData
 	private final StaticLayoutData layoutData = new StaticLayoutData(null, -1, -1);
 	
 	// The associated KuixCanvas
@@ -253,8 +253,8 @@ public class Desktop extends Widget {
 			this.screen.remove();
 		}
 		
-		// Hide popupMenus
-		Menu.hideAllPopupMenu();
+		// Hide menuPopups
+		Menu.hideAllMenuPopups();
 		
 		// Check transition
 		Transition transition = screen.getTransition();

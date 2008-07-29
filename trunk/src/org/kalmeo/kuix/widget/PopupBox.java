@@ -29,6 +29,7 @@ import org.kalmeo.kuix.layout.Layout;
 import org.kalmeo.kuix.layout.LayoutData;
 import org.kalmeo.kuix.layout.StaticLayoutData;
 import org.kalmeo.kuix.util.Alignment;
+import org.kalmeo.kuix.widget.Menu.MenuPopup;
 import org.kalmeo.util.worker.Worker;
 import org.kalmeo.util.worker.WorkerTask;
 
@@ -63,7 +64,7 @@ public class PopupBox extends ActionWidget {
 	private Gauge gauge;
 
 	/**
-	 * Construct a {@link PopupMenu}
+	 * Construct a {@link MenuPopup}
 	 */
 	public PopupBox() {
 		super(KuixConstants.POPUP_BOX_WIDGET_TAG);

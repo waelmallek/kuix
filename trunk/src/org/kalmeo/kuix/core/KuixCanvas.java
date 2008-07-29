@@ -40,7 +40,7 @@ import org.kalmeo.util.worker.Worker;
 import org.kalmeo.util.worker.WorkerTask;
 
 /**
- * This is the Kuix implementation of the J2ME {@link Canvas}.
+ * This is the Kuix implementation of the J2ME {@link GameCanvas}.
  * This canvas intercept all user events (keyboard and pointer)
  * 
  * @author bbeaulant
