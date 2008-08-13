@@ -51,6 +51,10 @@ import org.kalmeo.util.xml.LightXmlParser;
 import org.kalmeo.util.xml.LightXmlParserHandler;
 
 /**
+ * This class is the central class for Kuix framework management. It pertmits to
+ * load XML files, load CSS files. It contains the {@link FrameHandler} object
+ * instance that manages Frames.
+ * 
  * @author bbeaulant
  */
 public final class Kuix {
@@ -63,6 +67,13 @@ public final class Kuix {
 
 	// Converter
 	private static KuixConverter converter = new KuixConverter();
+	
+	/**
+	 * Construct a {@link Kuix}
+	 */
+	private Kuix() {
+		// Private constructor, no need to instanciate this class.
+	}
 	
 	/**
 	 * @return the frameHandler
@@ -239,7 +250,17 @@ public final class Kuix {
 	 */
 	public static void callActionMethod(Method method) {
 		if (method != null) {
-			frameHandler.processMessage(method.getName(), method.getArguments());
+			if (!frameHandler.processMessage(method.getName(), method.getArguments())) {
+				
+				// Default KUIX actions
+				//////////////////////////////////////////////////////////////////////
+				
+				// Exit (exits the application)
+				if (KuixConstants.EXIT_ACTION.equals(method.getName())) {
+					KuixMIDlet.getDefault().destroyImpl();
+				}
+				
+			}
 		}
 	}
 
@@ -418,7 +439,7 @@ public final class Kuix {
 							if (characters.startsWith(KuixConstants.INCLUDE_KEYWORD_PATTERN)) {
 								String fileName = null;
 								String dataProviderProperty = null;
-								String rawParams = KuixConverter.extractRawParams(KuixConstants.INCLUDE_KEYWORD_PATTERN, characters);
+								String rawParams = StringUtil.extractRawParams(KuixConstants.INCLUDE_KEYWORD_PATTERN, characters);
 								if (rawParams != null) {
 									StringTokenizer st = new StringTokenizer(rawParams, ", ");
 									if (st.hasMoreElements()) {

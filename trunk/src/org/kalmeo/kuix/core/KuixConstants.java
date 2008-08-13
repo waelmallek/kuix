@@ -29,7 +29,7 @@ public interface KuixConstants {
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Commons
 	
-	public static final String VERSION										= "1.0.0";
+	public static final String VERSION										= "1.0.1";
 	
 	public static final String DEFAULT_XML_RES_FOLDER						= "/xml/";
 	public static final String DEFAULT_CSS_RES_FOLDER						= "/css/";
@@ -72,6 +72,8 @@ public interface KuixConstants {
 	public static final String OK_I18N_KEY									= "OK";
 	public static final String YES_I18N_KEY									= "YES";
 	public static final String NO_I18N_KEY									= "NO";
+	public static final String SOFT_LEFT_I18N_KEY							= "SOFT_LEFT";
+	public static final String SOFT_RIGHT_I18N_KEY							= "SOFT_RIGHT";
 	
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// JAD app properties
@@ -97,6 +99,11 @@ public interface KuixConstants {
 	// PointerEvent
 	public static final byte FOCUS_GAINED_EVENT_TYPE 						= 30;
 	public static final byte FOCUS_LOST_EVENT_TYPE 							= 31;
+	
+	/////////////////////////////////////////////////////////////////////////////////////////
+	// Kuix default actions
+	
+	public static final String EXIT_ACTION									= "!exit";
 	
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Widget attributes
@@ -276,6 +283,7 @@ public interface KuixConstants {
 	public static final String PLATFORM_SAMSUNG 							= "samsung";
 	public static final String PLATFORM_LG 									= "lg";
 	public static final String PLATFORM_INTENT 								= "intent";	// Windows mobile
+	public static final String PLATFORM_BLACKBERRY 							= "blackberry";
 	public static final String PLATFORM_NOT_DEFINED 						= "NA";
 
 	/////////////////////////////////////////////////////////////////////////////////////////

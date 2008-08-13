@@ -1,6 +1,19 @@
 # Kuix Changelog
 
+##Version 1.0.1 (2008-XX-XX)
+
+- Add **Blackberry** platform detection support and Soft keys emulation through action menu.
+
+- Add a processDebugInfosKeyEvent() method to KuixMIDlet to be able to customize debug infos key event action. By default it displays Kuix debug infos on the screen.
+
+- Add KuixMIDlet.fatal(String) and KuixMIDlet.fatal(String, Throwable) methods to display fatal error LCDUI alert messages. 
+
+- Add default kuix actions available in xml actions (like onAction="...") :
+  - *!exit* : exits the application by calling KuixMIDlet.getDefault().destroyImpl()
+
 ##Version 1.0.0 (2008-07-25)
+
+- This release need **kutil 1.0.1**
 
 - Bug fix : avoid a NoClassDefFoundException on SonyEricsson
 - Bug fix : avoid an exception when loading a CCS file with comment on SonyEricsson

@@ -179,7 +179,7 @@ public class Desktop extends Widget {
 
 	// FocusManagers
 	private final Stack popupFocusManagers;
-	private FocusManager screenFocusManagers;
+	private FocusManager screenFocusManager;
 	
 	// The content's widgets
 	private final PopupContainer popupContainer;
@@ -197,7 +197,7 @@ public class Desktop extends Widget {
 		
 		// Init focusManagers
 		popupFocusManagers = new Stack();
-		screenFocusManagers = null;
+		screenFocusManager = null;
 		
 		// Init content's widgets
 		popupContainer = new PopupContainer();
@@ -291,7 +291,7 @@ public class Desktop extends Widget {
 	 */
 	public FocusManager getCurrentFocusManager() {
 		if (popupFocusManagers.isEmpty()) {
-			return screenFocusManagers;
+			return screenFocusManager;
 		}
 		return (FocusManager) popupFocusManagers.lastElement();
 	}
@@ -491,7 +491,7 @@ public class Desktop extends Widget {
 	protected void onChildAdded(Widget widget) {
 		FocusManager focusManager = widget.getFocusManager();
 		if (focusManager != null) {
-			screenFocusManagers = focusManager;
+			screenFocusManager = focusManager;
 			// Select the first selectable if there is no focused widget
 			if (focusManager.getFocusedWidget() == null) {
 				focusManager.requestFirstFocus();
@@ -503,7 +503,7 @@ public class Desktop extends Widget {
 	 * @see org.kalmeo.kuix.widget.Widget#onRemoved(org.kalmeo.kuix.widget.Widget)
 	 */
 	protected void onChildRemoved(Widget widget) {
-		screenFocusManagers = null;
+		screenFocusManager = null;
 	}
 	
 }
