@@ -73,6 +73,7 @@ import org.kalmeo.kuix.widget.Widget;
 import org.kalmeo.util.BooleanUtil;
 import org.kalmeo.util.MathFP;
 import org.kalmeo.util.StringTokenizer;
+import org.kalmeo.util.StringUtil;
 import org.kalmeo.util.resource.ImageManager;
 
 /**
@@ -269,11 +270,11 @@ public class KuixConverter {
 			return null;
 		}
 		String rawParams = null;
-		if ((rawParams = extractRawParams("slide", rawData)) != null) {
+		if ((rawParams = StringUtil.extractRawParams("slide", rawData)) != null) {
 			Alignment alignment = convertAlignment(rawParams);
 			return new SlideTransition(alignment);
 		}
-		if ((rawParams = extractRawParams("fade", rawData)) != null) {
+		if ((rawParams = StringUtil.extractRawParams("fade", rawData)) != null) {
 			return new FadeTransition(Integer.parseInt(rawParams));
 		}
 		throw new IllegalArgumentException("Bad transition value");
@@ -607,7 +608,7 @@ public class KuixConverter {
 		}
 		String rawParams = null;
 		String imgSrc = null;
-		if ((rawParams = extractRawParams("url", rawData.trim())) != null) {
+		if ((rawParams = StringUtil.extractRawParams("url", rawData.trim())) != null) {
 			StringTokenizer st = new StringTokenizer(rawParams, ",");
 			int numTokens = st.countTokens();
 			if (numTokens >= 1) {
@@ -781,7 +782,7 @@ public class KuixConverter {
 			return null;
 		}
 		String rawParams = null;
-		if ((rawParams = extractRawParams("inlinelayout", rawData)) != null) {
+		if ((rawParams = StringUtil.extractRawParams("inlinelayout", rawData)) != null) {
 			StringTokenizer st = new StringTokenizer(rawParams, ",");
 			if (st.countTokens() >= 2) {
 				boolean horizontal = BooleanUtil.parseBoolean(st.nextToken());
@@ -792,7 +793,7 @@ public class KuixConverter {
 				return new InlineLayout(horizontal);
 			}
 			return new InlineLayout();
-		} else if ((rawParams = extractRawParams("flowlayout", rawData)) != null) {
+		} else if ((rawParams = StringUtil.extractRawParams("flowlayout", rawData)) != null) {
 			Alignment alignment = convertAlignment(rawParams);
 			if (alignment != null) {
 				return new FlowLayout(alignment);
@@ -802,7 +803,7 @@ public class KuixConverter {
 			return TableLayout.instance;
 		} else if (rawData.startsWith("borderlayout")) {
 			return BorderLayout.instance;
-		} else if ((rawParams = extractRawParams("gridlayout", rawData)) != null) {
+		} else if ((rawParams = StringUtil.extractRawParams("gridlayout", rawData)) != null) {
 			StringTokenizer st = new StringTokenizer(rawParams, ",");
 			if (st.countTokens() >= 2) {
 				int numCols = Integer.parseInt(st.nextToken().trim());
@@ -825,7 +826,7 @@ public class KuixConverter {
 		}
 		String rawParams = null;
 		// BorderLayouData
-		if ((rawParams = extractRawParams("bld", rawData)) != null) {
+		if ((rawParams = StringUtil.extractRawParams("bld", rawData)) != null) {
 			if ("north".equals(rawParams)) {
 				return BorderLayoutData.instanceNorth;
 			} else if ("west".equals(rawParams)) {
@@ -840,7 +841,7 @@ public class KuixConverter {
 			throw new IllegalArgumentException("Invalid bld value : " + rawParams);
 		}
 		// StaticLayoutData
-		if ((rawParams = extractRawParams("sld", rawData)) != null) {
+		if ((rawParams = StringUtil.extractRawParams("sld", rawData)) != null) {
 			int pos = rawParams.indexOf(",");
 			if (pos != -1) {
 				try {
@@ -981,24 +982,6 @@ public class KuixConverter {
 		return null;
 	}
 	
-	/**
-	 * Extract parameters from a prefix(params) syntaxed string
-	 *  
-	 * @param prefix
-	 * @param rawData
-	 * @return The paramters full string
-	 */
-	public static String extractRawParams(String prefix, String rawData) {
-		if (rawData.startsWith(prefix)) {
-			int posStart = rawData.indexOf(prefix + "(");
-			int posEnd = rawData.indexOf(")");
-			if (posStart != -1 && posEnd != -1 && posStart < posEnd) {
-				return rawData.substring(posStart + prefix.length() + 1, posEnd);
-			}
-		}
-		return null;
-	}
-
 	/**
 	 * @param rawData
 	 * @param wantedMinSize

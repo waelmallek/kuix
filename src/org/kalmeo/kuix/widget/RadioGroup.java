@@ -147,10 +147,10 @@ public class RadioGroup extends List {
 	 * @param propagateChangeEvent if <code>true</code> the onChange event could be propagated
 	 */
 	public void setSelectedRadioButton(RadioButton radioButton, boolean propagateChangeEvent) {
-		wantedValue = null;
 		if (radioButton != null && radioButton.parent != this) {
 			return;
 		}
+		wantedValue = null;
 		if (selectedRadioButton != radioButton) {
 			if (selectedRadioButton != null) {
 				selectedRadioButton.setSelected(false);
@@ -188,6 +188,7 @@ public class RadioGroup extends List {
 	 */
 	public void cleanUp() {
 		selectedRadioButton = null;
+		wantedValue = null;
 		super.cleanUp();
 	}
 	

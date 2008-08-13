@@ -21,7 +21,12 @@
 
 package org.kalmeo.kuix.core;
 
+import javax.microedition.lcdui.Alert;
+import javax.microedition.lcdui.AlertType;
+import javax.microedition.lcdui.Command;
+import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
+import javax.microedition.lcdui.Displayable;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
@@ -37,7 +42,10 @@ import org.kalmeo.util.worker.Worker;
  * 
  * @author bbeaulant
  */
-public abstract class KuixMIDlet extends MIDlet {
+public abstract class KuixMIDlet extends MIDlet implements CommandListener {
+	
+	// Fatal alert exit command
+	private static final Command FATAL_EXIT_COMMAND = new Command("Exit", Command.EXIT, 0);
 
 	// The Midlet instance
 	private static KuixMIDlet defaultInstance;
@@ -59,6 +67,8 @@ public abstract class KuixMIDlet extends MIDlet {
 	}
 
 	/**
+	 * Returns the {@link KuixCanvas} object instance.
+	 * 
 	 * @return the canvas
 	 */
 	public KuixCanvas getCanvas() {
@@ -66,6 +76,8 @@ public abstract class KuixMIDlet extends MIDlet {
 	}
 
 	/**
+	 * Returns the display object instance.
+	 * 
 	 * @return the display
 	 */
 	public Display getDisplay() {
@@ -146,7 +158,57 @@ public abstract class KuixMIDlet extends MIDlet {
 		} catch (MIDletStateChangeException mste) {
 		}
 	}
-
+	
+	// Fatal ////////////////////////////////////////////////////////////////////////////////////
+	 
+	/** 
+	 * Display a basic lcdui fatal error alert popup with the given
+	 * <code>message</code>. After displaying
+	 * the message the application will be closed.
+	 * 
+	 * @param message
+	 * @since 1.0.1
+	 */
+	public void fatal(String message) {
+		fatal(message, null);
+	}
+	
+	/** 
+	 * Display a basic lcdui fatal error alert popup with the given
+	 * <code>message</code> and <code>throwable</code>. After displaying
+	 * the message the application will be closed.
+	 * 
+	 * @param message
+	 * @param throwable
+	 * @since 1.0.1
+	 */
+	public void fatal(String message, Throwable throwable) {
+		
+		// Create and display the lcdui alert
+		Alert alert = new Alert("Error");
+		alert.setString(composeAltertMessage(message, throwable));
+		alert.setType(AlertType.ERROR);
+		alert.setCommandListener(this);
+		alert.addCommand(FATAL_EXIT_COMMAND);
+		alert.setTimeout(Alert.FOREVER);
+		display.setCurrent(alert);
+		
+		// Print stack trace for debug
+		if (throwable != null) {
+			throwable.printStackTrace();
+		}
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see javax.microedition.lcdui.CommandListener#commandAction(javax.microedition.lcdui.Command, javax.microedition.lcdui.Displayable)
+	 */
+	public void commandAction(Command command, Displayable displayable) {
+		if (command == FATAL_EXIT_COMMAND) {
+			destroyImpl();
+		}
+	}
+	
 	// PopupBox ////////////////////////////////////////////////////////////////////////////////////
 	
 	/**
@@ -331,6 +393,35 @@ public abstract class KuixMIDlet extends MIDlet {
 	 * @return The {@link PopupBox} instance
 	 */
 	public PopupBox alert(String message, Throwable throwable) {
+		
+		// Print stack trace for debug
+		if (throwable != null) {
+			throwable.printStackTrace();
+		}
+		
+		return alert(composeAltertMessage(message, throwable), KuixConstants.ALERT_ERROR | KuixConstants.ALERT_OK);
+	}
+	
+	/**
+	 * Open an alert box with the {@link Throwable} object message and
+	 * 'alerterror' style class.
+	 * 
+	 * @param throwable the {@link Throwable} to get message or class name
+	 * @return The {@link PopupBox} instance
+	 */
+	public PopupBox alert(Throwable throwable) {
+		return alert(null, throwable);
+	}
+	
+	/**
+	 * Compose an alert message by using the given <code>message</code> and
+	 * <code>throwable</code>.
+	 * 
+	 * @param message
+	 * @param throwable
+	 * @return the composed String.
+	 */
+	private String composeAltertMessage(String message, Throwable throwable) {
 		StringBuffer buffer = new StringBuffer();
 		if (message != null) {
 			buffer.append(message);
@@ -345,22 +436,7 @@ public abstract class KuixMIDlet extends MIDlet {
 				buffer.append(throwable.getClass().getName());
 			}
 		}
-		
-		// Print stack trace for debug
-		throwable.printStackTrace();
-		
-		return alert(buffer.toString(), KuixConstants.ALERT_ERROR | KuixConstants.ALERT_OK);
-	}
-	
-	/**
-	 * Open an alert box with the {@link Throwable} object message and
-	 * 'alerterror' style class.
-	 * 
-	 * @param throwable the {@link Throwable} to get message or class name
-	 * @return The {@link PopupBox} instance
-	 */
-	public PopupBox alert(Throwable throwable) {
-		return alert(null, throwable);
+		return buffer.toString();
 	}
 
 	/* (non-Javadoc)
@@ -427,6 +503,16 @@ public abstract class KuixMIDlet extends MIDlet {
 		onDestroy();
 		notifyDestroyed();
 		
+	}
+	
+	/**
+	 * This method is called when a Kuix internal debug infos key event occured.<br>
+	 * You can override this method to implement your own debug infos process.
+	 */
+	protected void processDebugInfosKeyEvent() {
+		if (canvas != null) {
+			canvas.setDebugInfosEnabled(!canvas.isDebugInfosEnabled());
+		}
 	}
 	
 	/**

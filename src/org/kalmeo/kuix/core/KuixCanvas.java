@@ -25,6 +25,9 @@ import java.io.IOException;
 import java.util.Vector;
 
 import javax.microedition.lcdui.Canvas;
+import javax.microedition.lcdui.Command;
+import javax.microedition.lcdui.CommandListener;
+import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
@@ -143,6 +146,21 @@ public final class KuixCanvas extends GameCanvas {
 	protected void setDebugInfosKuixKeyCode(int debugInfosKuixKeyCode) {
 		this.debugInfosKuixKeyCode = debugInfosKuixKeyCode;
 	}
+	
+	/**
+	 * @return the debugInfosEnabled
+	 */
+	public boolean isDebugInfosEnabled() {
+		return debugInfosEnabled;
+	}
+
+	/**
+	 * @param debugInfosEnabled the debugInfosEnabled to set
+	 */
+	public void setDebugInfosEnabled(boolean debugInfosEnabled) {
+		this.debugInfosEnabled = debugInfosEnabled;
+		repaintNextFrame();
+	}
 
 	/**
 	 * Define the next repaint transition. The transition delay depends on the
@@ -182,6 +200,31 @@ public final class KuixCanvas extends GameCanvas {
 		softKeyRight = getRightSoftkeyCode();
 		softKeyDelete = getDeleteKeyCode();
 		softKeyBack = getBackKeyCode();
+		
+		// Add blackberry soft keys emulation commands
+		if (platformName == KuixConstants.PLATFORM_BLACKBERRY) {
+			final Command softKeyLeftCommand = new Command(Kuix.getMessage(KuixConstants.SOFT_LEFT_I18N_KEY), Command.OK, 1);
+			final Command softKeyRightCommand = new Command(Kuix.getMessage(KuixConstants.SOFT_RIGHT_I18N_KEY), Command.OK, 2);
+			addCommand(softKeyLeftCommand);
+			addCommand(softKeyRightCommand);
+			setCommandListener(new CommandListener() {
+
+				/* (non-Javadoc)
+				 * @see javax.microedition.lcdui.CommandListener#commandAction(javax.microedition.lcdui.Command, javax.microedition.lcdui.Displayable)
+				 */
+				public void commandAction(Command c, Displayable d) {
+					if (c == softKeyLeftCommand) {
+						processKeyEvent(KuixConstants.KEY_PRESSED_EVENT_TYPE, SOFT_KEY_LEFT_DEFAULT);
+						return;
+					}
+					if (c == softKeyRightCommand) {
+						processKeyEvent(KuixConstants.KEY_PRESSED_EVENT_TYPE, SOFT_KEY_RIGHT_DEFAULT);
+						return;
+					}
+				}
+				
+			});
+		}
 		
 		// Init worker's task
 		keyEvents = new Vector();
@@ -522,7 +565,7 @@ public final class KuixCanvas extends GameCanvas {
 	 * 
 	 * @return a String representation of the debug infos
 	 */
-	protected String getDebugInfos() {
+	public String getDebugInfos() {
 
 		long totalMemory = -1;
 		long freeMemory = -1;
@@ -586,9 +629,8 @@ public final class KuixCanvas extends GameCanvas {
 				if ((debugInfosKuixKeyCode & kuixKeyCode) == kuixKeyCode) {
 					debugInfosKeyCounter++;
 					if (debugInfosKeyCounter >= 3) {
-						debugInfosEnabled = !debugInfosEnabled;
+						KuixMIDlet.getDefault().processDebugInfosKeyEvent();
 						debugInfosKeyCounter = 0;
-						repaintNextFrame();
 					}
 				} else {
 					debugInfosKeyCounter = 0;
@@ -600,7 +642,7 @@ public final class KuixCanvas extends GameCanvas {
 			
 		}
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see javax.microedition.lcdui.Canvas#pointerDragged(int, int)
 	 */
@@ -690,6 +732,8 @@ public final class KuixCanvas extends GameCanvas {
 	private static final int SOFT_KEY_LEFT_INTENT 		= 57345;
 	private static final int SOFT_KEY_RIGHT_INTENT 		= 57346;
 
+	private static final int DELETE_KEY_BLACKBERRY		= 8;
+	
 	private static final String SOFT_WORD = "SOFT";
 
 	/**
@@ -788,6 +832,12 @@ public final class KuixCanvas extends GameCanvas {
 					}
 				}
 			}
+		}
+		// Detecting LG
+		try {
+			Class.forName("net.rim.device.api.ui.UiApplication");
+			return KuixConstants.PLATFORM_BLACKBERRY;
+		} catch (Throwable ex) {
 		}
 		return KuixConstants.PLATFORM_NOT_DEFINED;
 	}
@@ -980,6 +1030,8 @@ public final class KuixCanvas extends GameCanvas {
 				return DELETE_KEY_SE;
 			} else if (platformName.equals(KuixConstants.PLATFORM_SUN)) {
 				return DELETE_KEY_DEFAULT;
+			} else if (platformName.equals(KuixConstants.PLATFORM_BLACKBERRY)) {
+				return DELETE_KEY_BLACKBERRY;
 			}
 		} catch (Throwable e) {
 			return DELETE_KEY_DEFAULT;
