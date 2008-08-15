@@ -1,0 +1,11 @@
+<screen style="layout:inlinelayout(false, right)" title="InlineLayout Demo">
+	<text class="child1">Word</text>
+	<container class="child2">
+		<picture>logo.png</picture>
+	</container>
+	<container class="child3">
+		<button>Button</button>
+	</container>
+	<screenfirstmenu onAction="back">Back</screenfirstmenu>
+	<screenSecondMenu onAction="next">Next</screenSecondMenu>
+</screen>

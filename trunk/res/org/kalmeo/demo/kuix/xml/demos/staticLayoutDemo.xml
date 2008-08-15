@@ -1,0 +1,14 @@
+<screen style="layout:staticlayout" title="StaticLayout Demo">
+	<container style="layout-data:sld(center,-1,-1);margin:10 10 0 0">
+		<container class="child1" style="padding:2">
+			<picture>logo.png</picture>
+		</container>
+	</container>
+	<container style="layout-data:sld(center,-1,-1);margin:0 0 10 10">
+		<container class="child2" style="padding:2">
+			<picture>logo.png</picture>
+		</container>
+	</container>
+	<screenfirstmenu onAction="back">Back</screenfirstmenu>
+	<screenSecondMenu onAction="next">Next</screenSecondMenu>
+</screen>

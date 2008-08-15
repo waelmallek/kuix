@@ -1,0 +1,80 @@
+<screen title="TabFolder Demo" cleanUpWhenRemoved="true">
+	<tabfolder>
+		<tabfolderdefaulttabitem>
+			<text style="align:center">All tabs are disabled</text>
+		</tabfolderdefaulttabitem>
+		<tabitem label="Text">
+			<_enabled>@{bText}</_enabled>
+			<scrollPane style="layout:inlinelayout(false,fill);padding:5">
+				<text class="label">Text :</text>
+				<text style="align:center">A text</text>
+				<container class="separator" />
+				<text class="label">Textarea :</text>
+				<textarea class="textareademo">A paragraph long enough to take up two lines</textarea>
+				<container class="separator" />
+				<text class="label">Textfield :</text>
+				<textfield tooltip="tooltip" />
+			</scrollPane>
+		</tabitem>
+		<tabitem label="Button">
+			<_enabled>@{bButton}</_enabled>
+			<scrollPane style="layout:inlinelayout(false,fill);padding:5">
+				<text class="label">Button :</text>
+				<button>Ok</button>
+				<container class="separator" />
+				<text class="label">CheckBox :</text>
+				<checkbox>Box</checkbox>
+				<container class="separator" />
+				<text class="label">RadioButton :</text>
+				<radioGroup value="2">
+					<radiobutton value="1">Choice one</radiobutton>
+					<radiobutton value="2">Choice two</radiobutton>
+				</radioGroup>
+				<container class="separator" />
+				<text class="label">Choice :</text>
+				<choice>
+					<choiceRadiogroup>
+						<radiobutton selected="true">Choice one</radiobutton>
+						<radiobutton>Choice two</radiobutton>
+						<radiobutton>Choice tree</radiobutton>
+					</choiceRadiogroup>
+				</choice>
+				<container class="separator" />
+				<text class="label">Gauge :</text>
+				<gauge value="0.4" />
+			</scrollPane>
+		</tabitem>
+		<tabitem label="List" style="layout:borderlayout;padding:5">
+			<_enabled>@{bList}</_enabled>
+			<scrollPane usemarkers="false">
+				<list>
+					<listitem>
+						<text>Stone</text>
+						<picture>stone.png</picture>
+					</listitem>
+					<listitem>
+						<text>Leaf</text>
+					</listitem>
+					<listitem>
+						<picture>scissors.png</picture>
+						<text>Scissors</text>
+					</listitem>
+					<listitem>
+						<textarea>A paragraph long enough to take up two lines</textarea>
+					</listitem>
+				</list>
+			</scrollPane>
+		</tabitem>
+	</tabfolder>
+	<screenfirstmenu onAction="back">Back</screenfirstmenu>
+	<screenSecondMenu>
+		<picture>phone.png</picture>
+		Enable
+		<menupopup>
+			<menuitem onAction="enableText">Tab Text</menuitem>
+			<menuitem onAction="enableButton">Tab Button</menuitem>
+			<menuitem onAction="enableList">Tab List</menuitem>
+			<menuitem onAction="goHome">Home</menuitem>
+		</menupopup>
+	</screenSecondMenu>
+</screen>

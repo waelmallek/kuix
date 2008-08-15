@@ -1,0 +1,4 @@
+<container style="layout:borderlayout">
+	<picture src="logo.png" />
+	<text style="layout-data:bld(south)" text="KuixDemo" />
+</container>

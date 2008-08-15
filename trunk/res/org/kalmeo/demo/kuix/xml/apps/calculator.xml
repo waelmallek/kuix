@@ -1,0 +1,19 @@
+<screen style="align:fill-center;layout:inlinelayout(false,fill);gap:0 1" cleanUpWhenRemoved="true">
+	<_title>%CALCULATOR%</_title>
+	<container style="align:center;layout:flowlayout(center);gap:2 0">
+		<textfield constraints="numeric" onChange="updateValue1(this.text)">@{vVal1}</textfield>
+		<text>@{cOp}</text>
+		<textfield constraints="numeric" onChange="updateValue2(this.text)">@{vVal2}</textfield>
+		<text>=</text>
+		<text>@{vResult}</text>
+	</container>
+
+	<radiogroup onChange="updateOperator(this.value)" style="align:center">
+		<_value>@{cOp}</_value>
+		<radiobutton value="+">%ADD%</radiobutton>
+		<radiobutton value="-">%SUBTRACT%</radiobutton>
+	</radiogroup>
+
+	<screenfirstmenu onAction="back">%BACK%</screenfirstmenu>
+	<screenSecondMenu onAction="next">%NEXT%</screenSecondMenu>
+</screen>

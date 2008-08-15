@@ -1,0 +1,9 @@
+<screen style="layout:borderlayout" title="BorderLayout Demo">
+	<text class="child1" style="layout-data:bld(north);align:center;margin:2">north</text>
+	<text class="child2" style="layout-data:bld(south);align:center;margin:2">south</text>
+	<text class="child3" style="layout-data:bld(west);align:center;margin:2">west</text>
+	<text class="child4" style="layout-data:bld(east);align:center;margin:2">east</text>
+	<text class="child5" style="align:center;margin:2">center</text>
+	<screenfirstmenu onAction="back">Back</screenfirstmenu>
+	<screenSecondMenu onAction="next">Next</screenSecondMenu>
+</screen>
