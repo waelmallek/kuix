@@ -1,0 +1,15 @@
+<container class="library" style="align:fill-center;layout:borderlayout">
+	<radioGroup id="type" style="layout-data:bld(north);layout:inlinelayout(true,fill)" value="2">
+		<radiobutton value="1">DVD</radiobutton>
+		<radiobutton value="2">CD</radiobutton>
+	</radioGroup>
+	<textfield id="name" tooltip="name" />
+	<container style="layout-data:bld(south);layout:borderlayout">
+		Add position
+		<radioGroup id="side" style="layout-data:bld(south);layout:inlinelayout(false,fill)" value="1">
+			<radiobutton value="1">At the end</radiobutton>
+			<radiobutton value="2">Before selection</radiobutton>
+			<radiobutton value="3">After selection</radiobutton>
+		</radioGroup>
+	</container>
+</container>

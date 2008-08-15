@@ -1,0 +1,46 @@
+<screen cleanUpWhenRemoved="true">
+	<_title>%LIBRARY%</_title>
+	<tabfolder class="library">
+		<tabitem style="layout:borderlayout">
+			<_label>%LIBRARY%</_label>
+			<!-- The library xml code -->
+			<scrollPane usemarkers="false">
+				<list>
+					<_renderer><![CDATA[
+						<listitem>
+							<picture>support${vType}.png</picture>
+							${sTitle}
+						</listitem>
+					]]></_renderer>
+					<_items>@{lMedias}</_items>
+				</list>
+			</scrollPane>
+		</tabitem>
+		<tabitem>
+			<_label>%HELP%</_label>
+			<container>
+				<textarea class="library" styled="true"><![CDATA[
+					<b>Add your CD and DVD to the list</b> : <br/>
+					Enter a name, chose the support and press <i><u>add</u></i>
+				]]></textarea>
+			</container>
+		</tabitem>
+	</tabfolder>
+	<screenfirstmenu onAction="back">%BACK%</screenfirstmenu>
+	<screenSecondMenu>
+		%MENU%
+		<menupopup>
+			<menuitem onAction="askAdd">%ADD%</menuitem>
+			<menuitem onAction="remove">%REMOVE%</menuitem>
+			<menuitem onAction="removeAll">%REMOVEALL%</menuitem>
+			<menu>
+				%SORT%
+				<menupopup>
+					<menuitem onAction="sortBy(title)">%TITLE_SORT%</menuitem>
+					<menuitem onAction="sortBy(type)">%TYPE_SORT%</menuitem>
+				</menupopup>
+			</menu>
+			<menuitem onAction="goHome">%HOME%</menuitem>
+		</menupopup>
+	</screenSecondMenu>
+</screen>

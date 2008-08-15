@@ -1,0 +1,45 @@
+<screen style="align:top-left;layout:flowlayout(top)" title="FlowLayout Demo">
+		<container class="child1">
+			<picture>cake.png</picture>
+		</container>
+		<text class="child2">A word</text>
+		<container class="child3">
+			<picture>car.png</picture>
+		</container>
+		<container class="child4">
+			<picture>television.png</picture>
+		</container>
+		<container class="child5">
+			<picture>door_open.png</picture>
+		</container>
+		<container class="child6">
+			<picture>sport_8ball.png</picture>
+		</container>
+		<container class="child7">
+			<picture>sport_basketball.png</picture>
+		</container>
+		<container class="child8">
+			<picture>sport_shuttlecock.png</picture>
+		</container>
+		<container>
+			<picture>sport_raquet.png</picture>
+		</container>
+		<container class="child7">
+			<picture>sport_basketball.png</picture>
+		</container>
+		<container class="child5">
+			<picture>door_open.png</picture>
+		</container>
+		<container class="child4">
+			<picture>television.png</picture>
+		</container>
+		<container class="child6">
+			<picture>sport_8ball.png</picture>
+		</container>
+		<container class="child3">
+			<picture>car.png</picture>
+		</container>
+		<text class="child2">A word</text>
+	<screenfirstmenu onAction="back">Back</screenfirstmenu>
+	<screenSecondMenu onAction="next">Next</screenSecondMenu>
+</screen>

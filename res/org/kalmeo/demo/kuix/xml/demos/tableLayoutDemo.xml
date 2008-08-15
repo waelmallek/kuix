@@ -1,0 +1,15 @@
+<screen style="layout:tablelayout;gap:2 2" title="TableLayout Demo">
+	<container class="child1" style="span:4 1;padding:2">A</container>
+	<break/>
+	<container class="child2" style="span:1 2;padding:2"><picture>sport_8ball.png</picture></container>
+	<container class="child3" style="span:2 1;padding:2">C</container>
+	<container class="child4" style="span:1 3;padding:2">D</container>
+	<break/>
+	<container class="child5" style="padding:2"><picture>sport_raquet.png</picture></container>
+	<container class="child6" style="padding:2">F</container>
+	<break/>
+	<container class="child7" style="span:3 1;padding:2">G</container>
+	<break/>
+	<screenfirstmenu onAction="back">Back</screenfirstmenu>
+	<screenSecondMenu onAction="next">Next</screenSecondMenu>
+</screen>

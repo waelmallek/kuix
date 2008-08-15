@@ -1,0 +1,48 @@
+<screen>
+	<_title>%FORM%</_title>
+	<scrollPane usemarkers="false" style="align:fill-center;layout:inlinelayout(false,fill);gap:0 5">
+		<container style="align:right;gap:2 0">
+			<radioGroup style="layout:inlinelayout(true,fill)">
+				<radiobutton class="flags" onAction="setLang(fr)">
+					<picture>flag_fr.png</picture>
+				</radiobutton>
+				<radiobutton class="flags" onAction="setLang(en)">
+					<picture>flag_en.png</picture>
+				</radiobutton>
+			</radioGroup>
+		</container>
+
+		<container style="layout:gridlayout(2,1)">
+			%NAME%
+			<textfield id="name">
+				<_tooltip>%NAME_TOOLTIP%</_tooltip>
+			</textfield>
+		</container>
+
+		<container style="layout:gridlayout(2,1)">
+			%FIRSTNAME%
+			<textfield id="firstname">
+				<_tooltip>%FIRSTNAME_TOOLTIP%</_tooltip>
+			</textfield>
+		</container>
+
+		<container style="layout:gridlayout(2,1)">
+			%AGE%
+			<textfield id="age" constraints="numeric" style="align:right">
+				<_tooltip>%AGE_TOOLTIP%</_tooltip>
+			</textfield>
+		</container>
+
+		<container style="layout:gridlayout(2,1)">
+			%SEX%
+			<radioGroup id="sex" style="align:right;layout:inlinelayout(true,fill)">
+				<radiobutton value="M" style="gap:3 0">M</radiobutton>
+				<radiobutton value="F" style="gap:3 0">F</radiobutton>
+			</radioGroup>
+		</container>
+		
+		<button onAction="showPopup(#name.text, #firstname.text, #sex.value)">%SEND%</button>
+	</scrollPane>
+	<screenfirstmenu onAction="back">%BACK%</screenfirstmenu>
+	<screenSecondMenu onAction="next">%NEXT%</screenSecondMenu>
+</screen>

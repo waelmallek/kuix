@@ -1,0 +1,317 @@
+desktop {
+	bg-color: #cfdff0;
+}
+
+screen {
+	transition: slide(left);
+}
+
+container.library {
+	bg-color: #cfdff0;
+	padding: 2;
+}
+
+scrollpane {
+	padding: 2;
+}
+
+tabbutton {
+	border: 2 2 1 2;
+	border-image: url(tb.png) 2 2 1 2;
+	bg-color: #e2eaf6;
+	margin: 1 0 0 1;
+	padding: 2;
+}
+
+tabbutton:selected {
+	border-image: url(o_tb.png) 2 2 1 2;
+	bg-color: white;
+}
+
+tabbutton:disabled {
+	color: #b9cedc;
+}
+
+tabfolderbuttonscontainer {
+	bg-image: url(tb.png,2,12,30,1);
+	bg-repeat: 0 1;
+	bg-align: bottom;
+}
+
+button,choice {
+	border: 4;
+	border-image: url(btn.png) 4 4 4 4;
+	bg-color: #a1c831;
+	bg-image: url(btn.png,4,4,20,10);
+	bg-repeat: 0 1;
+	bg-align: bottom-left;
+	margin: 1;
+	padding: 0 2 0 2;
+	color: white;
+	font-style: bold;
+}
+
+choice {
+	bg-image: url(btn.png,4,4,20,10)|url(arrow.png);
+	bg-repeat: 0 1|1 1;
+	bg-align: bottom-left|right;
+}
+
+button:disabled {
+	color: #7eaf01;
+}
+
+button:hover,choice:hover {
+	border-image: url(o_btn.png) 4 4 4 4;
+	bg-image: url(o_btn.png,4,4,20,10);
+}
+
+choice:hover {
+	bg-image: url(o_btn.png,4,4,20,10)|url(arrow.png);
+}
+
+tabitem {
+	bg-color: white;
+}
+
+tabfolderbuttonscontainer {
+	align: right;
+}
+
+tabfolder.library tabfolderbuttonscontainer {
+	align: left;
+}
+
+checkbox {
+	bg-image: url(chk_off.png);
+	bg-align: left;
+	bg-repeat: 1 1;
+	padding: 0 0 0 20;
+	align: left;
+}
+
+checkbox:selected {
+	bg-image: url(chk_on.png);
+}
+
+checkbox:hover {
+	bg-image: url(o_chk_off.png);
+}
+
+checkbox:hover:selected {
+	bg-image: url(o_chk_on.png);
+}
+
+radiobutton {
+	bg-image: url(rb_off.png);
+	bg-align: left;
+	bg-repeat: 1 1;
+	padding: 0 3 0 16;
+	align: left;
+}
+
+radiobutton:selected {
+	bg-image: url(rb_on.png);
+}
+
+radiobutton:hover {
+	bg-image: url(o_rb_off.png);
+}
+
+radiobutton:hover:selected {
+	bg-image: url(o_rb_on.png);
+}
+
+radiobutton.flags {
+	padding: 0;
+	border: 1;
+	align: center;
+}
+
+radiobutton.flags:hover {
+	border-color: black;
+}
+
+textfield {
+	border: 3;
+	border-image: url(tf.png) 3 3 3 3;
+	bg-color: white;
+}
+
+textfield:hover {
+	border-image: url(o_tf.png) 3 3 3 3;
+}
+
+text.tooltip {
+	bg-color: #6d9fcc;
+	color: white;
+	padding: 0 2 0 2;
+	font-size: small;
+}
+
+screentopbar {
+	padding: 2 5 2 5;
+	bg-color: #6d9fcc;
+	color: white;
+}
+
+screentopbar text {
+	layout-data: sld(left,1,-1);
+	font-style: bold;
+	align: center;
+}
+
+screenbottombar {
+	padding: 2 5 2 5;
+	bg-color: #6d9fcc;
+	color: white;
+}
+
+menupopup {
+	border-color: #6d9fcc;
+	bg-color: white;
+	border: 1;
+	padding: 2;
+	color: #6d9fcc;
+}
+
+menuitem {
+	padding: 1 2 1 2;
+}
+
+menu {
+	padding: 1 18 1 2;
+	bg-image: url(arrow.png);
+	bg-repeat: 1 1;
+	bg-align: right;
+}
+
+screenfirstmenu:hover,screensecondmenu:hover,menu:hover,menuitem:hover {
+	color: white;
+	bg-color: #6d9fcc;
+}
+
+listitem {
+	gap: 5 0;
+}
+
+listitem:hover {
+	bg-color: #edf2f6;
+	color: #6d9fcc;
+}
+
+scrollbar {
+	bg-color: #e2eaf6;
+	padding: 1;
+}
+
+scrollbarbar {
+	padding: 0 0 0 5; 
+	bg-color: #6d9fcc;
+}
+
+textarea {
+	align: center;
+}
+
+textarea.library {
+	align: left;
+}
+
+textarea.textareademo {
+	align: left;
+	font-size: large;
+}
+
+text.white {
+	bg-color: white;
+	color: black;
+}
+
+text.black {
+	bg-color: black;
+	color: white;
+}
+
+text.label {
+	color: #6d9fcc;
+}
+
+gauge {
+	bg-color: #6d9fcc;
+	padding: 1;
+}
+
+gaugebar {
+	bg-color: white;
+	padding: 10 0 0 0;
+}
+
+popupbox {
+	border: 3;
+	border-color: #6d9fcc;
+	bg-color: white;
+	layout-data: sld(center,.9,-1);
+	color: #6d9fcc;
+	padding: 2;
+}
+
+popupbox textarea {
+	align: center;
+}
+
+popupboxbuttonscontainer {
+	align: center;
+	padding: 2;
+}
+
+popupbox.splash {
+	layout-data:sld(center,.8,.8);
+	bg-color: #55565A;
+	border: 2;
+	border-color: white;
+}
+
+popupbox.splash text {
+	color:white;
+	align:center;
+	font-size:large;
+}
+
+.child1 {
+	bg-color: #FF0000;
+}
+
+.child2 {
+	bg-color: #00FF00;
+}
+
+.child3 {
+	bg-color: #0000FF;
+}
+
+.child4 {
+	bg-color: #FFFF00;
+}
+
+.child5 {
+	bg-color: #00FFFF;
+}
+
+.child6 {
+	bg-color: #FF00FF;
+}
+
+.child7 {
+	bg-color: #FFFFFF;
+}
+
+.child8 {
+	bg-color: #000000;
+}
+
+.separator {
+	min-size: 0 1;
+	bg-color: #b9cedc;
+	margin: 2 0 2 0;
+}
