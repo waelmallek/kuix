@@ -153,11 +153,11 @@ public class RadioGroup extends List {
 		wantedValue = null;
 		if (selectedRadioButton != radioButton) {
 			if (selectedRadioButton != null) {
-				selectedRadioButton.setSelected(false);
+				selectedRadioButton.internalSetSelected(false, false);
 			}
 			selectedRadioButton = radioButton;
 			if (radioButton != null) {
-				radioButton.setSelected(true);
+				radioButton.internalSetSelected(true, false);
 			}
 			if (propagateChangeEvent && onChange != null) {
 				Kuix.callActionMethod(Kuix.parseMethod(onChange, this));

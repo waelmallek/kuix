@@ -235,12 +235,8 @@ public final class Kuix {
 	 */
 	public static void loadCss(InputStream inputStream) {
 		parseCss(converter, inputStream);
-		try {
-			// Clear all style caches to use new loaded styles
-			clearStyleCache(KuixMIDlet.getDefault().getCanvas().getDesktop(), true);
-		} catch (Exception e) {
-			// Do nothing
-		}
+		// Clear all style caches to use new loaded styles
+		clearStyleCache(KuixMIDlet.getDefault().getCanvas().getDesktop(), true);
 	}
 
 	/**

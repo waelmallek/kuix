@@ -250,7 +250,7 @@ public final class KuixCanvas extends GameCanvas {
 							synchronized (this) {
 								for (int i = 0; i < keyEvents.size(); ++i) {
 									int[] keyEvent = ((int[]) keyEvents.elementAt(i));
-									FocusManager focusManager = getDesktop().getCurrentFocusManager();
+									FocusManager focusManager = desktop.getCurrentFocusManager();
 									if (focusManager != null && focusManager.processKeyEvent((byte) keyEvent[0], keyEvent[1])) {
 										repaintNextFrame();
 									}
@@ -264,7 +264,7 @@ public final class KuixCanvas extends GameCanvas {
 							synchronized (this) {
 								for (int i = 0; i < pointerEvents.size(); ++i) {
 									int[] pointerEvent = ((int[]) pointerEvents.elementAt(i));
-									FocusManager focusManager = getDesktop().getCurrentFocusManager();
+									FocusManager focusManager = desktop.getCurrentFocusManager();
 									if (focusManager.processPointerEvent((byte) pointerEvent[0], pointerEvent[1], pointerEvent[2])) {
 										repaintNextFrame();
 									} else if ((byte) pointerEvent[0] == KuixConstants.POINTER_DROPPED_EVENT_TYPE) {
@@ -638,7 +638,9 @@ public final class KuixCanvas extends GameCanvas {
 			}
 			
 			// Add event to queue
-			keyEvents.addElement(new int[] { type, kuixKeyCode });
+			synchronized (this) {
+				keyEvents.addElement(new int[] { type, kuixKeyCode });
+			}
 			
 		}
 	}
@@ -685,7 +687,9 @@ public final class KuixCanvas extends GameCanvas {
 	 */
 	protected void processPointerEvent(final byte type, final int x, final int y) {
 		if (initialized) {
-			pointerEvents.addElement(new int[] { type, x, y });
+			synchronized (this) {
+				pointerEvents.addElement(new int[] { type, x, y });
+			}
 		}
 	}
 

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with org.kalmeo.kuix.  If not, see <http://www.gnu.org/licenses/>.
  *  
- * Creation date : 7 f�vr. 08
+ * Creation date : 7 févr. 08
  * Copyright (c) Kalmeo 2008. All rights reserved.
  */
 
