@@ -57,11 +57,6 @@ public class Menu extends MenuItem {
 		public MenuPopup() {
 			super(KuixConstants.MENU_POPUP_WIDGET_TAG);
 			
-			// Used as a workaround CLDC 1.0 limitation on MenuPopup.class
-			if (menuPopupClass == null) {
-				menuPopupClass = getClass();
-			}
-			
 			// Create the associated focusManager
 			focusManager = new FocusManager(this, true) {
 
@@ -226,9 +221,6 @@ public class Menu extends MenuItem {
 		
 	}
 	
-	// Used as a workaround CLDC 1.0 limitation on MenuPopup.class
-	private static Class menuPopupClass;
-
 	// The associated menuPopup
 	protected MenuPopup popup;
 	
@@ -334,9 +326,7 @@ public class Menu extends MenuItem {
 	 * Hide all visible menuPopups
 	 */
 	protected static void hideAllMenuPopups() {
-		if (menuPopupClass != null) {
-			KuixMIDlet.getDefault().getCanvas().getDesktop().removeAllPopupInstanceOf(menuPopupClass);
-		}
+		KuixMIDlet.getDefault().getCanvas().getDesktop().removeAllPopupFromTag(KuixConstants.MENU_POPUP_WIDGET_TAG);
 	}
 	
 	/* (non-Javadoc)

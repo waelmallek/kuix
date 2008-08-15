@@ -86,6 +86,33 @@ public class RadioButton extends CheckBox {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.CheckBox#setSelected(boolean)
+	 */
+	public void setSelected(boolean selected) {
+		internalSetSelected(selected, true);
+	}
+
+	/**
+	 * Used to intercept selection change and propagate the event to the ragio
+	 * groupg according to <code>propagateToRadioGroup</code> value.
+	 * 
+	 * @param selected
+	 * @param propagateToRadioGroup
+	 */
+	protected void internalSetSelected(boolean selected, boolean propagateToRadioGroup) {
+		if (propagateToRadioGroup) {
+			RadioGroup group = getRadioGroup();
+			if (group != null) {
+				group.setSelectedRadioButton(this, true);
+			} else {
+				super.setSelected(selected);
+			}
+		} else {
+			super.setSelected(selected);
+		}
+	}
+	
 	/**
 	 * @return the value
 	 */
@@ -112,24 +139,6 @@ public class RadioButton extends CheckBox {
 			return (RadioGroup) parent;
 		}
 		return null;
-	}
-	
-	/**
-	 * Select the radio button and inform its RadioGroup
-	 */
-	public void select() {
-		RadioGroup group = getRadioGroup();
-		if (group != null) {
-			group.setSelectedRadioButton(this, true);
-		}
-		super.setSelected(true);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.CheckBox#processSelectionEvent()
-	 */
-	protected void processSelectionEvent() {
-		select();
 	}
 	
 }

@@ -44,7 +44,7 @@ public class TabFolder extends List {
 	/**
 	 * This class represents a tab button.
 	 */
-	class TabButton extends CheckBox {
+	protected class TabButton extends CheckBox {
 		
 		private TabItem tabItem;
 		private Text labelWidget;

@@ -100,23 +100,17 @@ public class CheckBox extends ActionWidget {
 	 * @param selected the selected to set
 	 */
 	public void setSelected(boolean selected) {
-		invalidateStylePropertiesCache(true);
 		this.selected = selected;
+		invalidateStylePropertiesCache(true);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.AbstractActionWidget#processActionEvent()
 	 */
 	public boolean processActionEvent() {
-		processSelectionEvent();
+		setSelected(!selected);
 		super.processActionEvent();
 		return true;
 	}
 	
-	/**
-	 * Process the selection change
-	 */
-	protected void processSelectionEvent() {
-		setSelected(!selected);
-	}
 }

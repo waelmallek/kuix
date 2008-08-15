@@ -403,19 +403,21 @@ public class Desktop extends Widget {
 	}
 	
 	/**
-	 * Remove all popup widgets which are instance of <code>clazz</code>.
+	 * Remove all popup widgets where tag equals <code>tag</code>.
 	 * 
-	 * @param clazz
+	 * @param tag
 	 */
-	public void removeAllPopupInstanceOf(Class clazz) {
-		Widget popup = popupContainer.getChild();
-		while (popup != null) {
-			if (popup.getClass() == clazz) {
-				Widget nextPopup = popup.next;
-				popup.remove();
-				popup = nextPopup;
-			} else {
-				popup = popup.next;
+	public void removeAllPopupFromTag(String tag) {
+		if (tag != null) {
+			Widget popup = popupContainer.getChild();
+			while (popup != null) {
+				if (tag.equals(popup.getInheritedTag())) {
+					Widget nextPopup = popup.next;
+					popup.remove();
+					popup = nextPopup;
+				} else {
+					popup = popup.next;
+				}
 			}
 		}
 	}

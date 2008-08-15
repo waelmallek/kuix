@@ -435,7 +435,7 @@ public class Widget {
 	 * @return the inherited tag
 	 */
 	public String getInheritedTag() {
-		return null;
+		return tag;
 	}
 
 	/**
@@ -616,6 +616,9 @@ public class Widget {
 	}
 	
 	/**
+	 * Caution, if widget attribute are already cached, you need to call the
+	 * <code>invalidateStylePropertiesCache(propagateToChildern)</code>.
+	 * 
 	 * @param authorStyle the authorStyle to set
 	 */
 	public void setAuthorStyle(Style authorStyle) {
@@ -1516,9 +1519,11 @@ public class Widget {
 			next = null;
 		}
 		previous = null;
-		invalidate();	// Caution : This call should stay before parent = null;
 		Widget prevParent = parent;
 		parent = null;
+		
+		// Invalidate the parent widget
+		prevParent.invalidate();
 		
 		// Call remove events
 		prevParent.onChildRemoved(this);
