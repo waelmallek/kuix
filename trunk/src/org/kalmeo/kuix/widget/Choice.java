@@ -40,7 +40,7 @@ import org.kalmeo.kuix.util.Gap;
  * @author bbeaulant
  */
 public class Choice extends ActionWidget {
-
+	
 	// The internal choice container (hold the selected radio button content)
 	private final Widget choiceContainer;
 
@@ -54,6 +54,9 @@ public class Choice extends ActionWidget {
 	
 	// Keep there the lastest selected radio button (for internal use)
 	private RadioButton lastSelectedRadioButton = null;
+	
+	// Internal use
+	private Widget noChoiceText;
 
 	/**
 	 * Construct a {@link Choice}
@@ -61,7 +64,7 @@ public class Choice extends ActionWidget {
 	public Choice() {
 		super(KuixConstants.CHOICE_WIDGET_TAG);
 
-		// Create the inner comb container
+		// Create the inner choice container
 		choiceContainer = new Widget(KuixConstants.CHOICE_CONTAINER_WIDGET_TAG) {
 
 			/* (non-Javadoc)
@@ -89,10 +92,15 @@ public class Choice extends ActionWidget {
 			 */
 			public Layout getLayout() {
 				if (lastSelectedRadioButton != null) {
-					if (getChild() == null) {
+					if (getChild() == null || getChild() == noChoiceText) {
 						catchChildrenFrom(lastSelectedRadioButton);
+						noChoiceText = null;
 					}
 					return lastSelectedRadioButton.getLayout();
+				} else if (getChild() ==  null) {
+					// No radioButton was selected, display the no choice text
+					noChoiceText = new Text().setText(Kuix.getMessage(KuixConstants.PLEASE_SELECT_I18N_KEY));
+					this.add(noChoiceText);
 				}
 				return super.getLayout();
 			}

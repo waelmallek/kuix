@@ -41,10 +41,12 @@ public class KuixDemoDemosFrame implements Frame {
 	
 		private static final String TEXT_TABITEM_ENABLED_PROPERTY = "bText";
 		private static final String BUTTON_TABITEM_ENABLED_PROPERTY = "bButton";
+		private static final String CHOICE_TABITEM_ENABLED_PROPERTY = "bChoice";
 		private static final String LIST_TABITEM_ENABLED_PROPERTY = "bList";
 		
 		private boolean tabTextEnabled = true;
 		private boolean tabButtonEnabled = true;
+		private boolean tabChoiceEnabled = true;
 		private boolean tabListEnabled = true;
 		
 		/**
@@ -54,6 +56,7 @@ public class KuixDemoDemosFrame implements Frame {
 			tabTextEnabled = !tabTextEnabled;
 			dispatchUpdateEvent(TEXT_TABITEM_ENABLED_PROPERTY);
 		}
+		
 		/**
 		 * Enable or disable the Button TabItem in widget.xml
 		 */
@@ -61,6 +64,15 @@ public class KuixDemoDemosFrame implements Frame {
 			tabButtonEnabled = !tabButtonEnabled;
 			dispatchUpdateEvent(BUTTON_TABITEM_ENABLED_PROPERTY);
 		}
+		
+		/**
+		 * Enable or disable the Choice TabItem in widget.xml
+		 */
+		public void switchTabChoiceEnabledState() {
+			tabChoiceEnabled = !tabChoiceEnabled;
+			dispatchUpdateEvent(CHOICE_TABITEM_ENABLED_PROPERTY);
+		}
+		
 		/**
 		 * Enable or disable the List TabItem in widget.xml
 		 */
@@ -78,6 +90,9 @@ public class KuixDemoDemosFrame implements Frame {
 			}
 			if (BUTTON_TABITEM_ENABLED_PROPERTY.equals(property)) {
 				return BooleanUtil.toString(tabButtonEnabled);
+			}
+			if (CHOICE_TABITEM_ENABLED_PROPERTY.equals(property)) {
+				return BooleanUtil.toString(tabChoiceEnabled);
 			}
 			if (LIST_TABITEM_ENABLED_PROPERTY.equals(property)) {
 				return BooleanUtil.toString(tabListEnabled);
@@ -106,6 +121,10 @@ public class KuixDemoDemosFrame implements Frame {
 		}
 		if ("enableButton".equals(identifier)) {
 			provider.switchTabButtonEnabledState();
+			return false;
+		}
+		if ("enableChoice".equals(identifier)) {
+			provider.switchTabChoiceEnabledState();
 			return false;
 		}
 		if ("enableList".equals(identifier)) {

@@ -122,10 +122,6 @@ public class KuixDemoMainFrame implements Frame {
 				
 			}.start();
 		}
-		if ("quit".equals(identifier)) {
-			KuixDemo.getDefault().destroyImpl();
-			return false;
-		}
 		if ("showMainScreen".equals(identifier)) {
 			showScreen();
 			return false;

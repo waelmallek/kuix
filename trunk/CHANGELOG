@@ -9,6 +9,13 @@
 - Add KuixMIDlet.fatal(String) and KuixMIDlet.fatal(String, Throwable) methods to display fatal error LCDUI alert messages. 
 - Add default kuix actions available in xml actions (like onAction="...") :
   - *!exit* : exits the application by calling KuixMIDlet.getDefault().destroyImpl()
+- Add onselect and onunselect method attribute on CheckBox, RadioButton and TabItemButton. 
+- Add animation capabilities on Picture accessible from new attributes (frameWidth, frameHeight, frameSequence, frameDuration).
+
+- Default "Please select" text is displayed when a Choice has no selected radioButton.
+  
+- Widget tags **refactoring** :
+  - tabbutton *become* tabitembutton and is an internal widget of tabitem
 
 ##Version 1.0.0 (2008-07-25)
 

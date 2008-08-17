@@ -23,13 +23,17 @@ package org.kalmeo.kuix.widget;
 
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
+import javax.microedition.lcdui.game.Sprite;
 
 import org.kalmeo.kuix.core.KuixConstants;
+import org.kalmeo.kuix.core.KuixConverter;
 import org.kalmeo.kuix.layout.Layout;
 import org.kalmeo.kuix.util.Alignment;
 import org.kalmeo.kuix.util.Insets;
 import org.kalmeo.kuix.util.Metrics;
 import org.kalmeo.util.resource.ImageManager;
+import org.kalmeo.util.worker.Worker;
+import org.kalmeo.util.worker.WorkerTask;
 
 /**
  * This class represents a picture. <br>
@@ -44,14 +48,30 @@ public class Picture extends Widget {
 
 	// The default Picture's aligment
 	private static final Alignment PICTURE_DEFAULT_ALIGN = Alignment.CENTER;
-
+	
 	// The picture's image
 	private Image image;
 	
-	// Image coordinates
-	protected int imageX;
-	protected int imageY;
+	// Size of a frame
+	private int frameWidth;
+	private int frameHeight;
+	
+	// Animation sequence
+	private int[] frameSequence;
 
+	// Duration of each frame
+	private int frameDuration;
+	
+	// Animated sprite
+	private Sprite sprite;
+	
+	// The animation workerTask
+	private WorkerTask animationWorkerTask;
+	
+	// Internal use
+	private boolean needToResetSprite = true;
+	private long lastFrameTime;
+	
 	/**
 	 * Construct a {@link Picture}
 	 */
@@ -72,6 +92,22 @@ public class Picture extends Widget {
 	public boolean setAttribute(String name, String value) {
 		if (KuixConstants.SRC_ATTRIBUTE.equals(name)) {
 			setSource(value);
+			return true;
+		}
+		if (KuixConstants.FRAME_WIDTH_ATTRIBUTE.equals(name)) {
+			setFrameWidth(Integer.parseInt(value));
+			return true;
+		}
+		if (KuixConstants.FRAME_HEIGHT_ATTRIBUTE.equals(name)) {
+			setFrameHeight(Integer.parseInt(value));
+			return true;
+		}
+		if (KuixConstants.FRAME_SEQUENCE_ATTRIBUTE.equals(name)) {
+			setFrameSequence(KuixConverter.convertIntArray(value, 1, ","));
+			return true;
+		}
+		if (KuixConstants.FRAME_DURATION_ATTRIBUTE.equals(name)) {
+			setFrameDuration(Integer.parseInt(value));
 			return true;
 		}
 		return super.setAttribute(name, value);
@@ -128,8 +164,7 @@ public class Picture extends Widget {
 		if (!source.startsWith("/")) {
 			source = new StringBuffer(KuixConstants.DEFAULT_IMG_RES_FOLDER).append(source).toString();
 		}
-		image = ImageManager.instance.getImage(source);
-		invalidate();
+		setImage(ImageManager.instance.getImage(source));
 		return this;
 	}
 	
@@ -148,8 +183,53 @@ public class Picture extends Widget {
 	 */
 	public Picture setImage(Image image) {
 		this.image = image;
+		if (image != null) {
+			if (frameWidth == 0) {
+				frameWidth = image.getWidth();
+			}
+			if (frameHeight == 0) {
+				frameHeight = image.getHeight();
+			}
+		} else {
+			frameWidth = 0;
+			frameHeight = 0;
+		}
+		needToResetSprite = true;
 		invalidate();
 		return this;
+	}
+	
+	/**
+	 * @param frameWidth
+	 */
+	public void setFrameWidth(int frameWidth) {
+		this.frameWidth = frameWidth;
+		needToResetSprite = true;
+		invalidate();
+	}
+
+	/**
+	 * @param frameHeight
+	 */
+	public void setFrameHeight(int frameHeight) {
+		this.frameHeight = frameHeight;
+		needToResetSprite = true;
+		invalidate();
+	}
+
+	/**
+	 * @param frameSequence
+	 */
+	public void setFrameSequence(int[] frameSequence) {
+		this.frameSequence = frameSequence;
+		invalidate();
+	}
+	
+	/**
+	 * @param frameDuration
+	 */
+	public void setFrameDuration(int frameDuration) {
+		this.frameDuration = frameDuration;
 	}
 
 	/* (non-Javadoc)
@@ -170,6 +250,16 @@ public class Picture extends Widget {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#getDefaultStyleAttributeValue(java.lang.String)
+	 */
+	protected Object getDefaultStylePropertyValue(String name) {
+		if (KuixConstants.ALIGN_STYLE_PROPERTY.equals(name)) {
+			return PICTURE_DEFAULT_ALIGN;
+		}
+		return super.getDefaultStylePropertyValue(name);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#add(org.kalmeo.kuix.widget.Widget)
 	 */
 	public Widget add(Widget widget) {
@@ -182,17 +272,36 @@ public class Picture extends Widget {
 	 */
 	protected void doLayout() {
 		
-		Insets insets = getInsets();
-		imageX = insets.left; 
-		imageY = insets.top;
-		
+		if (animationWorkerTask != null) {
+			Worker.instance.removeTask(animationWorkerTask);
+			animationWorkerTask = null;
+		}
 		if (image != null) {
+			
+			if (sprite == null) {
+				sprite = new Sprite(image, frameWidth, frameHeight);
+				needToResetSprite = false;
+			} else if (needToResetSprite) {
+				sprite.setImage(image, frameWidth, frameHeight);
+				needToResetSprite = false;
+			}
+			
+			if (frameSequence != null) {
+				sprite.setFrameSequence(frameSequence);
+			}
+			
+			Insets insets = getInsets();
+			int spriteX = insets.left; 
+			int spriteY = insets.top;
+			
 			Alignment alignment = getAlign();
 			if (alignment != null) {
-				imageX += alignment.alignX(getWidth() - insets.left - insets.right, image.getWidth());
-				imageY += alignment.alignY(getHeight() - insets.top - insets.bottom, image.getHeight());
+				spriteX += alignment.alignX(getWidth() - insets.left - insets.right, frameWidth);
+				spriteY += alignment.alignY(getHeight() - insets.top - insets.bottom, frameHeight);
 			}
-
+			
+			sprite.setPosition(spriteX, spriteY);
+			
 		}
 		
 		markAsValidate();
@@ -203,22 +312,35 @@ public class Picture extends Widget {
 	 * @see org.kalmeo.kuix.widget.Widget#paintChildrenImpl(javax.microedition.lcdui.Graphics)
 	 */
 	protected void paintChildrenImpl(Graphics g) {
-		if (image != null) {
-			g.drawImage(image, 
-						imageX, 
-						imageY, 
-						Graphics.SOLID);
+		if (sprite != null) {
+			
+			// Push the animation worker task if needed
+			if (sprite.getFrameSequenceLength() > 1) {
+				if (animationWorkerTask == null) {
+					animationWorkerTask = new WorkerTask() {
+	
+						/* (non-Javadoc)
+						 * @see org.kalmeo.util.worker.WorkerTask#run()
+						 */
+						public boolean run() {
+							
+							if (isVisible() && System.currentTimeMillis() - lastFrameTime > frameDuration) {
+								sprite.nextFrame();
+								lastFrameTime = System.currentTimeMillis();
+								invalidateAppearance();
+							}
+							
+							// Remove the WorkerTask if the widget is not in the widget tree
+							return !isInWidgetTree();
+						}
+						
+					};
+				}
+				Worker.instance.pushTask(animationWorkerTask);
+			}
+			
+			sprite.paint(g);
 		}
 	}
-
-	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.Widget#getDefaultStyleAttributeValue(java.lang.String)
-	 */
-	protected Object getDefaultStylePropertyValue(String name) {
-		if (KuixConstants.ALIGN_STYLE_PROPERTY.equals(name)) {
-			return PICTURE_DEFAULT_ALIGN;
-		}
-		return super.getDefaultStylePropertyValue(name);
-	}
-
+	
 }

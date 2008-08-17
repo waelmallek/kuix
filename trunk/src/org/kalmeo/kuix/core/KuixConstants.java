@@ -114,6 +114,10 @@ public interface KuixConstants {
 	public static final String STYLE_ATTRIBUTE 								= "style";
 	public static final String SRC_ATTRIBUTE 								= "src";
 	public static final String IMAGE_ATTRIBUTE 								= "image";
+	public static final String FRAME_WIDTH_ATTRIBUTE 						= "framewidth";
+	public static final String FRAME_HEIGHT_ATTRIBUTE 						= "frameheight";
+	public static final String FRAME_SEQUENCE_ATTRIBUTE 					= "framesequence";
+	public static final String FRAME_DURATION_ATTRIBUTE 					= "frameduration";
 	public static final String SELECTED_ATTRIBUTE 							= "selected";
 	public static final String VALUE_ATTRIBUTE 								= "value";
 	public static final String INCREMENT_ATTRIBUTE 							= "increment";
@@ -150,6 +154,8 @@ public interface KuixConstants {
 	public static final String ON_LOST_FOCUS_ATTRIBUTE 						= "onlostfocus";
 	public static final String ON_ACTION_ATTRIBUTE 							= "onaction";
 	public static final String ON_CHANGE_ATTRIBUTE 							= "onchange";
+	public static final String ON_SELECT_ATTRIBUTE 							= "onselect";
+	public static final String ON_UNSELECT_ATTRIBUTE 						= "onunselect";
 	
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Style properties
@@ -236,8 +242,8 @@ public interface KuixConstants {
 	public static final String TEXT_AREA_WIDGET_TAG 						= "textarea";
 	public static final String TEXT_FIELD_WIDGET_TAG 						= "textfield";
 	
-	public static final String TAB_BUTTON_WIDGET_TAG 						= "tabbutton";
 	public static final String TAB_ITEM_WIDGET_TAG 							= "tabitem";
+	public static final String TAB_ITEM_BUTTON_WIDGET_TAG 					= "tabitembutton";
 	
 	public static final String TAB_FOLDER_WIDGET_TAG 						= "tabfolder";
 	public static final String TAB_FOLDER_DEFAULT_TAB_ITEM_WIDGET_TAG 		= "tabfolderdefaulttabitem";

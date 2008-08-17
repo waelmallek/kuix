@@ -48,7 +48,7 @@ public class FocusableWidget extends Widget {
 	// Button focus state
 	protected boolean focused = false;
 	
-	// The onFocus method
+	// The focus methods
 	private String onFocus;
 	private String onLostFocus;
 	

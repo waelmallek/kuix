@@ -988,13 +988,13 @@ public class KuixConverter {
 	 * @param delim
 	 * @return The converted int[]
 	 */
-	public int[] convertIntArray(String rawData, int wantedMinSize, String delim) {
+	public static int[] convertIntArray(String rawData, int wantedMinSize, String delim) {
 		StringTokenizer values = new StringTokenizer(rawData, delim);
 		if (values.countTokens() >= wantedMinSize) {
 			int[] intValues = new int[values.countTokens()];
 			for (int i = 0; values.hasMoreTokens(); ++i) {
 				try {
-					intValues[i] = Integer.parseInt(values.nextToken());
+					intValues[i] = Integer.parseInt(values.nextToken().trim());
 					continue;
 				} catch (Exception e) {
 					return null;
