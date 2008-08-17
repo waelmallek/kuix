@@ -31,17 +31,39 @@
 					<radiobutton value="2">Choice two</radiobutton>
 				</radioGroup>
 				<container class="separator" />
-				<text class="label">Choice :</text>
+				<text class="label">Gauge :</text>
+				<gauge value="0.4" />
+			</scrollPane>
+		</tabitem>
+		<tabitem label="Choice">
+			<_enabled>@{bChoice}</_enabled>
+			<scrollPane style="layout:inlinelayout(false,fill);padding:5">
+				<text class="label">Text Choice :</text>
 				<choice>
 					<choiceRadiogroup>
-						<radiobutton selected="true">Choice one</radiobutton>
+						<radiobutton>Choice one</radiobutton>
 						<radiobutton>Choice two</radiobutton>
 						<radiobutton>Choice tree</radiobutton>
 					</choiceRadiogroup>
 				</choice>
 				<container class="separator" />
-				<text class="label">Gauge :</text>
-				<gauge value="0.4" />
+				<text class="label">Image Choice :</text>
+				<choice>
+					<choiceRadiogroup value="car">
+						<radiobutton value="cake"><picture src="cake.png" /></radiobutton>
+						<radiobutton value="television"><picture src="television.png" /></radiobutton>
+						<radiobutton value="car"><picture src="car.png" /></radiobutton>
+					</choiceRadiogroup>
+				</choice>
+				<container class="separator" />
+				<text class="label">Mixed Choice :</text>
+				<choice>
+					<choiceRadiogroup class="mixed">
+						<radiobutton><picture src="cake.png" /> Cake</radiobutton>
+						<radiobutton selected="true">Stone<picture src="stone.png" /></radiobutton>
+						<radiobutton><picture src="car.png" /> Car</radiobutton>
+					</choiceRadiogroup>
+				</choice>
 			</scrollPane>
 		</tabitem>
 		<tabitem label="List" style="layout:borderlayout;padding:5">
@@ -73,6 +95,7 @@
 		<menupopup>
 			<menuitem onAction="enableText">Tab Text</menuitem>
 			<menuitem onAction="enableButton">Tab Button</menuitem>
+			<menuitem onAction="enableChoice">Tab Choice</menuitem>
 			<menuitem onAction="enableList">Tab List</menuitem>
 			<menuitem onAction="goHome">Home</menuitem>
 		</menupopup>

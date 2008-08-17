@@ -41,91 +41,6 @@ import org.kalmeo.kuix.layout.StaticLayout;
  */
 public class TabFolder extends List {
 
-	/**
-	 * This class represents a tab button.
-	 */
-	protected class TabButton extends CheckBox {
-		
-		private TabItem tabItem;
-		private Text labelWidget;
-		private Picture iconWidget;
-		
-		/**
-		 * Construct a {@link TabButton}
-		 */
-		public TabButton(TabItem tabItem) {
-			super(KuixConstants.TAB_BUTTON_WIDGET_TAG);
-			this.tabItem = tabItem;
-			if (tabItem != null) {
-				setEnabled(tabItem.isEnabled());
-				if (tabItem.getIcon() != null) {
-					setIcon(tabItem.getIcon());
-				}
-				if (tabItem.getLabel() != null) {
-					setLabel(tabItem.getLabel());
-				}
-			}
-			
-		}
-
-		/* (non-Javadoc)
-		 * @see org.kalmeo.kuix.widget.AbstractActionWidget#processActionEvent()
-		 */
-		public boolean processActionEvent() {
-			setCurrentTabItem(tabItem);
-			return true;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.kalmeo.kuix.widget.AbstractFocusableWidget#isFocusable()
-		 */
-		public boolean isFocusable() {
-			return false;
-		}
-		
-		/**
-		 * Set the label of this tab button.
-		 * 
-		 * @param label
-		 */
-		public void setLabel(String label) {
-			if (labelWidget == null) {
-				labelWidget = new Text();
-				this.add(labelWidget);
-			} else if (label == null) {
-				labelWidget.remove();
-				labelWidget = null;
-				return;
-			}
-			labelWidget.setText(label);
-		}
-		
-		/**
-		 * Set the icon of this tab button.
-		 * 
-		 * @param icon
-		 */
-		public void setIcon(String icon) {
-			if (iconWidget == null) {
-				iconWidget = new Picture();
-				this.add(iconWidget);
-			} else if (icon == null) {
-				iconWidget.remove();
-				iconWidget = null;
-				return;
-			}
-			iconWidget.setSource(icon);
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.kalmeo.kuix.widget.Widget#onRemoved(org.kalmeo.kuix.widget.Widget)
-		 */
-		protected void onRemoved(Widget parent) {
-			tabItem = null;
-		}
-		
-	}
-	
 	// Internal widgets
 	private final ScrollPane buttonsContainer;
 	private final Widget container;
@@ -261,20 +176,14 @@ public class TabFolder extends List {
 			return;
 		}
 		if (currentTabItem != null) {
-			if (currentTabItem.tabButton != null) {
-				currentTabItem.tabButton.setSelected(false);
-			}
-			currentTabItem.selected = false;
+			currentTabItem.internalSetSelected(false, false);
 			currentTabItem.setVisible(false);
 		}
 		currentTabItem = tabItem;
 		if (tabItem != null) {
-			if (tabItem.tabButton != null) {
-				tabItem.tabButton.setSelected(true);
-			}
-			tabItem.selected = true;
+			tabItem.internalSetSelected(true, false);
 			tabItem.setVisible(true);
-			buttonsContainer.bestScrollToChild(tabItem.tabButton, false);
+			buttonsContainer.bestScrollToChild(tabItem.getButton(), false);
 		}
 		if (defaultTabItem != null) {
 			defaultTabItem.setVisible(currentTabItem == null);
@@ -317,10 +226,8 @@ public class TabFolder extends List {
 	public void addTabItem(final TabItem tabItem) {
 		if (tabItem != null && tabItem.parent != container) {
 			
-			// Create the tabButton
-			TabButton tabButton = new TabButton(tabItem);
-			tabItem.tabButton = tabButton;
-			buttonsContainer.add(tabButton);
+			// Add the tabButtn to the buttonsContainer
+			buttonsContainer.add(tabItem.getButton());
 			
 			// Add tabItem
 			container.add(tabItem);
@@ -349,7 +256,7 @@ public class TabFolder extends List {
 	 * @param unselectIfNoOther
 	 */
 	protected void selectOtherTab(boolean forward, boolean unselectIfNoOther) {
-		Widget currentTab = currentTabItem != null ? currentTabItem.tabButton : (forward ? buttonsContainer.getContainer().getChild() : buttonsContainer.getContainer().getLastChild());
+		Widget currentTab = currentTabItem != null ? currentTabItem.getButton() : (forward ? buttonsContainer.getContainer().getChild() : buttonsContainer.getContainer().getLastChild());
 		Widget tab = currentTab;
 		while (tab != null) {
 			tab = forward ? tab.next : tab.previous;

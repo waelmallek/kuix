@@ -15,7 +15,7 @@ scrollpane {
 	padding: 2;
 }
 
-tabbutton {
+tabitembutton {
 	border: 2 2 1 2;
 	border-image: url(tb.png) 2 2 1 2;
 	bg-color: #e2eaf6;
@@ -23,12 +23,12 @@ tabbutton {
 	padding: 2;
 }
 
-tabbutton:selected {
+tabitembutton:selected {
 	border-image: url(o_tb.png) 2 2 1 2;
 	bg-color: white;
 }
 
-tabbutton:disabled {
+tabitembutton:disabled {
 	color: #b9cedc;
 }
 
@@ -120,6 +120,11 @@ radiobutton:hover {
 
 radiobutton:hover:selected {
 	bg-image: url(o_rb_on.png);
+}
+
+radiogroup.mixed radiobutton {
+	layout: inlinelayout(true,center);
+	gap: 4 0;
 }
 
 radiobutton.flags {

@@ -28,7 +28,6 @@ import org.kalmeo.kuix.layout.GridLayout;
 import org.kalmeo.kuix.layout.Layout;
 import org.kalmeo.kuix.layout.LayoutData;
 import org.kalmeo.kuix.layout.StaticLayoutData;
-import org.kalmeo.kuix.widget.TabFolder.TabButton;
 import org.kalmeo.util.BooleanUtil;
 
 /**
@@ -42,20 +41,86 @@ import org.kalmeo.util.BooleanUtil;
  */
 public class TabItem extends Widget {
 
+	/**
+	 * This class represents the tabItem button.
+	 */
+	public class TabItemButton extends CheckBox {
+		
+		private Text labelWidget;
+		private Picture iconWidget;
+		
+		/**
+		 * Construct a {@link TabItemButton}
+		 */
+		public TabItemButton() {
+			super(KuixConstants.TAB_ITEM_BUTTON_WIDGET_TAG);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.kalmeo.kuix.widget.AbstractActionWidget#processActionEvent()
+		 */
+		public boolean processActionEvent() {
+			if (tabFolder != null) {
+				tabFolder.setCurrentTabItem(TabItem.this);
+			}
+			return true;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.kalmeo.kuix.widget.AbstractFocusableWidget#isFocusable()
+		 */
+		public boolean isFocusable() {
+			return false;
+		}
+		
+		/**
+		 * Set the label of this tab button.
+		 * 
+		 * @param label
+		 */
+		public void setLabel(String label) {
+			if (labelWidget == null) {
+				labelWidget = new Text();
+				this.add(labelWidget);
+			} else if (label == null) {
+				labelWidget.remove();
+				labelWidget = null;
+				return;
+			}
+			labelWidget.setText(label);
+		}
+		
+		/**
+		 * Set the icon of this tab button.
+		 * 
+		 * @param icon
+		 */
+		public void setIcon(String icon) {
+			if (iconWidget == null) {
+				iconWidget = new Picture();
+				this.add(iconWidget);
+			} else if (icon == null) {
+				iconWidget.remove();
+				iconWidget = null;
+				return;
+			}
+			iconWidget.setSource(icon);
+		}
+		
+	}
+	
 	// Defaults
 	private static final Layout TAB_ITEM_DEFAULT_LAYOUT = GridLayout.instanceOneByOne;
 
 	// Tab item properties
 	private String label;
 	private String icon;
-	private boolean enabled = true;
-	protected boolean selected = false;
 	
 	// The associated tabFolder
 	private TabFolder tabFolder;
 	
 	// The associated TabButton
-	protected TabButton tabButton;
+	private final TabItemButton button;
 	
 	// FocusManager
 	private final FocusManager focusManager;
@@ -85,6 +150,9 @@ public class TabItem extends Widget {
 		super(tag);
 		setDataProvider(dataProvider);
 		
+		// Create the tabItem button
+		button = new TabItemButton();
+		
 		// Init focusManagers
 		focusManager = new FocusManager(this, false);
 	}
@@ -113,6 +181,16 @@ public class TabItem extends Widget {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#getInternalChildInstance(java.lang.String)
+	 */
+	public Widget getInternalChildInstance(String tag) {
+		if (KuixConstants.TAB_ITEM_BUTTON_WIDGET_TAG.equals(tag)) {
+			return getButton();
+		}
+		return super.getInternalChildInstance(tag);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#getFocusManager()
 	 */
 	public FocusManager getFocusManager() {
@@ -135,6 +213,13 @@ public class TabItem extends Widget {
 		}
 		return super.getDefaultStylePropertyValue(name);
 	}
+	
+	/**
+	 * @return the tabItem button
+	 */
+	public TabItemButton getButton() {
+		return button;
+	}
 
 	/**
 	 * @return the label
@@ -147,8 +232,8 @@ public class TabItem extends Widget {
 	 * @param label the label to set
 	 */
 	public void setLabel(String label) {
-		if (tabButton != null) {
-			tabButton.setLabel(label);
+		if (button != null) {
+			button.setLabel(label);
 		}
 		this.label = label;
 	}
@@ -164,8 +249,8 @@ public class TabItem extends Widget {
 	 * @param icon the icon to set
 	 */
 	public void setIcon(String icon) {
-		if (tabButton != null) {
-			tabButton.setIcon(icon);
+		if (button != null) {
+			button.setIcon(icon);
 		}
 		this.icon = icon;
 	}
@@ -174,16 +259,14 @@ public class TabItem extends Widget {
 	 * @return the enabled
 	 */
 	public boolean isEnabled() {
-		return enabled;
+		return button.isEnabled();
 	}
 
 	/**
 	 * @param enabled the enabled to set
 	 */
 	public void setEnabled(boolean enabled) {
-		if (tabButton != null) {
-			tabButton.setEnabled(enabled);
-		}
+		button.setEnabled(enabled);
 		if (tabFolder != null) {
 			if (enabled) {
 				if (tabFolder.getCurrentTabItem() == null) {
@@ -196,30 +279,37 @@ public class TabItem extends Widget {
 				}
 			}
 		}
-		this.enabled = enabled;
 	}
 	
 	/**
 	 * @return the selected
 	 */
 	public boolean isSelected() {
-		return selected;
+		return button.isSelected();
 	}
 
 	/**
 	 * @param selected the selected to set
 	 */
 	public void setSelected(boolean selected) {
-		if (tabFolder != null) {
+		internalSetSelected(selected, true);
+	}
+
+	/**
+	 * @param selected the selected to set
+	 * @param propagateToTabFolder
+	 */
+	protected void internalSetSelected(boolean selected, boolean propagateToTabFolder) {
+		button.setSelected(selected);
+		if (propagateToTabFolder && tabFolder != null) {
 			if (selected) {
 				tabFolder.setCurrentTabItem(this);
 			} else {
 				tabFolder.selectOtherTab(true, true);
 			}
 		}
-		this.selected = selected;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#onAdded(org.kalmeo.kuix.widget.Widget)
 	 */
@@ -233,9 +323,8 @@ public class TabItem extends Widget {
 	 * @see org.kalmeo.kuix.widget.Widget#onRemoved(org.kalmeo.kuix.widget.Widget)
 	 */
 	protected void onRemoved(Widget parent) {
-		if (tabButton != null) {
-			tabButton.remove();
-			tabButton = null;
+		if (button != null) {
+			button.remove();
 		}
 		tabFolder = null;
 	}
