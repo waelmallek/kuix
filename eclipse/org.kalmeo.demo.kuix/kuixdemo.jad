@@ -1,6 +1,7 @@
-MIDlet-Jar-URL: org.kalmeo.demo.kuix.jar
-MIDlet-Name: org.kalmeo.demo.kuix Midlet Suite
-MIDlet-Vendor: Midlet Suite Vendor
 MIDlet-Version: 1.0.0
-MicroEdition-Configuration: CLDC-1.1
+MIDlet-Vendor: Kalmeo
+MIDlet-Jar-URL: kuixdemo.jar
+MicroEdition-Configuration: CLDC-1.0
 MicroEdition-Profile: MIDP-2.0
+MIDlet-1: KuixDemo,/img/icon.png,org.kalmeo.demo.kuix.KuixDemo
+MIDlet-Name: KuixDemo
