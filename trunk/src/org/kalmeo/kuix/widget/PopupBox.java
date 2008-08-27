@@ -38,7 +38,11 @@ import org.kalmeo.util.worker.WorkerTask;
  * <br>
  * <strong>For further informations, visit the <a
  * href="http://www.kalmeo.org/files/kuix/widgetdoc/index.html"
- * target="new">Kuix widgets reference page</a></strong>.
+ * target="new">Kuix widgets reference page</a></strong>.<br>
+ * <br>
+ * <b>Caution</b> : by default the attribute <code>cleanUpOnRemove</code> is set
+ * to <code>true</code>. This causes a <code>cleanUp</code> when the
+ * {@link PopupBox} is removed from its parent.
  * 
  * @author bbeaulant
  */
@@ -62,6 +66,9 @@ public class PopupBox extends ActionWidget {
 	
 	// The optional gauge (add via setProgress method)
 	private Gauge gauge;
+	
+	// Define if the cleanUp() method is called on remove
+	private boolean cleanUpOnRemove = true;
 
 	/**
 	 * Construct a {@link MenuPopup}
@@ -127,7 +134,7 @@ public class PopupBox extends ActionWidget {
 		}
 		return super.getInternalChildInstance(tag);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#getFocusManager()
 	 */
@@ -143,7 +150,10 @@ public class PopupBox extends ActionWidget {
 	}
 
 	/**
-	 * @param content
+	 * Define the content of the {@link PopupBox}. The content object could be s
+	 * straing or a {@link Widget}.
+	 * 
+	 * @param content the string or widget to add as content
 	 */
 	public void setContent(Object content) {
 		if (content instanceof String) {
@@ -232,6 +242,14 @@ public class PopupBox extends ActionWidget {
 		}
 		return super.getDefaultStylePropertyValue(name);
 	}
+	
+	/**
+	 * @param cleanUpOnRemove
+	 * @since 1.0.1
+	 */
+	public void setCleanUpOnRemove(boolean cleanUpOnRemove) {
+		this.cleanUpOnRemove = cleanUpOnRemove;
+	}
 
 	/**
 	 * Add a new Button
@@ -303,6 +321,9 @@ public class PopupBox extends ActionWidget {
 	 * @see org.kalmeo.kuix.widget.Widget#onRemoved(org.kalmeo.kuix.widget.Widget)
 	 */
 	protected void onRemoved(Widget parent) {
+		if (cleanUpOnRemove) {
+			cleanUp();
+		}
 		processActionEvent();
 		parent.getDesktop().getCanvas().repaintNextFrame();
 	}

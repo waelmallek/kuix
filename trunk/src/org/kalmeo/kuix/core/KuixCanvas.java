@@ -104,7 +104,7 @@ public final class KuixCanvas extends GameCanvas {
 	 * @param midlet
 	 * @param fullscreen
 	 */
-	public KuixCanvas(KuixMIDlet midlet, boolean fullscreen) {
+	protected KuixCanvas(KuixMIDlet midlet, boolean fullscreen) {
 		super(false);
 		this.midlet = midlet;
 		setFullScreenMode(fullscreen);
@@ -177,9 +177,6 @@ public final class KuixCanvas extends GameCanvas {
 	 * Initialize the Canvas
 	 */
 	protected void initialize() {
-		
-		// Set KuixCanvas as current displayable
-		midlet.getDisplay().setCurrent(this);
 		
 		// Try to init statup locale
 		String locale = midlet.getAppProperty(KuixConstants.KUIX_LOCALE_APP_PROPERTY);
@@ -629,7 +626,7 @@ public final class KuixCanvas extends GameCanvas {
 				if ((debugInfosKuixKeyCode & kuixKeyCode) == kuixKeyCode) {
 					debugInfosKeyCounter++;
 					if (debugInfosKeyCounter >= 3) {
-						KuixMIDlet.getDefault().processDebugInfosKeyEvent();
+						midlet.processDebugInfosKeyEvent();
 						debugInfosKeyCounter = 0;
 					}
 				} else {

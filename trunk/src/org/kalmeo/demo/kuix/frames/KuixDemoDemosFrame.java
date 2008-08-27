@@ -22,7 +22,6 @@ package org.kalmeo.demo.kuix.frames;
 
 import java.util.Random;
 
-import org.kalmeo.demo.kuix.KuixDemo;
 import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.kuix.core.model.DataProvider;
 import org.kalmeo.kuix.widget.Desktop;
@@ -161,7 +160,7 @@ public class KuixDemoDemosFrame implements Frame {
 	 * @see org.kalmeo.util.frame.Frame#onAdded()
 	 */
 	public void onAdded() {
-		desktop = KuixDemo.getDefault().getCanvas().getDesktop();
+		desktop = Kuix.getCanvas().getDesktop();
 	}
 
 	/* (non-Javadoc)

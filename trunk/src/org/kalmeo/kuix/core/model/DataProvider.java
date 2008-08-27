@@ -30,7 +30,17 @@ import org.kalmeo.util.LinkedListItem;
 import org.kalmeo.util.LinkedList.LinkedListEnumeration;
 
 /**
- * This class represent the base object of the Kuix data model. 
+ * This class represent the base object of the Kuix data model.<br>
+ * A {@link DataProvider} help you to organize data model to interact with
+ * widgets.<br>
+ * You can customize returns value by overriding the
+ * <code>getUserDefinedValue</code> function.<br>
+ * <b>Since 1.0.1</b>, you can create a tree of dataproviders by adding
+ * dataproviders as slave of an other. in this case, the <code>getValue</code>
+ * function could returns a value from the dataprovider itself if it exists of
+ * from its slaves.<br>
+ * <code>dispatchUpdateEvent</code> and <code>dispatchItemsUpdateEvent</code>
+ * methods invoke rescursivly each dataprovider's masters.
  * 
  * @author bbeaulant
  */
@@ -45,10 +55,14 @@ public class DataProvider implements LinkedListItem {
 	public static final byte FILTER_MODEL_UPDATE_EVENT_TYPE 		= 6;
 	public static final byte CLEAR_MODEL_UPDATE_EVENT_TYPE 			= 7;
 
-	// Hashtable of property / itemsValues pair
+	// Masters / slaves vectors
+	private Vector masters;
+	private Vector slaves;
+	
+	// Hashtable of property / itemsValues (Object) pair
 	private Hashtable itemsValues;
 	
-	// Hashtable of property / itemsFilters pair
+	// Hashtable of property / itemsFilters (Filter) pair
 	private Hashtable itemsFilters;
 
 	// List of binded widgets
@@ -57,7 +71,114 @@ public class DataProvider implements LinkedListItem {
 	// LinkedListItem properties
 	private DataProvider previous;
 	private DataProvider next;
+	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.util.LinkedListItem#getNext()
+	 */
+	public LinkedListItem getNext() {
+		return next;
+	}
 
+	/* (non-Javadoc)
+	 * @see org.kalmeo.util.LinkedListItem#getPrevious()
+	 */
+	public LinkedListItem getPrevious() {
+		return previous;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.kalmeo.util.LinkedListItem#setNext(org.kalmeo.util.LinkedListItem)
+	 */
+	public void setNext(LinkedListItem next) {
+		this.next = (DataProvider) next;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.kalmeo.util.LinkedListItem#setPrevious(org.kalmeo.util.LinkedListItem)
+	 */
+	public void setPrevious(LinkedListItem previous) {
+		this.previous = (DataProvider) previous;
+	}
+	
+	// Masters / Slaves ////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * Add a slave {@link DataProvider} to this {@link DataProvider}.
+	 * 
+	 * @param slaveDataProvider
+	 * @since 1.0.1
+	 */
+	public void addSlave(DataProvider slaveDataProvider) {
+		if (slaveDataProvider != null) {
+			if (slaves == null) {
+				slaves = new Vector();
+			}
+			if (!slaves.contains(slaveDataProvider)) {
+				if (slaveDataProvider.masters == null) {
+					slaveDataProvider.masters = new Vector();
+				}
+				slaveDataProvider.masters.addElement(this);
+				slaves.addElement(slaveDataProvider);
+			}
+		}
+	}
+	
+	/**
+	 * Remove the <code>slaveDataProvider</code> instance from this
+	 * {@link DataProvider} slaves.
+	 * 
+	 * @param slaveDataProvider
+	 * @since 1.0.1
+	 */
+	public void removeSlave(DataProvider slaveDataProvider) {
+		if (slaves != null && slaveDataProvider != null && slaves.contains(slaveDataProvider)) {
+			if (slaveDataProvider.masters != null) {
+				slaveDataProvider.masters.removeElement(this);
+			}
+			slaves.removeElement(slaveDataProvider);
+		}
+	}
+	
+	/**
+	 * Remove all {@link DataProvider} slaves of this instance.
+	 * 
+	 * @since 1.0.1
+	 */
+	public void removeAllSlaves() {
+		if (slaves != null) {
+			for (int i = slaves.size() - 1; i >= 0; --i) {
+				removeSlave(((DataProvider) slaves.elementAt(i)));
+			}
+		}
+	}
+	
+	/**
+	 * Remove this {@link DataProvider} from a specific master.
+	 * 
+	 * @param masterDataProvider
+	 * @since 1.0.1
+	 */
+	public void removeFromMaster(DataProvider masterDataProvider) {
+		if (masters != null && masterDataProvider != null && masters.contains(masterDataProvider)) {
+			masterDataProvider.removeSlave(this);
+		}
+	}
+	
+	/**
+	 * Remove this {@link DataProvider} from its masters.
+	 * 
+	 * @since 1.0.1
+	 */
+	public void removeFromMasters() {
+		if (masters != null) {
+			for (int i = masters.size() - 1; i >= 0; --i) {
+				((DataProvider) masters.elementAt(i)).removeSlave(this);
+			}
+		}
+	}
+	
+	// Values ////////////////////////////////////////////////////////////////////
+	
 	/**
 	 * Returns the value (user defined values and items values) corresponding the
 	 * given <code>property</code>.
@@ -66,11 +187,19 @@ public class DataProvider implements LinkedListItem {
 	 * @return the value associated with the given <code>property</code>.
 	 */
 	public final Object getValue(String property) {
-		Object userDefinedValue = getUserDefinedValue(property);
-		if (userDefinedValue == null) {
-			return enumerateItems(property, true);
+		Object value = getUserDefinedValue(property);
+		if (value == null) {
+			value = enumerateItems(property, true);
 		}
-		return userDefinedValue;
+		if (value == null && slaves != null) {
+			for (int i = slaves.size() - 1; i >= 0; --i) {
+				value = ((DataProvider) slaves.elementAt(i)).getValue(property);
+				if (value != null) {
+					break;
+				}
+			}
+		}
+		return value;
 	}
 	
 	/**
@@ -120,34 +249,6 @@ public class DataProvider implements LinkedListItem {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.kalmeo.util.LinkedListItem#getNext()
-	 */
-	public LinkedListItem getNext() {
-		return next;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.kalmeo.util.LinkedListItem#getPrevious()
-	 */
-	public LinkedListItem getPrevious() {
-		return previous;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.kalmeo.util.LinkedListItem#setNext(org.kalmeo.util.LinkedListItem)
-	 */
-	public void setNext(LinkedListItem next) {
-		this.next = (DataProvider) next;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.kalmeo.util.LinkedListItem#setPrevious(org.kalmeo.util.LinkedListItem)
-	 */
-	public void setPrevious(LinkedListItem previous) {
-		this.previous = (DataProvider) previous;
-	}
-	
 	/**
 	 * Returns the {@link LinkedList} relative to the given
 	 * <code>property</code>. If the list doesn't exist, a new one is created
@@ -430,8 +531,7 @@ public class DataProvider implements LinkedListItem {
 	 */
 	public void unbindAll() {
 		if (bindedWidgets != null) {
-			int size = bindedWidgets.size();
-			for (int i = 0; i < size; ++i) {
+			for (int i = bindedWidgets.size() - 1; i >= 0; --i) {
 				((Widget) (bindedWidgets.elementAt(i))).setDataProvider(null);
 			}
 			bindedWidgets.removeAllElements();
@@ -450,6 +550,11 @@ public class DataProvider implements LinkedListItem {
 				((Widget) (bindedWidgets.elementAt(i))).processModelUpdateEvent(property);
 			}
 		}
+		if (masters != null) {
+			for (int i = masters.size() - 1; i >= 0; --i) {
+				((DataProvider) masters.elementAt(i)).dispatchUpdateEvent(property);
+			}
+		}
 	}
 
 	/**
@@ -465,6 +570,11 @@ public class DataProvider implements LinkedListItem {
 		if (bindedWidgets != null) {
 			for (int i = bindedWidgets.size() - 1; i >= 0; --i) {
 				((Widget) (bindedWidgets.elementAt(i))).processItemsModelUpdateEvent(type, property, item, itemsEnumeration);
+			}
+		}
+		if (masters != null) {
+			for (int i = masters.size() - 1; i >= 0; --i) {
+				((DataProvider) masters.elementAt(i)).dispatchItemsUpdateEvent(type, property, item, itemsEnumeration);
 			}
 		}
 	}

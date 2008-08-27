@@ -62,22 +62,22 @@ public class MenuItem extends ListItem {
 		super(tag, dataProvider);
 	}
 	
-	/**
-	 * Hide the menu tree
-	 */
-	public boolean hideMenuTree() {
-		if (parent != null && parent instanceof MenuPopup) {
-			((MenuPopup) parent).getMenu().hideMenuTree();
-		}
-		return false;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.AbstractActionWidget#processActionEvent()
 	 */
 	public boolean processActionEvent() {
+		
+		// Keep the parent instance
+		Widget tmpParent = parent;
+		
+		// Process the onAction event
 		super.processActionEvent();
-		hideMenuTree();	// Caution the action is execute before hideMenuTree !
+		
+		// Caution the action is processed before hiding the menu tree !
+		if (tmpParent != null && tmpParent instanceof MenuPopup) {
+			((MenuPopup) tmpParent).getMenu().hideMenuTree();
+		}
+		
 		return true;
 	}
 	

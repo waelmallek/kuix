@@ -22,6 +22,7 @@
 package org.kalmeo.kuix.widget;
 
 import org.kalmeo.kuix.core.KuixConstants;
+import org.kalmeo.kuix.core.KuixConverter;
 import org.kalmeo.kuix.core.focus.FocusManager;
 import org.kalmeo.kuix.core.model.DataProvider;
 import org.kalmeo.kuix.layout.BorderLayout;
@@ -29,6 +30,7 @@ import org.kalmeo.kuix.layout.BorderLayoutData;
 import org.kalmeo.kuix.layout.Layout;
 import org.kalmeo.kuix.layout.LayoutData;
 import org.kalmeo.kuix.layout.StaticLayout;
+import org.kalmeo.kuix.widget.TabItem.TabItemButton;
 
 /**
  * This class represents a tab folder. <br>
@@ -41,14 +43,18 @@ import org.kalmeo.kuix.layout.StaticLayout;
  */
 public class TabFolder extends List {
 
+	// The default widget visible if there's no valid tabs
+	private TabItem defaultTabItem;
+	
+	// Tab navigation
+	private int backwardTabKey = KuixConstants.KUIX_KEY_LEFT;
+	private int forwardTabKey = KuixConstants.KUIX_KEY_RIGHT;
+	
 	// Internal widgets
 	private final ScrollPane buttonsContainer;
 	private final Widget container;
 	private TabItem currentTabItem;
 	
-	// The default widget visible if there's no valid tabs
-	private TabItem defaultTabItem;
-
 	/**
 	 * Construct a {@link TabFolder}
 	 */
@@ -104,19 +110,20 @@ public class TabFolder extends List {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.Widget#isFocusWidgetChild()
+	 * @see org.kalmeo.kuix.widget.List#setAttribute(java.lang.String, java.lang.String)
 	 */
-	public boolean isFocusWidgetChild() {
-		return false;	// Special case for TabFolder focus stop recursion
+	public boolean setAttribute(String name, String value) {
+		if (KuixConstants.BACKWARD_TAB_KEY_ATTRIBUTE.equals(name)) {
+			setBackwardTabKey(KuixConverter.convertKuixKeyCode(value));
+			return true;
+		}
+		if (KuixConstants.FORWARD_TAB_KEY_ATTRIBUTE.equals(name)) {
+			setForwardTabKey(KuixConverter.convertKuixKeyCode(value));
+			return true;
+		}
+		return super.setAttribute(name, value);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.Widget#getLayout()
-	 */
-	public Layout getLayout() {
-		return BorderLayout.instance;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#getInternalChildInstance(java.lang.String)
 	 */
@@ -132,8 +139,25 @@ public class TabFolder extends List {
 		}
 		return super.getInternalChildInstance(tag);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#isFocusWidgetChild()
+	 */
+	public boolean isFocusWidgetChild() {
+		return false;	// Special case for TabFolder focus stop recursion
+	}
+
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#getLayout()
+	 */
+	public Layout getLayout() {
+		return BorderLayout.instance;
+	}
 
 	/**
+	 * Returns the defaultTabItem. The default tab item is the {@link TabItem}
+	 * used if no other tab are enabled.
+	 * 
 	 * @return the defaultTabItem
 	 */
 	public Widget getDefaultTabItem() {
@@ -145,6 +169,49 @@ public class TabFolder extends List {
 	}
 	
 	/**
+	 * Returns the backwardTabKey. The backward tab key represents the
+	 * KuixKeyCode used as shortcut to switch to the backward tab.
+	 * 
+	 * @return the previousTabKey
+	 */
+	public int getBackwardTabKey() {
+		return backwardTabKey;
+	}
+
+	/**
+	 * Set the backwardTabKey. The backward tab key represents the KuixKeyCode
+	 * used as shortcut to switch to the backward tab.
+	 * 
+	 * @param backwardTabKey to set
+	 */
+	public void setBackwardTabKey(int backwardTabKey) {
+		this.backwardTabKey = backwardTabKey;
+	}
+
+	/**
+	 * Returns the forwardTabKey. The forward tab key represents the
+	 * KuixKeyCode used as shortcut to switch to the forward tab.
+	 * 
+	 * @return the nextTabKey
+	 */
+	public int getForwardTabKey() {
+		return forwardTabKey;
+	}
+
+	/**
+	 * Set the forwardTabKey. The forward tab key represents the KuixKeyCode
+	 * used as shortcut to switch to the forward tab.
+	 * 
+	 * @param forwardTabKey to set
+	 */
+	public void setForwardTabKey(int forwardTabKey) {
+		this.forwardTabKey = forwardTabKey;
+	}
+
+	/**
+	 * Returns the buttonsContainer. The buttonsContainer is the widget that
+	 * holds tabItems buttons ({@link TabItemButton}).
+	 * 
 	 * @return the buttonsContainer
 	 */
 	public ScrollPane getButtonsContainer() {
@@ -152,6 +219,8 @@ public class TabFolder extends List {
 	}
 
 	/**
+	 * Returns the container. The container is the widget that holds tabItems.
+	 * 
 	 * @return the container
 	 */
 	public Widget getContainer() {
@@ -301,15 +370,13 @@ public class TabFolder extends List {
 			// Tab navigation
 			if (type == KuixConstants.KEY_PRESSED_EVENT_TYPE	
 					|| type == KuixConstants.KEY_REPEATED_EVENT_TYPE) {
-				switch (kuixKeyCode) {
-					case KuixConstants.KUIX_KEY_LEFT: {
-						selectPreviousTab();
-						return true;
-					}
-					case KuixConstants.KUIX_KEY_RIGHT: {
-						selectNextTab();
-						return true;
-					}
+				if (kuixKeyCode == backwardTabKey) {
+					selectPreviousTab();
+					return true;
+				}
+				if (kuixKeyCode == forwardTabKey) {
+					selectNextTab();
+					return true;
 				}
 			}
 		

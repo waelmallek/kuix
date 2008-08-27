@@ -11,9 +11,27 @@
   - *!exit* : exits the application by calling KuixMIDlet.getDefault().destroyImpl()
 - Add onselect and onunselect method attribute on CheckBox, RadioButton and TabItemButton. 
 - Add animation capabilities on Picture accessible from new attributes (frameWidth, frameHeight, frameSequence, frameDuration).
+- Add "Multi" DataProvider capabilities. A DataProvider can now be a slave of an other, to be able to load a Screen with more thant one data model.
+- Add backwardTabKey and forwardTabKey attribute on TabFilder widget to be able to change the default left and right keys of tab navigation.
+- Add multi border-color capabilities on widgets. You can now set a different color for the 4 borders.
+- Add Kuix.loadMenu(Menu, String, DataProvider) and Kuix.loadMenu(Menu, InputStream, DataProvider) methods to reload menu content on the fly.
+
+- Remove unuseful Widget.drawBorder(...) and Widget.drawBackground(...) methods.
+- Remove unuseful MenuItem.hideMenuTree() method
 
 - Default "Please select" text is displayed when a Choice has no selected radioButton.
   
+- Methods **refactoring** :
+  - Kuix.extractStyleSheets(...) *has been moved to* KuixConverter.convertStyleSheets(...)
+  - Widget.bringToBack(...) *become* Widget.sendToBack(...)
+  - Widget.getBorderColors(...) *now returns* a Color[] (array length is 4)
+  - Widget.getBorderImages(...) *become* Widget.getBorderImage(...) to be conform to the style property name.
+  - Widget.getBorderAlignments(...) *become* Widget.getBorderAlign(...) to be conform to the style property name.
+  - Widget.getBackgroundAlignment(...) *become* Widget.getBackgroundAlign(...) to be conform to the style property name.
+  - KuixMIDlet.getCanvas() *is now deprecated and replaced by* Kuix.getCanvas()
+  - KuixMIDlet.showPopupBox(...) *is now deprecated and replaced by* Kuix.showPopupBox(...)
+  - KuixMIDlet.alert(...) *are now deprecated and replaced by* Kuix.alert(...)
+
 - Widget tags **refactoring** :
   - tabbutton *become* tabitembutton and is an internal widget of tabitem
 

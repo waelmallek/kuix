@@ -31,6 +31,7 @@ import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.kuix.core.KuixConstants;
 import org.kalmeo.kuix.core.KuixMIDlet;
 import org.kalmeo.kuix.util.Alignment;
+import org.kalmeo.kuix.util.Color;
 import org.kalmeo.kuix.util.Metrics;
 import org.kalmeo.util.StringTokenizer;
 import org.kalmeo.util.worker.Worker;
@@ -290,6 +291,12 @@ public class TextField extends Text implements CommandListener {
 	protected void paintChildrenImpl(Graphics g) {
 		super.paintChildrenImpl(g);
 		if (isFocused()) {
+			Color color = getColor();
+			if (color != null) {
+				g.setColor(color.getRGB());
+			} else {
+				g.setColor(0x000000);
+			}
 			g.setStrokeStyle(Graphics.SOLID);
 			g.drawLine(textX, textY, textX, textY + insetHeight - 1);
 		}
@@ -318,7 +325,7 @@ public class TextField extends Text implements CommandListener {
 				});
 			}
 		}
-		KuixMIDlet.getDefault().getDisplay().setCurrent(KuixMIDlet.getDefault().getCanvas());
+		KuixMIDlet.getDefault().getDisplay().setCurrent(Kuix.getCanvas());
 	}
 
 	/* (non-Javadoc)
