@@ -454,8 +454,8 @@ public final class Kuix {
 	 * @param dataProvider
 	 * @since 1.0.1
 	 */
-	public static void loadMenu(Menu menu, String xmlFilePath, DataProvider dataProvider) {
-		loadMenu(menu, Kuix.getXmlResourceInputStream(xmlFilePath), dataProvider);
+	public static void loadMenuContent(Menu menu, String xmlFilePath, DataProvider dataProvider) {
+		loadMenuContent(menu, Kuix.getXmlResourceInputStream(xmlFilePath), dataProvider);
 	}
 
 	/**
@@ -470,7 +470,7 @@ public final class Kuix {
 	 * @param dataProvider
 	 * @since 1.0.1
 	 */
-	public static void loadMenu(Menu menu, InputStream inputStream, DataProvider dataProvider) {
+	public static void loadMenuContent(Menu menu, InputStream inputStream, DataProvider dataProvider) {
 		if (menu != null) {
 			menu.hideMenuTree();
 			menu.cleanUp();

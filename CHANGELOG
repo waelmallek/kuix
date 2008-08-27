@@ -14,7 +14,7 @@
 - Add "Multi" DataProvider capabilities. A DataProvider can now be a slave of an other, to be able to load a Screen with more thant one data model.
 - Add backwardTabKey and forwardTabKey attribute on TabFilder widget to be able to change the default left and right keys of tab navigation.
 - Add multi border-color capabilities on widgets. You can now set a different color for the 4 borders.
-- Add Kuix.loadMenu(Menu, String, DataProvider) and Kuix.loadMenu(Menu, InputStream, DataProvider) methods to reload menu content on the fly.
+- Add Kuix.loadMenuContent(Menu, String, DataProvider) and Kuix.loadMenuContent(Menu, InputStream, DataProvider) methods to reload menu content on the fly.
 
 - Remove unuseful Widget.drawBorder(...) and Widget.drawBackground(...) methods.
 - Remove unuseful MenuItem.hideMenuTree() method
