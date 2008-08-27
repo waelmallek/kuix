@@ -24,6 +24,13 @@ package org.kalmeo.kuix.core.style;
 import java.util.Vector;
 
 /**
+ * A {@link StyleSelector} represents the full CSS defined path that represent a
+ * style.<br>
+ * For example : <code>screen container.myclass button:hover</code> will be
+ * represented by a tree of three StyleSelectors where names are respectively :
+ * <code>screen</code>, <code>container.myclass</code>,
+ * <code>button:hover</code>.
+ * 
  * @author bbeaulant
  */
 public class StyleSelector {

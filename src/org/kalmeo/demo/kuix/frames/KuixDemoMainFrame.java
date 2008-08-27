@@ -74,7 +74,7 @@ public class KuixDemoMainFrame implements Frame {
 			return false;
 		}
 		if ("progress".equals(identifier)) {
-			final PopupBox progressBox = KuixDemo.getDefault().showPopupBox(null, -1, "Progress Demo", 0, new String[] { Kuix.getMessage(KuixConstants.OK_I18N_KEY)}, null, null, null);
+			final PopupBox progressBox = Kuix.showPopupBox(null, -1, "Progress Demo", 0, new String[] { Kuix.getMessage(KuixConstants.OK_I18N_KEY)}, null, null, null);
 			Worker.instance.pushTask(new WorkerTask() {
 				
 				private final int PROGRESS_INCREMENT = 1;
@@ -94,7 +94,7 @@ public class KuixDemoMainFrame implements Frame {
 			});
 		}
 		if ("threadProgress".equals(identifier)) {
-			final PopupBox progressBox = KuixDemo.getDefault().showPopupBox(null, -1, "Thread progress Demo", 0, new String[] { Kuix.getMessage(KuixConstants.OK_I18N_KEY)}, null, null, null);
+			final PopupBox progressBox = Kuix.showPopupBox(null, -1, "Thread progress Demo", 0, new String[] { Kuix.getMessage(KuixConstants.OK_I18N_KEY)}, null, null, null);
 			new Thread() {
 
 				private final int PROGRESS_INCREMENT = 1;
@@ -139,7 +139,7 @@ public class KuixDemoMainFrame implements Frame {
 				 */
 				public void commandAction(Command c, Displayable d) {
 					if (c == backToKuixCommand) {
-						KuixDemo.getDefault().getDisplay().setCurrent(KuixDemo.getDefault().getCanvas());
+						KuixDemo.getDefault().getDisplay().setCurrent(Kuix.getCanvas());
 					}
 				}
 				
@@ -155,7 +155,7 @@ public class KuixDemoMainFrame implements Frame {
 	 */
 	public void onAdded() {
 		Widget splash = Kuix.loadWidget("/xml/splash.xml", null);
-		KuixDemo.getDefault().splash(2000, splash, "showMainScreen");
+		Kuix.splash(2000, splash, "showMainScreen");
 	}
 
 	/* (non-Javadoc)

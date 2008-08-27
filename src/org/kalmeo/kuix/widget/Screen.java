@@ -23,7 +23,6 @@ package org.kalmeo.kuix.widget;
 
 import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.kuix.core.KuixConstants;
-import org.kalmeo.kuix.core.KuixMIDlet;
 import org.kalmeo.kuix.core.focus.FocusManager;
 import org.kalmeo.kuix.layout.BorderLayout;
 import org.kalmeo.kuix.layout.BorderLayoutData;
@@ -99,6 +98,9 @@ public class Screen extends Widget {
 
 		private StaticLayoutData layoutData;
 		private boolean internal;
+		
+		private boolean desiredVisible = true;
+		private boolean internalVisible = true;
 
 		/**
 		 * Construct a {@link ScreenMenu}
@@ -130,9 +132,9 @@ public class Screen extends Widget {
 		/* (non-Javadoc)
 		 * @see org.kalmeo.kuix.widget.MenuItem#hideMenuTree()
 		 */
-		public boolean hideMenuTree() {
+		public void hideMenuTree() {
 			switchToDefaultMenus();
-			return super.hideMenuTree();
+			super.hideMenuTree();
 		}
 
 		/* (non-Javadoc)
@@ -150,6 +152,34 @@ public class Screen extends Widget {
 				return super.processActionEvent();
 			}
 			return true;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.kalmeo.kuix.widget.Widget#setVisible(boolean)
+		 */
+		public void setVisible(boolean visible) {
+			desiredVisible = visible;
+			combineVisible();
+		}
+		
+		/**
+		 * Set the internal visiblity (used to switch between internal and
+		 * default menus).
+		 * 
+		 * @param visible
+		 */
+		private void setInternalVisible(boolean visible) {
+			internalVisible = visible;
+			combineVisible();
+		}
+		
+		/**
+		 * Combine the internal and desired visiblilty.
+		 * 
+		 * @param visible
+		 */
+		private void combineVisible() {
+			super.setVisible(internalVisible && desiredVisible);
 		}
 		
 	}
@@ -561,19 +591,19 @@ public class Screen extends Widget {
 		}
 		return secondInternalMenu;
 	}
-	
+
 	/**
 	 * Switch menu display from defaults menus to internal menus
 	 */
 	protected void switchToInternalMenus() {
 		if (firstMenu != null) {
-			firstMenu.setVisible(false);
+			firstMenu.setInternalVisible(false);
 		}
 		if (secondMenu != null) {
-			secondMenu.setVisible(false);
+			secondMenu.setInternalVisible(false);
 		}
-		getFirstInternalMenu().setVisible(true);
-		getSecondInternalMenu().setVisible(true);
+		getFirstInternalMenu().setInternalVisible(true);
+		getSecondInternalMenu().setInternalVisible(true);
 	}
 	
 	/**
@@ -581,16 +611,16 @@ public class Screen extends Widget {
 	 */
 	protected void switchToDefaultMenus() {
 		if (firstInternalMenu != null) {
-			firstInternalMenu.setVisible(false);
+			firstInternalMenu.setInternalVisible(false);
 		}
 		if (secondInternalMenu != null) {
-			secondInternalMenu.setVisible(false);
+			secondInternalMenu.setInternalVisible(false);
 		}
 		if (firstMenu != null) {
-			firstMenu.setVisible(true);
+			firstMenu.setInternalVisible(true);
 		}
 		if (secondMenu != null) {
-			secondMenu.setVisible(true);
+			secondMenu.setInternalVisible(true);
 		}
 	}
 	
@@ -599,7 +629,7 @@ public class Screen extends Widget {
 	 */
 	public void setCurrent() {
 		try {
-			KuixMIDlet.getDefault().getCanvas().getDesktop().setCurrentScreen(this);
+			Kuix.getCanvas().getDesktop().setCurrentScreen(this);
 		} catch (Exception e) {
 		}
 	}

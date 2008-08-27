@@ -121,9 +121,11 @@ public class Widget {
 		 *         binded by the instruction.
 		 */
 		protected boolean hasProperty(String property) {
-			for (int i =0; i<bindedProperties.length; ++i) {
-				if (bindedProperties[i].equals(property)) {
-					return true;
+			if (bindedProperties != null) {
+				for (int i = 0; i < bindedProperties.length; ++i) {
+					if (bindedProperties[i].equals(property)) {
+						return true;
+					}
 				}
 			}
 			return false;
@@ -283,12 +285,12 @@ public class Widget {
 	private boolean validCachedColor;
 	private boolean validCachedBorderColor;
 	private boolean validCachedBorderStroke;
-	private boolean validCachedBorderImages;
-	private boolean validCachedBorderAlignments;
+	private boolean validCachedBorderImage;
+	private boolean validCachedBorderAlign;
 	private boolean validCachedBackgroundColor;
 	private boolean validCachedBackgroundImage;
 	private boolean validCachedBackgroundRepeat;
-	private boolean validCachedBackgroundAlignment;
+	private boolean validCachedBackgroundAlign;
 
 	private boolean validCachedGap;
 	private boolean validCachedSpan;
@@ -304,14 +306,14 @@ public class Widget {
 	private Metrics cachedMinSize;
 	
 	private Color cachedColor;
-	private Color cachedBorderColor;
+	private Color[] cachedBorderColor;
 	private int cachedBorderStroke;
-	private Image[] cachedBorderImages;
-	private Alignment[] cachedBorderAlignments;
+	private Image[] cachedBorderImage;
+	private Alignment[] cachedBorderAlign;
 	private Color cachedBackgroundColor;
 	private Image[] cachedBackgroundImage;
 	private Repeat[] cachedBackgroundRepeat;
-	private Alignment[] cachedBackgroundAlignment;
+	private Alignment[] cachedBackgroundAlign;
 	
 	private Gap cachedGap;
 	private Span cachedSpan;
@@ -425,13 +427,20 @@ public class Widget {
 	}
 
 	/**
+	 * Returns the tag. The tag is the reference name of the widget. It's used
+	 * to rerieve the widget nature on CSS and XML parsing.
+	 * 
 	 * @return the tag
 	 */
 	public String getTag() {
 		return tag;
 	}
-	
+
 	/**
+	 * Returns the inheritedTag. The Inherited tag is used to inherit style
+	 * properties from and other widget is those properties aren't defined
+	 * specificly for this widget.
+	 * 
 	 * @return the inherited tag
 	 */
 	public String getInheritedTag() {
@@ -439,6 +448,9 @@ public class Widget {
 	}
 
 	/**
+	 * Returns the id. The id represents a unique instance reference of a
+	 * widget.
+	 * 
 	 * @return the id
 	 */
 	public String getId() {
@@ -446,6 +458,8 @@ public class Widget {
 	}
 
 	/**
+	 * Set the id.
+	 * 
 	 * @param id the id to set
 	 */
 	public void setId(String id) {
@@ -453,6 +467,9 @@ public class Widget {
 	}
 
 	/**
+	 * Returns styleClasses. Style classes is an array of style class string
+	 * reresentation.
+	 * 
 	 * @return the styleClasses
 	 */
 	public String[] getStyleClasses() {
@@ -480,6 +497,9 @@ public class Widget {
 	}
 	
 	/**
+	 * Retuns the list of available pseudo classes. (i.e <code>hover</code>,
+	 * <code>selected</code>, ...).
+	 * 
 	 * @return the pseudoClasses list
 	 */
 	public String[] getAvailablePseudoClasses() {
@@ -494,6 +514,8 @@ public class Widget {
 	}
 
 	/**
+	 * Returns the first child of this widget.
+	 * 
 	 * @return the child
 	 */
 	public Widget getChild() {
@@ -501,6 +523,8 @@ public class Widget {
 	}
 	
 	/**
+	 * Returns the last child of this widget.
+	 * 
 	 * @return the lastChild
 	 */
 	public Widget getLastChild() {
@@ -631,7 +655,7 @@ public class Widget {
 	 * @param authorStyle the authorStyle to parse
 	 */
 	public void parseAuthorStyle(String rawAuthorStyle) {
-		Style[] styles = Kuix.extractStyleSheets(Kuix.getConverter(), getTag(), rawAuthorStyle);
+		Style[] styles = Kuix.getConverter().convertStyleSheets(getTag(), rawAuthorStyle);
 		if (styles.length > 0) {
 			setAuthorStyle(styles[0]);
 		}
@@ -765,7 +789,7 @@ public class Widget {
 	}
 
 	/**
-	 * @return <code>true</code> if shortcuts are set for all most one event type
+	 * @return <code>true</code> if shortcuts are set for all most one event type.
 	 */
 	public boolean hasShortcuts() {
 		return (pressedShortcutActions != null || repeatedShortcutActions != null || releasedShortcutActions != null);
@@ -813,6 +837,8 @@ public class Widget {
 	}
 	
 	/**
+	 * Returns the associated {@link DataProvider}.
+	 * 
 	 * @return the dataProvider
 	 */
 	public DataProvider getDataProvider() {
@@ -934,16 +960,16 @@ public class Widget {
 	}
 	
 	/**
-	 * Returns the border color value. By default the value is
+	 * Returns the border color array. The array length is 4. By default the value is
 	 * <code>null</code>.
 	 * 
 	 * @return the borderColor
 	 */
-	public Color getBorderColor() {
+	public Color[] getBorderColor() {
 		if (!validCachedBorderColor) {
 			Object borderColorValue = getStylePropertyValue(KuixConstants.BORDER_COLOR_STYLE_PROPERTY, false);
 			if (borderColorValue != null) {
-				cachedBorderColor = (Color) borderColorValue;
+				cachedBorderColor = (Color[]) borderColorValue;
 			} else {
 				cachedBorderColor = null;
 			}
@@ -972,22 +998,22 @@ public class Widget {
 	}
 	
 	/**
-	 * Returns the border images array. The array length is 8. By default the
+	 * Returns the border image array. The array length is 8. By default the
 	 * value is <code>null</code>.
 	 * 
 	 * @return the borderImages array
 	 */
-	public Image[] getBorderImages() {
-		if (!validCachedBorderImages) {
-			Object borderImagesValue = getStylePropertyValue(KuixConstants.BORDER_IMAGE_STYLE_PROPERTY, false);
-			if (borderImagesValue != null) {
-				cachedBorderImages = (Image[]) borderImagesValue;
+	public Image[] getBorderImage() {
+		if (!validCachedBorderImage) {
+			Object borderImageValue = getStylePropertyValue(KuixConstants.BORDER_IMAGE_STYLE_PROPERTY, false);
+			if (borderImageValue != null) {
+				cachedBorderImage = (Image[]) borderImageValue;
 			} else {
-				cachedBorderImages = null;
+				cachedBorderImage = null;
 			}
-			validCachedBorderImages = true;
+			validCachedBorderImage = true;
 		}
-		return cachedBorderImages;
+		return cachedBorderImage;
 	}
 	
 	/**
@@ -996,17 +1022,17 @@ public class Widget {
 	 * 
 	 * @return the borderAlignments array
 	 */
-	public Alignment[] getBorderAlignments() {
-		if (!validCachedBorderAlignments) {
+	public Alignment[] getBorderAlign() {
+		if (!validCachedBorderAlign) {
 			Object borderAlignValue = getStylePropertyValue(KuixConstants.BORDER_ALIGN_STYLE_PROPERTY, false);
 			if (borderAlignValue != null) {
-				cachedBorderAlignments = (Alignment[]) borderAlignValue;
+				cachedBorderAlign = (Alignment[]) borderAlignValue;
 			} else {
-				cachedBorderAlignments = null;
+				cachedBorderAlign = null;
 			}
-			validCachedBorderAlignments = true;
+			validCachedBorderAlign = true;
 		}
-		return cachedBorderAlignments;
+		return cachedBorderAlign;
 	}
 	
 	/**
@@ -1047,21 +1073,21 @@ public class Widget {
 	}
 	
 	/**
-	 * Returns the backroundAlignment or alignment list if multi alignments are defined.
+	 * Returns the backroundAlign or alignment list if multi alignments are defined.
 	 * 
-	 * @return the backroundAlignment array
+	 * @return the backroundAlign array
 	 */
-	public Alignment[] getBackgroundAlignment() {
-		if (!validCachedBackgroundAlignment) {
+	public Alignment[] getBackgroundAlign() {
+		if (!validCachedBackgroundAlign) {
 			Object backgroundAlignValue = getStylePropertyValue(KuixConstants.BACKGROUND_ALIGN_STYLE_PROPERTY, false);
 			if (backgroundAlignValue != null) {
-				cachedBackgroundAlignment = (Alignment[]) backgroundAlignValue;
+				cachedBackgroundAlign = (Alignment[]) backgroundAlignValue;
 			} else {
-				cachedBackgroundAlignment = DEFAULT_BACKGROUND_ALIGN;
+				cachedBackgroundAlign = DEFAULT_BACKGROUND_ALIGN;
 			}
-			validCachedBackgroundAlignment = true;
+			validCachedBackgroundAlign = true;
 		}
-		return cachedBackgroundAlignment;
+		return cachedBackgroundAlign;
 	}
 	
 	/**
@@ -1083,7 +1109,8 @@ public class Widget {
 	}
 	
 	/**
-	 * Returns the gap value.
+	 * Returns the gap value. The gape represents the horizontal and vertical
+	 * space between widget's children.
 	 * 
 	 * @return the gap
 	 */
@@ -1369,6 +1396,7 @@ public class Widget {
 	
 	/**
 	 * Bring the <code>widget</code> to the front of the orthers.
+	 * <code>widget</code> need to be a child of this widget.
 	 * 
 	 * @param widget
 	 */
@@ -1387,13 +1415,14 @@ public class Widget {
 			
 		}
 	}
-	
+
 	/**
-	 * Bring the <code>widget</code> to the back of the others.
+	 * Send the <code>widget</code> to the back of the others.
+	 * <code>widget</code> need to be a child of this widget.
 	 * 
 	 * @param widget
 	 */
-	public void bringToBack(Widget widget) {
+	public void sendToBack(Widget widget) {
 		if (widget != null && widget.parent == this && lastChild != widget) {
 			
 			// Remove from previous depth
@@ -1408,8 +1437,12 @@ public class Widget {
 			
 		}
 	}
-	
+
 	/**
+	 * Bring the <code>widget</code> on top or behind
+	 * <code>referenceWidget</code> according to the <code>after</code>
+	 * parameter. <code>widget</code> need to be a child of this widget.
+	 * 
 	 * @param widget
 	 * @param referenceWidget
 	 * @param after
@@ -1646,7 +1679,7 @@ public class Widget {
 	}
 	
 	/**
-	 * Paint the widget.
+	 * Paint the widget itself.
 	 * 
 	 * @param g
 	 */
@@ -1656,30 +1689,18 @@ public class Widget {
 	}
 
 	/**
-	 * Paint the background of this {@link Widget}
+	 * Paint the background of this {@link Widget}.
 	 * 
 	 * @param g
 	 */
 	public void paintBackground(Graphics g) {
 		Insets margin = getMargin();
 		Insets border = getBorder();
-		drawBackground(	g, 
-						margin.left + border.left, 
-						margin.top + border.top, 
-						getWidth() - margin.left - border.left - border.right - margin.right, 
-						getHeight() - margin.top - border.top - border.bottom - margin.bottom);
-	}
-
-	/**
-	 * Draw the background
-	 * 
-	 * @param g
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
-	 */
-	protected void drawBackground(Graphics g, int x, int y, int width, int height) {
+		
+		int x = margin.left + border.left;
+		int y = margin.top + border.top;
+		int width = getWidth() - margin.left - border.left - border.right - margin.right;
+		int height = getHeight() - margin.top - border.top - border.bottom - margin.bottom;
 		
 		// Background Color
 		Color backgroundColor = getBackgroundColor();
@@ -1692,7 +1713,7 @@ public class Widget {
 		Image[] images = getBackgroundImage();
 		if (images != null) {
 			
-			Alignment[] alignments = getBackgroundAlignment();
+			Alignment[] alignments = getBackgroundAlign();
 			Repeat[] repeats = getBackgroundRepeat();
 			
 			int backgroundCount = Math.max(images.length, Math.max(alignments.length, repeats.length));
@@ -1711,43 +1732,29 @@ public class Widget {
 			}
 			
 		}
-		
 	}
 
 	/**
-	 * Paint the border of this {@link Widget}
+	 * Paint the widget's border.
 	 * 
 	 * @param g
 	 */
 	public void paintBorder(Graphics g) {
 		Insets margin = getMargin();
-		drawBorder(	g, 
-					margin.left, 
-					margin.top, 
-					getWidth() - margin.left - margin.right, 
-					getHeight() - margin.top - margin.bottom);
-	}
-
-	/**
-	 * Draw the border
-	 * 
-	 * @param g
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
-	 */
-	protected void drawBorder(Graphics g, int x, int y, int width, int height) {
+		
+		int x = margin.left;
+		int y = margin.top;
+		int width = getWidth() - margin.left - margin.right;
+		int height = getHeight() - margin.top - margin.bottom;
 		
 		if (width == 0 || height == 0) {
 			return;
 		}
 		
 		// Border Color
-		Color borderColor = getBorderColor();
+		Color[] borderColor = getBorderColor();
 		if (borderColor != null) {
 			
-			g.setColor(borderColor.getRGB());
 			Insets border = getBorder();
 			
 			// Stroke is only possible if border thin is 1
@@ -1755,21 +1762,32 @@ public class Widget {
 				g.setStrokeStyle(getBorderStroke());
 			}
 			
+			// Top
+			g.setColor(borderColor[0].getRGB());
 			if (border.top == 1) {
 				g.drawLine(x, y, x + width - 1, y);
 			} else if (border.top != 0) {
 				g.fillRect(x, y, width, border.top);
 			}
+			
+			// Right
+			g.setColor(borderColor[1].getRGB());
 			if (border.right == 1) {
 				g.drawLine(x + width - 1, y, x + width - 1, y + height - 1);
 			} else if (border.right != 0) {
 				g.fillRect(x + width - border.right, y, border.right, height);
 			}
+			
+			// Bottom
+			g.setColor(borderColor[2].getRGB());
 			if (border.bottom == 1) {
 				g.drawLine(x, y + height - 1, x + width - 1, y + height - 1);
 			} else if (border.bottom != 0) {
 				g.fillRect(x, y + height - border.bottom, width, border.bottom);
 			}
+			
+			// Left
+			g.setColor(borderColor[3].getRGB());
 			if (border.left == 1) {
 				g.drawLine(x, y, x, y + height - 1);
 			} else if (border.left != 0) {
@@ -1779,54 +1797,117 @@ public class Widget {
 		}
 		
 		// Border Images
-		Image[] borderImages = getBorderImages();
+		Image[] borderImages = getBorderImage();
 		if (borderImages != null) {
 			
 			Insets border = getBorder();
-			Alignment[] alignments = getBorderAlignments();
+			Alignment[] alignments = getBorderAlign();
 			
 			// Top
 			if (borderImages[0] != null) {
-				paintMosaicImage(g, borderImages[0], x + border.left, y, width - border.left - border.right, border.top, extractBorderAlignment(0, alignments));
+				paintMosaicImage(	g, 
+									borderImages[0], 
+									x + border.left, 
+									y, 
+									width - border.left - border.right, 
+									border.top, 
+									extractBorderAlignment(0, alignments), 
+									Integer.MAX_VALUE, 
+									Integer.MAX_VALUE);
 			}
 			
 			// Top right
 			if (borderImages[1] != null) {
-				paintMosaicImage(g, borderImages[1], x + width - border.right, y, border.right, border.top, extractBorderAlignment(1, alignments));
+				paintMosaicImage(	g, 
+									borderImages[1], 
+									x + width - border.right, 
+									y, 
+									border.right, 
+									border.top, 
+									extractBorderAlignment(1, alignments), 
+									Integer.MAX_VALUE, 
+									Integer.MAX_VALUE);
 			}
 			
 			// Right
 			if (borderImages[2] != null) {
-				paintMosaicImage(g, borderImages[2], x + width - border.right, y + border.top, border.right, height - border.top - border.bottom, extractBorderAlignment(2, alignments));
+				paintMosaicImage(	g, 
+									borderImages[2],
+									x + width - border.right,
+									y + border.top,
+									border.right,
+									height - border.top - border.bottom,
+									extractBorderAlignment(2, alignments),
+									Integer.MAX_VALUE,
+									Integer.MAX_VALUE);
 			}
 			
 			// Bottom right
 			if (borderImages[3] != null) {
-				paintMosaicImage(g, borderImages[3], x + width - border.right, y + height - border.bottom, border.right, border.bottom, extractBorderAlignment(3, alignments));
+				paintMosaicImage(	g, 
+									borderImages[3],
+									x + width - border.right,
+									y + height - border.bottom,
+									border.right,
+									border.bottom,
+									extractBorderAlignment(3, alignments),
+									Integer.MAX_VALUE,
+									Integer.MAX_VALUE);
 			}
 			
 			// Bottom
 			if (borderImages[4] != null) {
-				paintMosaicImage(g, borderImages[4], x + border.left, y + height - border.bottom, width - border.left - border.right, border.bottom, extractBorderAlignment(4, alignments));
+				paintMosaicImage(	g,
+									borderImages[4],
+									x + border.left,
+									y + height - border.bottom,
+									width - border.left - border.right,
+									border.bottom,
+									extractBorderAlignment(4, alignments),
+									Integer.MAX_VALUE,
+									Integer.MAX_VALUE);
 			}
 			
 			// Bottom left
 			if (borderImages[5] != null) {
-				paintMosaicImage(g, borderImages[5], x, y + height - border.bottom, border.left, border.bottom, extractBorderAlignment(5, alignments));
+				paintMosaicImage(	g,
+									borderImages[5],
+									x,
+									y + height - border.bottom,
+									border.left,
+									border.bottom,
+									extractBorderAlignment(5, alignments),
+									Integer.MAX_VALUE,
+									Integer.MAX_VALUE);
 			}
 			
 			// Left
 			if (borderImages[6] != null) {
-				paintMosaicImage(g, borderImages[6], x, y + border.top, border.left, height - border.top - border.bottom, extractBorderAlignment(6, alignments));
+				paintMosaicImage(	g,
+									borderImages[6],
+									x,
+									y + border.top,
+									border.left,
+									height - border.top - border.bottom,
+									extractBorderAlignment(6, alignments),
+									Integer.MAX_VALUE,
+									Integer.MAX_VALUE);
 			}
 			
 			// Top left
 			if (borderImages[7] != null) {
-				paintMosaicImage(g, borderImages[7], x, y, border.left, border.top, extractBorderAlignment(7, alignments));
+				paintMosaicImage(	g,
+									borderImages[7],
+									x,
+									y,
+									border.left,
+									border.top,
+									extractBorderAlignment(7, alignments),
+									Integer.MAX_VALUE,
+									Integer.MAX_VALUE);
 			}
 			
 		}
-		
 	}
 	
 	/**
@@ -1843,35 +1924,6 @@ public class Widget {
 			return alignment;
 		}
 		return Alignment.TOP_LEFT;
-	}
-	
-	/**
-	 * Paint a cliped zone with mosaic image
-	 * 
-	 * @param g
-	 * @param image
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
-	 */
-	protected void paintMosaicImage(Graphics g, Image image, int x, int y, int width, int height) {
-		paintMosaicImage(g, image, x, y, width, height, Alignment.TOP_LEFT, Integer.MAX_VALUE, Integer.MAX_VALUE);
-	}
-	
-	/**
-	 * Paint a cliped zone with mosaic image
-	 * 
-	 * @param g
-	 * @param image
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
-	 * @param alignment
-	 */
-	protected void paintMosaicImage(Graphics g, Image image, int x, int y, int width, int height, Alignment alignment) {
-		paintMosaicImage(g, image, x, y, width, height, alignment, Integer.MAX_VALUE, Integer.MAX_VALUE);
 	}
 	
 	/**
@@ -1951,7 +2003,7 @@ public class Widget {
 	}
 	
 	/**
-	 * Paint the implementation of the widget
+	 * Paint the implementation of the widget (itself and its children).
 	 * 
 	 * @param g
 	 */
@@ -1987,7 +2039,7 @@ public class Widget {
 	}
 	
 	/**
-	 * Call the <code>paintImpl</code> method on widget's children.
+	 * Invoke the <code>paintImpl</code> method on widget's children.
 	 * 
 	 * @param g
 	 */
@@ -2022,7 +2074,7 @@ public class Widget {
 				widget.clearCachedStyle(propagateToChildren);
 			}
 		}
-		invalidateStylePropertiesCache(true);
+		invalidateStylePropertiesCache(!propagateToChildren);	// if propagateToChildren is true invalidateStylePropertiesCache is already invoked
 		invalidate();
 	}
 	
@@ -2044,12 +2096,12 @@ public class Widget {
 		validCachedColor = false;
 		validCachedBorderColor = false;
 		validCachedBorderStroke = false;
-		validCachedBorderImages = false;
-		validCachedBorderAlignments = false;
+		validCachedBorderImage = false;
+		validCachedBorderAlign = false;
 		validCachedBackgroundColor = false;
 		validCachedBackgroundImage = false;
 		validCachedBackgroundRepeat = false;
-		validCachedBackgroundAlignment = false;
+		validCachedBackgroundAlign = false;
 
 		validCachedGap = false;
 		validCachedSpan = false;
@@ -2213,7 +2265,7 @@ public class Widget {
 	}
 
 	/**
-	 * Requests the focus of this {@link Widget}
+	 * Requests the focus of this {@link Widget}.
 	 */
 	public void requestFocus() {
 	}
@@ -2239,9 +2291,10 @@ public class Widget {
 	}
 	
 	/**
-	 * Returns the next focusable {@link Widget}
+	 * Returns the previous or next focusable {@link Widget} according to the
+	 * <code>forward</code> parameter.
 	 * 
-	 * @return The next focusable {@link Widget}
+	 * @return The previous or next focusable {@link Widget}
 	 */
 	public Widget getOtherFocus(Widget root, Widget focusedWidget, Widget nearestFocusableWidget, boolean forward, Alignment direction, boolean checkChild, boolean checkParent) {
 		boolean isVisible = isVisible();
@@ -2414,15 +2467,14 @@ public class Widget {
 	 * @return <code>true</code> if the event is treated by the widget
 	 */
 	public boolean processDataBindEvent() {
-		boolean success = false;
 		if (dataProvider != null && hasBindInstruction()) {
 			for (BindInstruction bindInstruction = (BindInstruction) bindInstructions.getFirst(); bindInstruction != null; bindInstruction = bindInstruction.next) {
 				bindInstruction.process();
 			}
 			invalidate();
-			success = true;
+			return true;
 		}
-		return success;
+		return false;
 	}
 	
 	/**
@@ -2433,8 +2485,8 @@ public class Widget {
 	 * @return <code>true</code> if the event is treated by the widget
 	 */
 	public boolean processModelUpdateEvent(String property) {
-		boolean success = false;
 		if (dataProvider != null && hasBindInstruction()) {
+			boolean success = false;
 			for (BindInstruction bindInstruction = (BindInstruction) bindInstructions.getFirst(); bindInstruction != null; bindInstruction = bindInstruction.next) {
 				if (bindInstruction.hasProperty(property)) {
 					bindInstruction.process();
@@ -2442,8 +2494,9 @@ public class Widget {
 					success = true;
 				}
 			}
+			return success;
 		}
-		return success;
+		return false;
 	}
 	
 	/**

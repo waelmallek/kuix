@@ -20,7 +20,6 @@
 
 package org.kalmeo.demo.kuix.frames;
 
-import org.kalmeo.demo.kuix.KuixDemo;
 import org.kalmeo.demo.kuix.model.Calculator;
 import org.kalmeo.demo.kuix.model.Media;
 import org.kalmeo.demo.kuix.model.MediaList;
@@ -104,7 +103,7 @@ public class KuixDemoAppsFrame implements Frame {
 			}
 
 			String[] string = { civility, username, firstname };
-			KuixDemo.getDefault().alert(Kuix.getMessage("POPUP_TEXT", string));
+			Kuix.alert(Kuix.getMessage("POPUP_TEXT", string));
 			return false;
 		}
 
@@ -145,7 +144,7 @@ public class KuixDemoAppsFrame implements Frame {
 
 			Widget container = new Widget(KuixConstants.CONTAINER_WIDGET_TAG);
 			Kuix.loadXml(container, getClass().getResourceAsStream("/xml/apps/add_popup.xml"), null);
-			KuixDemo.getDefault().showPopupBox("askbox", -1, container, -1, buttonTexts, buttonShortcutKeyCodes, buttonOnActions, null);
+			Kuix.showPopupBox("askbox", -1, container, -1, buttonTexts, buttonShortcutKeyCodes, buttonOnActions, null);
 			return false;
 		}
 		if ("add".equals(identifier)) {
@@ -156,13 +155,13 @@ public class KuixDemoAppsFrame implements Frame {
 					addMedia(arguments, null, false);
 					break;
 				case 2:
-					widget = KuixDemo.getDefault().getCanvas().getDesktop().getCurrentScreen().getFocusManager().getVirtualFocusedWidget();
+					widget = Kuix.getCanvas().getDesktop().getCurrentScreen().getFocusManager().getVirtualFocusedWidget();
 					if (widget != null) {
 						addMedia(arguments, widget.getDataProvider(), false);
 					}
 					break;
 				case 3:
-					widget = KuixDemo.getDefault().getCanvas().getDesktop().getCurrentScreen().getFocusManager().getVirtualFocusedWidget();
+					widget = Kuix.getCanvas().getDesktop().getCurrentScreen().getFocusManager().getVirtualFocusedWidget();
 					if (widget != null) {
 						addMedia(arguments, widget.getDataProvider(), true);
 					}
@@ -171,7 +170,7 @@ public class KuixDemoAppsFrame implements Frame {
 			return false;
 		}
 		if ("remove".equals(identifier)) {
-			Widget widget = KuixDemo.getDefault().getCanvas().getDesktop().getCurrentScreen().getFocusManager().getVirtualFocusedWidget();
+			Widget widget = Kuix.getCanvas().getDesktop().getCurrentScreen().getFocusManager().getVirtualFocusedWidget();
 			if (widget instanceof ListItem) {
 				mediaList.removeItem(MediaList.LIST_PROPERTY, ((ListItem) widget).getDataProvider());
 			}
@@ -219,7 +218,7 @@ public class KuixDemoAppsFrame implements Frame {
 	 * @see org.kalmeo.util.frame.Frame#onAdded()
 	 */
 	public void onAdded() {
-		desktop = KuixDemo.getDefault().getCanvas().getDesktop();
+		desktop = Kuix.getCanvas().getDesktop();
 	}
 
 	/* (non-Javadoc)

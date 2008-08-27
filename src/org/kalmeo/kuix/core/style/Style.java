@@ -21,7 +21,6 @@
 
 package org.kalmeo.kuix.core.style;
 
-import org.kalmeo.util.Filter;
 import org.kalmeo.util.LinkedList;
 import org.kalmeo.util.LinkedListItem;
 
@@ -30,22 +29,6 @@ import org.kalmeo.util.LinkedListItem;
  */
 public class Style implements LinkedListItem {
 
-	class PropertyFilter implements Filter {
-		
-		public String name;
-		
-		/* (non-Javadoc)
-		 * @see com.kalmeo.util.Filter#accept(java.lang.Object)
-		 */
-		public int accept(Object obj) {
-			return ((StyleProperty) obj).getName().equals(name) ? 1 : 0;
-		}
-		
-	}
-	
-	// Filter for internal use (Caution it doesn't work if getProperty is call for multiple threads)
-	private final PropertyFilter internalFilter = new PropertyFilter();
-	
 	// Style selector
 	private final StyleSelector selector;
 
@@ -53,7 +36,7 @@ public class Style implements LinkedListItem {
 	private final LinkedList properties;
 
 	// LinkedListItem vars
-	private Style parent;
+	private Style previous;
 	private Style next;
 	
 	/**
@@ -77,7 +60,7 @@ public class Style implements LinkedListItem {
 	 * @see com.kalmeo.util.LinkedListItem#getParent()
 	 */
 	public LinkedListItem getPrevious() {
-		return parent;
+		return previous;
 	}
 
 	/* (non-Javadoc)
@@ -91,7 +74,7 @@ public class Style implements LinkedListItem {
 	 * @see com.kalmeo.util.LinkedListItem#setParent(com.kalmeo.util.LinkedListItem)
 	 */
 	public void setPrevious(LinkedListItem parent) {
-		this.parent = (Style) parent;
+		this.previous = (Style) parent;
 	}
 
 	/**
@@ -109,17 +92,21 @@ public class Style implements LinkedListItem {
 	}
 
 	/**
-	 * Returns the {@link StyleProperty} that correspond to the
-	 * <code>name</code> or <code>null</code>.
+	 * Returns the {@link StyleProperty} corresponding to the <code>name</code>
+	 * or <code>null</code> if it does not exist
 	 * 
 	 * @param name
-	 * @return The {@link StyleProperty} that correspond to the
-	 *         <code>name</code>
+	 * @return The {@link StyleProperty} corresponding to the <code>name</code>
 	 */
 	public StyleProperty getProperty(final String name) {
-		internalFilter.name = name;
-		Object attribute = properties.find(internalFilter);
-		return (StyleProperty) attribute;
+		if (properties.getFirst() != null) {
+			for (StyleProperty property = (StyleProperty) properties.getFirst(); property != null; property = (StyleProperty) property.getNext()) {
+				if (property.getName().equals(name)) {
+					return property;
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -129,24 +116,6 @@ public class Style implements LinkedListItem {
 	 */
 	public void add(StyleProperty styleProperty) {
 		properties.add(styleProperty);
-	}
-
-	/**
-	 * Returns the {@link StyleProperty} corresponding to the <code>name</code>
-	 * or <code>null</code> if it does not exist
-	 * 
-	 * @param name
-	 * @return The {@link StyleProperty} corresponding to the <code>name</code>
-	 */
-	public StyleProperty get(String name) {
-		if (properties.getFirst() != null) {
-			for (StyleProperty sa = (StyleProperty) properties.getFirst(); sa != null; sa = (StyleProperty) sa.getNext()) {
-				if (sa.getName().equals(name)) {
-					return sa;
-				}
-			}
-		}
-		return null;
 	}
 
 	/* (non-Javadoc)

@@ -12,28 +12,28 @@
 			</radioGroup>
 		</container>
 
-		<container style="layout:gridlayout(2,1)">
+		<container class="formEntry" style="layout:gridlayout(2,1)">
 			%NAME%
 			<textfield id="name">
 				<_tooltip>%NAME_TOOLTIP%</_tooltip>
 			</textfield>
 		</container>
 
-		<container style="layout:gridlayout(2,1)">
+		<container class="formEntry" style="layout:gridlayout(2,1)">
 			%FIRSTNAME%
 			<textfield id="firstname">
 				<_tooltip>%FIRSTNAME_TOOLTIP%</_tooltip>
 			</textfield>
 		</container>
 
-		<container style="layout:gridlayout(2,1)">
+		<container class="formEntry" style="layout:gridlayout(2,1)">
 			%AGE%
 			<textfield id="age" constraints="numeric" style="align:right">
 				<_tooltip>%AGE_TOOLTIP%</_tooltip>
 			</textfield>
 		</container>
 
-		<container style="layout:gridlayout(2,1)">
+		<container class="formEntry" style="layout:gridlayout(2,1)">
 			%SEX%
 			<radioGroup id="sex" style="align:right;layout:inlinelayout(true,fill)">
 				<radiobutton value="M" style="gap:3 0">M</radiobutton>

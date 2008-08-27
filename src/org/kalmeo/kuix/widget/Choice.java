@@ -23,7 +23,6 @@ package org.kalmeo.kuix.widget;
 
 import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.kuix.core.KuixConstants;
-import org.kalmeo.kuix.core.KuixMIDlet;
 import org.kalmeo.kuix.core.focus.FocusManager;
 import org.kalmeo.kuix.layout.GridLayout;
 import org.kalmeo.kuix.layout.Layout;
@@ -270,7 +269,7 @@ public class Choice extends ActionWidget {
 	 * @see org.kalmeo.kuix.widget.AbstractActionWidget#processActionEvent()
 	 */
 	public boolean processActionEvent() {
-		Desktop desktop = KuixMIDlet.getDefault().getCanvas().getDesktop();
+		Desktop desktop = Kuix.getCanvas().getDesktop();
 		if (desktop != null) {
 			
 			if (lastSelectedRadioButton != null) {

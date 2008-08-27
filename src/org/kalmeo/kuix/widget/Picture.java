@@ -201,6 +201,7 @@ public class Picture extends Widget {
 	
 	/**
 	 * @param frameWidth
+	 * @since 1.0.1
 	 */
 	public void setFrameWidth(int frameWidth) {
 		this.frameWidth = frameWidth;
@@ -210,6 +211,7 @@ public class Picture extends Widget {
 
 	/**
 	 * @param frameHeight
+	 * @since 1.0.1
 	 */
 	public void setFrameHeight(int frameHeight) {
 		this.frameHeight = frameHeight;
@@ -219,6 +221,7 @@ public class Picture extends Widget {
 
 	/**
 	 * @param frameSequence
+	 * @since 1.0.1
 	 */
 	public void setFrameSequence(int[] frameSequence) {
 		this.frameSequence = frameSequence;
@@ -227,6 +230,7 @@ public class Picture extends Widget {
 	
 	/**
 	 * @param frameDuration
+	 * @since 1.0.1
 	 */
 	public void setFrameDuration(int frameDuration) {
 		this.frameDuration = frameDuration;

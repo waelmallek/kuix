@@ -30,6 +30,9 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
 
+import org.kalmeo.kuix.core.style.Style;
+import org.kalmeo.kuix.core.style.StyleProperty;
+import org.kalmeo.kuix.core.style.StyleSelector;
 import org.kalmeo.kuix.layout.BorderLayout;
 import org.kalmeo.kuix.layout.BorderLayoutData;
 import org.kalmeo.kuix.layout.FlowLayout;
@@ -77,6 +80,11 @@ import org.kalmeo.util.StringUtil;
 import org.kalmeo.util.resource.ImageManager;
 
 /**
+ * This converter is the default converter for Kuix basic widgets, style,
+ * styleProperties.<br>
+ * Override this class to create your own converter and adding custom widget for
+ * example.
+ * 
  * @author bbeaulant
  */
 public class KuixConverter {
@@ -159,6 +167,64 @@ public class KuixConverter {
 	}
 
 	/**
+	 * Extract {@link Style} definitions from raw datas and returns an array of
+	 * {@link Style} instances.
+	 * 
+	 * @param rawSelectors
+	 * @param rawDefinitions
+	 * @return A list of {@link Style} instance.
+	 */
+	public Style[] convertStyleSheets(String rawSelectors, String rawDefinitions) {
+
+		// Extract Selectors
+		StringTokenizer selectors = new StringTokenizer(rawSelectors, ",");
+		int numSelectors = selectors.countTokens();
+		Style[] styles = new Style[numSelectors];
+		for (int i = 0; i < numSelectors; ++i) {
+
+			// Create the StyleSelector tree
+			StyleSelector previousStyleSelector = null;
+			StringTokenizer contextualSelectors = new StringTokenizer(selectors.nextToken(), " \t\n\r");
+			while (contextualSelectors.hasMoreTokens()) {
+				StyleSelector styleSelector = new StyleSelector(contextualSelectors.nextToken().toLowerCase());
+				if (previousStyleSelector != null) {
+					styleSelector.parent = previousStyleSelector;
+				}
+				previousStyleSelector = styleSelector;
+			}
+
+			// Create the Style
+			styles[i] = new Style(previousStyleSelector);
+
+		}
+
+		// Extract definitions
+		StringTokenizer definitions = new StringTokenizer(rawDefinitions, ";");
+		while (definitions.hasMoreTokens()) {
+			String definition = definitions.nextToken().trim();
+			if (definition.length() > 2) {
+				StringTokenizer property = new StringTokenizer(definition, ":");
+				if (property.countTokens() == 2) {
+
+					String name = property.nextToken().trim();
+					String rawValue = property.nextToken().trim();
+
+					// Convert the property value
+					Object value = convertStyleProperty(name, rawValue);
+					
+					// Add property to all styles (Because of linked list, new instance is needed for each style)
+					for (int i = 0; i < styles.length; ++i) {
+						styles[i].add(new StyleProperty(name, value));
+					}
+
+				}
+			}
+		}
+
+		return styles;
+	}
+
+	/**
 	 * Convert a property raw data string into a specific object instance.
 	 * 
 	 * @param name
@@ -169,9 +235,11 @@ public class KuixConverter {
 		
 		// Color
 		if (KuixConstants.COLOR_STYLE_PROPERTY.equals(name) 
-				|| KuixConstants.BACKGROUND_COLOR_STYLE_PROPERTY.equals(name) 
-				|| KuixConstants.BORDER_COLOR_STYLE_PROPERTY.equals(name)) {
+				|| KuixConstants.BACKGROUND_COLOR_STYLE_PROPERTY.equals(name)) {
 			return convertColor(rawData);
+		}
+		if (KuixConstants.BORDER_COLOR_STYLE_PROPERTY.equals(name)) {
+			return convertBorderColor(rawData);
 		}
 
 		// Font face
@@ -288,23 +356,26 @@ public class KuixConverter {
 		if (isNone(rawData)) {
 			return null;
 		}
-		if (rawData != null && rawData.startsWith("#")) {
-			return new Color(Integer.parseInt(rawData.substring(1), 16));
-		}
-		if ("red".equals(rawData)) {
-			return Color.RED;
-		}
-		if ("green".equals(rawData)) {
-			return Color.GREEN;
-		}
-		if ("blue".equals(rawData)) {
-			return Color.BLUE;
-		}
-		if ("white".equals(rawData)) {
-			return Color.WHITE;
-		}
-		if ("black".equals(rawData)) {
-			return Color.BLACK;
+		if (rawData != null) {
+			rawData = rawData.trim();
+			if (rawData.startsWith("#")) {
+				return new Color(Integer.parseInt(rawData.substring(1), 16));
+			}
+			if ("red".equals(rawData)) {
+				return Color.RED;
+			}
+			if ("green".equals(rawData)) {
+				return Color.GREEN;
+			}
+			if ("blue".equals(rawData)) {
+				return Color.BLUE;
+			}
+			if ("white".equals(rawData)) {
+				return Color.WHITE;
+			}
+			if ("black".equals(rawData)) {
+				return Color.BLACK;
+			}
 		}
 		throw new IllegalArgumentException("Bad color value");
 	}
@@ -694,6 +765,29 @@ public class KuixConverter {
 	 * @param rawData
 	 * @param wantedSize
 	 * @param delim
+	 * @return The converted Color[]
+	 */
+	protected Color[] convertBorderColor(String rawData) {
+		if (isNone(rawData)) {
+			return null;
+		}
+		StringTokenizer values = new StringTokenizer(rawData);
+		if (values.countTokens() == 1) {
+			Color color = convertColor(values.nextToken());
+			return new Color[] { color, color, color, color };
+		} else if (values.countTokens() >= 4) {
+			return new Color[] { 	convertColor(values.nextToken()), 
+									convertColor(values.nextToken()),
+									convertColor(values.nextToken()),
+									convertColor(values.nextToken()) };
+		}
+		throw new IllegalArgumentException("Bad border-color value");
+	}
+	
+	/**
+	 * @param rawData
+	 * @param wantedSize
+	 * @param delim
 	 * @return The converted Image[]
 	 */
 	protected Image[] convertBorderImage(String rawData) {
@@ -878,6 +972,64 @@ public class KuixConverter {
 			throw new IllegalArgumentException("Bad class value");
 		}
 	}
+	
+	/**
+	 * Convert a key code (like <code>left</code> or <code>right</code>) string
+	 * definition to internal representation.
+	 * 
+	 * @param rawData
+	 * @return the converted kuixKeyCode
+	 */
+	public static int convertKuixKeyCode(String rawData) {
+		String value = rawData.trim();
+		int kuixKeyCode = KuixConstants.NOT_DEFINED_KEY;
+		if ("0".equals(value)) {
+			kuixKeyCode = KuixConstants.KUIX_KEY_0;
+		} else if ("1".equals(value)) {
+			kuixKeyCode = KuixConstants.KUIX_KEY_1;
+		} else if ("2".equals(value)) {
+			kuixKeyCode = KuixConstants.KUIX_KEY_2;
+		} else if ("3".equals(value)) {
+			kuixKeyCode = KuixConstants.KUIX_KEY_3;
+		} else if ("4".equals(value)) {
+			kuixKeyCode = KuixConstants.KUIX_KEY_4;
+		} else if ("5".equals(value)) {
+			kuixKeyCode = KuixConstants.KUIX_KEY_5;
+		} else if ("6".equals(value)) {
+			kuixKeyCode = KuixConstants.KUIX_KEY_6;
+		} else if ("7".equals(value)) {
+			kuixKeyCode = KuixConstants.KUIX_KEY_7;
+		} else if ("8".equals(value)) {
+			kuixKeyCode = KuixConstants.KUIX_KEY_8;
+		} else if ("9".equals(value)) {
+			kuixKeyCode = KuixConstants.KUIX_KEY_9;
+		} else if ("*".equals(value)) {
+			kuixKeyCode = KuixConstants.KUIX_KEY_STAR;
+		} else if ("#".equals(value)) {
+			kuixKeyCode = KuixConstants.KUIX_KEY_POUND;
+		} else if ("softleft".equals(value)) {
+			kuixKeyCode = KuixConstants.KUIX_KEY_SOFT_LEFT;
+		} else if ("softright".equals(value)) {
+			kuixKeyCode = KuixConstants.KUIX_KEY_SOFT_RIGHT;
+		} else if ("up".equals(value)) {
+			kuixKeyCode = KuixConstants.KUIX_KEY_UP;
+		} else if ("left".equals(value)) {
+			kuixKeyCode = KuixConstants.KUIX_KEY_LEFT;
+		} else if ("right".equals(value)) {
+			kuixKeyCode = KuixConstants.KUIX_KEY_RIGHT;
+		} else if ("down".equals(value)) {
+			kuixKeyCode = KuixConstants.KUIX_KEY_DOWN;
+		} else if ("fire".equals(value)) {
+			kuixKeyCode = KuixConstants.KUIX_KEY_FIRE;
+		} else if ("delete".equals(value)) {
+			kuixKeyCode = KuixConstants.KUIX_KEY_DELETE;
+		} else if ("back".equals(value)) {
+			kuixKeyCode = KuixConstants.KUIX_KEY_BACK;
+		} else if ("pencil".equals(value)) {
+			kuixKeyCode = KuixConstants.KUIX_KEY_PENCIL;
+		}
+		return kuixKeyCode;
+	}
 
 	/**
 	 * Convert a shortcuts (like "left|right=mysAction|1|*") string definition
@@ -901,63 +1053,17 @@ public class KuixConverter {
 		while (values.hasMoreTokens()) {
 			value = values.nextToken().trim();
 			
-			kuixKeyCode = 0;
-			action = null;
-			
 			// Check if definition is like 'key=action'
+			action = null;
 			int equalityPos = value.indexOf('=');
 			if (equalityPos != -1) {
 				action = value.substring(equalityPos + 1);
 				value = value.substring(0, equalityPos);
 			}
 			
-			if ("0".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_0;
-			} else if ("1".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_1;
-			} else if ("2".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_2;
-			} else if ("3".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_3;
-			} else if ("4".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_4;
-			} else if ("5".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_5;
-			} else if ("6".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_6;
-			} else if ("7".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_7;
-			} else if ("8".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_8;
-			} else if ("9".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_9;
-			} else if ("*".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_STAR;
-			} else if ("#".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_POUND;
-			} else if ("softleft".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_SOFT_LEFT;
-			} else if ("softright".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_SOFT_RIGHT;
-			} else if ("up".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_UP;
-			} else if ("left".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_LEFT;
-			} else if ("right".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_RIGHT;
-			} else if ("down".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_DOWN;
-			} else if ("fire".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_FIRE;
-			} else if ("delete".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_DELETE;
-			} else if ("back".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_BACK;
-			} else if ("pencil".equals(value)) {
-				kuixKeyCode = KuixConstants.KUIX_KEY_PENCIL;
-			}
-			
-			if (kuixKeyCode != 0) {
+			// Convert keyCode
+			kuixKeyCode = convertKuixKeyCode(value);
+			if (kuixKeyCode != KuixConstants.NOT_DEFINED_KEY) {
 				shortcutKuixKeyCodes |= kuixKeyCode;
 				if (action != null) {
 					try {

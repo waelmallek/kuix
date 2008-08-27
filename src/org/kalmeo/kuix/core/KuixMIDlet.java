@@ -34,6 +34,7 @@ import org.kalmeo.kuix.widget.Desktop;
 import org.kalmeo.kuix.widget.PopupBox;
 import org.kalmeo.kuix.widget.Widget;
 import org.kalmeo.util.worker.Worker;
+import org.kalmeo.util.worker.WorkerTask;
 
 /**
  * This class derived the J2ME {@link MIDlet} and is the base of all Kuix
@@ -44,14 +45,8 @@ import org.kalmeo.util.worker.Worker;
  */
 public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 	
-	// Fatal alert exit command
-	private static final Command FATAL_EXIT_COMMAND = new Command("Exit", Command.EXIT, 0);
-
 	// The Midlet instance
 	private static KuixMIDlet defaultInstance;
-
-	// Associated KuixCanvas
-	private KuixCanvas canvas;
 
 	// Associated Display
 	private Display display = Display.getDisplay(this);
@@ -70,9 +65,10 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 	 * Returns the {@link KuixCanvas} object instance.
 	 * 
 	 * @return the canvas
+	 * @deprecated use <code>Kuix.getCanvas()</code>
 	 */
 	public KuixCanvas getCanvas() {
-		return canvas;
+		return Kuix.getCanvas();
 	}
 
 	/**
@@ -134,6 +130,17 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 	}
 	
 	/**
+	 * Returns a new KuixConverter object instance. Override this method to 
+	 * propose your own KuixConverter derived converter.
+	 * 
+	 * @return the converter object instance
+	 * @since 1.0.1
+	 */
+	protected KuixConverter createNewConverterInstance() {
+		return new KuixConverter();
+	}
+	
+	/**
 	 * Init the Desktop's styles.
 	 * @since 0.9.1
 	 */
@@ -152,15 +159,30 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 	 * Destroyed the MIDlet implementation
 	 */
 	public void destroyImpl() {
-		try {
+		if (Worker.instance.isRunning()) {
+			Worker.instance.pushTask(new WorkerTask() {
+
+				/* (non-Javadoc)
+				 * @see org.kalmeo.util.worker.WorkerTask#run()
+				 */
+				public boolean run() {
+					destroyApp(false);
+					notifyDestroyed();
+					return true;
+				}
+				
+			});
+		} else {
 			destroyApp(false);
 			notifyDestroyed();
-		} catch (MIDletStateChangeException mste) {
 		}
 	}
 	
 	// Fatal ////////////////////////////////////////////////////////////////////////////////////
 	 
+	// Fatal alert exit command
+	private static final Command FATAL_EXIT_COMMAND = new Command("Exit", Command.EXIT, 0);
+
 	/** 
 	 * Display a basic lcdui fatal error alert popup with the given
 	 * <code>message</code>. After displaying
@@ -186,7 +208,7 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 		
 		// Create and display the lcdui alert
 		Alert alert = new Alert("Error");
-		alert.setString(composeAltertMessage(message, throwable));
+		alert.setString(Kuix.composeAltertMessage(message, throwable));
 		alert.setType(AlertType.ERROR);
 		alert.setCommandListener(this);
 		alert.addCommand(FATAL_EXIT_COMMAND);
@@ -198,15 +220,6 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 			throwable.printStackTrace();
 		}
 		
-	}
-	
-	/* (non-Javadoc)
-	 * @see javax.microedition.lcdui.CommandListener#commandAction(javax.microedition.lcdui.Command, javax.microedition.lcdui.Displayable)
-	 */
-	public void commandAction(Command command, Displayable displayable) {
-		if (command == FATAL_EXIT_COMMAND) {
-			destroyImpl();
-		}
 	}
 	
 	// PopupBox ////////////////////////////////////////////////////////////////////////////////////
@@ -223,25 +236,10 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 	 * @param buttonShortcutKeyCodes The ordred buttons shortcut kuixKeyCode
 	 * @param buttonOnActions The ordred buttons onAction
 	 * @return The {@link PopupBox} instance
+	 * @deprecated use <code>Kuix.showPopupBox(styleClass, duration, content, progress, buttonTexts, buttonShortcutKeyCodes, buttonOnActions, onCloseAction)</code>
 	 */
-	public PopupBox showPopupBox(String styleClass, int duration, Object content, int progress, String[] buttonTexts, int[] buttonShortcutKeyCodes, String[] buttonOnActions, String onCloseAction) {
-		if (canvas != null) {
-			
-			// Construct the PopupBox
-			PopupBox popupBox = new PopupBox();
-			popupBox.setStyleClass(styleClass);
-			popupBox.setDuration(duration);
-			popupBox.setContent(content);
-			popupBox.setProgress(progress);
-			popupBox.setButtons(buttonTexts, buttonShortcutKeyCodes, buttonOnActions);
-			popupBox.setOnAction(onCloseAction);
-			
-			// Add popupBox to desktop
-			canvas.getDesktop().addPopup(popupBox);
-			
-			return popupBox;
-		}
-		return null;
+	public static PopupBox showPopupBox(String styleClass, int duration, Object content, int progress, String[] buttonTexts, int[] buttonShortcutKeyCodes, String[] buttonOnActions, String onCloseAction) {
+		return Kuix.showPopupBox(styleClass, duration, content, progress, buttonTexts, buttonShortcutKeyCodes, buttonOnActions, onCloseAction);
 	}
 
 	// Splash ////////////////////////////////////////////////////////////////////////////////////
@@ -252,9 +250,10 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 	 * @param duration the duration of the splash (in ms)
 	 * @param content the splash widget content
 	 * @return The {@link PopupBox} instance
+	 * @deprecated use <code>Kuix.splash(duration, content, onCloseAction)</code>
 	 */
-	public PopupBox splash(int duration, Widget content, String onCloseAction) {
-		return showPopupBox(KuixConstants.SPLASH_STYLE_CLASS, duration, content, -1, null, null, null, onCloseAction);
+	public static PopupBox splash(int duration, Widget content, String onCloseAction) {
+		return Kuix.splash(duration, content, onCloseAction);
 	}
 	
 	// Alert ////////////////////////////////////////////////////////////////////////////////////
@@ -280,80 +279,10 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 	 * @param noAction the no onAction name
 	 * @param cancelAction the cancel onAction name
 	 * @return The {@link PopupBox} instance
+	 * @deprecated use <code>Kuix.alert(message, options, okAction, yesAction, noAction, cancelAction)</code>
 	 */
-	public PopupBox alert(String message, int options, String okAction, String yesAction, String noAction, String cancelAction) {
-		
-		// Determine alert style class
-		String styleClass = KuixConstants.ALERT_DEFAULT_STYLE_CLASS;
-		if ((options & KuixConstants.ALERT_DEBUG) == KuixConstants.ALERT_DEBUG) {
-			styleClass = KuixConstants.ALERT_DEBUG_STYLE_CLASS;
-		}
-		if ((options & KuixConstants.ALERT_INFO) == KuixConstants.ALERT_INFO) {
-			styleClass = KuixConstants.ALERT_INFO_STYLE_CLASS;
-		}
-		if ((options & KuixConstants.ALERT_WARNING) == KuixConstants.ALERT_WARNING) {
-			styleClass = KuixConstants.ALERT_WARNING_STYLE_CLASS;
-		}
-		if ((options & KuixConstants.ALERT_ERROR) == KuixConstants.ALERT_ERROR) {
-			styleClass = KuixConstants.ALERT_ERROR_STYLE_CLASS;
-		}
-		if ((options & KuixConstants.ALERT_QUESTION) == KuixConstants.ALERT_QUESTION) {
-			styleClass = KuixConstants.ALERT_QUESTION_STYLE_CLASS;
-		}
-		
-		// Determine alert buttons
-		boolean[] buttons = new boolean[] 	{
-												(options & KuixConstants.ALERT_OK) == KuixConstants.ALERT_OK,
-												(options & KuixConstants.ALERT_YES) == KuixConstants.ALERT_YES,
-												(options & KuixConstants.ALERT_NO) == KuixConstants.ALERT_NO,
-												(options & KuixConstants.ALERT_CANCEL) == KuixConstants.ALERT_CANCEL
-											};
-		
-		// If no button : add default OK button
-		if (!buttons[0] && !buttons[1] && !buttons[2] && !buttons[3]) {
-			buttons[0] = true;
-		}
-		
-		int numButtons = 0;
-		int i = 0;
-		for (; i < 4; ++i) {
-			if (buttons[i]) {
-				numButtons++;
-			}
-		}
-		
-		String[] buttonTexts = new String[numButtons];
-		int[] buttonShortcutKeyCodes = new int[numButtons];
-		String[] buttonsOnActions = new String[numButtons];
-		i = 0;
-		if (buttons[0]) {
-			buttonTexts[i] = Kuix.getMessage(KuixConstants.OK_I18N_KEY);
-			buttonShortcutKeyCodes[i] = KuixConstants.KUIX_KEY_FIRE;
-			buttonsOnActions[i++] = okAction;
-		}
-		if (buttons[1]) {
-			buttonTexts[i] = Kuix.getMessage(KuixConstants.YES_I18N_KEY);
-			buttonShortcutKeyCodes[i] = KuixConstants.KUIX_KEY_SOFT_LEFT | KuixConstants.KUIX_KEY_FIRE;
-			buttonsOnActions[i++] = yesAction;
-		}
-		if (buttons[2]) {
-			buttonTexts[i] = Kuix.getMessage(KuixConstants.NO_I18N_KEY);
-			buttonShortcutKeyCodes[i] = KuixConstants.KUIX_KEY_SOFT_RIGHT | KuixConstants.KUIX_KEY_BACK;
-			buttonsOnActions[i++] = noAction;
-		}
-		if (buttons[3]) {
-			buttonTexts[i] = Kuix.getMessage(KuixConstants.CANCEL_I18N_KEY);
-			buttonShortcutKeyCodes[i] = KuixConstants.KUIX_KEY_SOFT_RIGHT | KuixConstants.KUIX_KEY_BACK;
-			buttonsOnActions[i] = cancelAction;
-		}
-		
-		// Prepare the alert box
-		PopupBox popupBox = showPopupBox(styleClass, -1, message, -1, buttonTexts, buttonShortcutKeyCodes, buttonsOnActions, null);
-		if (popupBox == null) {
-			System.out.println(message);
-		}
-		return popupBox;
-		
+	public static PopupBox alert(String message, int options, String okAction, String yesAction, String noAction, String cancelAction) {
+		return Kuix.alert(message, options, okAction, yesAction, noAction, cancelAction);
 	}
 	
 	/**
@@ -364,14 +293,10 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 	 * @param message the message to display
 	 * @param options {@see KuixConstants}
 	 * @return The {@link PopupBox} instance
+	 * @deprecated use <code>Kuix.alert(message, options)</code>
 	 */
 	public PopupBox alert(String message, int options) {
-		return alert(	message, 
-						options, 
-						null,
-						null,
-						null,
-						null);
+		return Kuix.alert(message, options);
 	}
 	
 	/**
@@ -379,9 +304,10 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 	 * 
 	 * @param message the message to display
 	 * @return The {@link PopupBox} instance
+	 * @deprecated use <code>Kuix.alert(message)</code>
 	 */
-	public PopupBox alert(String message) {
-		return alert(message, KuixConstants.ALERT_DEFAULT);
+	public static PopupBox alert(String message) {
+		return Kuix.alert(message);
 	}
 	
 	/**
@@ -391,15 +317,10 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 	 * @param message the message to display
 	 * @param throwable the {@link Throwable} to get message or class name
 	 * @return The {@link PopupBox} instance
+	 * @deprecated use <code>Kuix.alert(message, throwable)</code>
 	 */
 	public PopupBox alert(String message, Throwable throwable) {
-		
-		// Print stack trace for debug
-		if (throwable != null) {
-			throwable.printStackTrace();
-		}
-		
-		return alert(composeAltertMessage(message, throwable), KuixConstants.ALERT_ERROR | KuixConstants.ALERT_OK);
+		return Kuix.alert(message, throwable);
 	}
 	
 	/**
@@ -408,44 +329,28 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 	 * 
 	 * @param throwable the {@link Throwable} to get message or class name
 	 * @return The {@link PopupBox} instance
+	 * @deprecated use <code>Kuix.alert(throwable)</code>
 	 */
 	public PopupBox alert(Throwable throwable) {
-		return alert(null, throwable);
+		return Kuix.alert(throwable);
 	}
 	
-	/**
-	 * Compose an alert message by using the given <code>message</code> and
-	 * <code>throwable</code>.
-	 * 
-	 * @param message
-	 * @param throwable
-	 * @return the composed String.
+	/* (non-Javadoc)
+	 * @see javax.microedition.lcdui.CommandListener#commandAction(javax.microedition.lcdui.Command, javax.microedition.lcdui.Displayable)
 	 */
-	private String composeAltertMessage(String message, Throwable throwable) {
-		StringBuffer buffer = new StringBuffer();
-		if (message != null) {
-			buffer.append(message);
-			if (throwable != null) {
-				buffer.append(" : ");
-			}
+	public void commandAction(Command command, Displayable displayable) {
+		if (command == FATAL_EXIT_COMMAND) {
+			destroyImpl();
 		}
-		if (throwable != null) {
-			if (throwable.getMessage() != null) {
-				buffer.append(throwable.getMessage());
-			} else {
-				buffer.append(throwable.getClass().getName());
-			}
-		}
-		return buffer.toString();
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see javax.microedition.midlet.MIDlet#startApp()
 	 */
 	protected void startApp() throws MIDletStateChangeException {
 		
 		// Canvas == null => first start : this code is a workaround for WTK emulator bug when pausing app twice
-		if (canvas == null) {
+		if (!Kuix.isInitialized()) {
 			
 			// Try to extract the Worker frame duration from the JAD file
 			String frameDurationValue = getAppProperty(KuixConstants.KUIX_FRAME_DURATION_APP_PROPERTY);
@@ -461,16 +366,27 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 			
 		if (paused) {
 			paused = false;
-			if (canvas != null) {
-				canvas.repaintNextFrame();
+			if (Kuix.isInitialized()) {
+				Kuix.getCanvas().repaintNextFrame();
 			}
 			onResumed();
-		} else if (canvas == null) {
-			// Create an initialize a new KuixCanvas instance
-			canvas = new KuixCanvas(this, isFullscreen());
+		} else if (!Kuix.isInitialized()) {
+			
+			// Create a new KuixCanvas instance
+			KuixCanvas canvas = new KuixCanvas(this, isFullscreen());
+			
+			// Init Kuix engine
+			Kuix.initialize(canvas, createNewConverterInstance());
+			
+			// Set KuixCanvas as current displayable
+			display.setCurrent(canvas);
+			
+			// Initialize the new KuixCanvas instance
 			canvas.initialize();
+			
 			// Call the onStarted event
 			onStarted();
+			
 		}
 		
 	}
@@ -488,7 +404,7 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 	/* (non-Javadoc)
 	 * @see javax.microedition.midlet.MIDlet#destroyApp(boolean)
 	 */
-	protected void destroyApp(boolean unconditional) throws MIDletStateChangeException {
+	protected void destroyApp(boolean unconditional) {
 		
 		// Stop the worker
 		Worker.instance.stop();
@@ -501,7 +417,6 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 		display.setCurrent(null);
 		
 		onDestroy();
-		notifyDestroyed();
 		
 	}
 	
@@ -510,6 +425,7 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 	 * You can override this method to implement your own debug infos process.
 	 */
 	protected void processDebugInfosKeyEvent() {
+		KuixCanvas canvas = Kuix.getCanvas();
 		if (canvas != null) {
 			canvas.setDebugInfosEnabled(!canvas.isDebugInfosEnabled());
 		}

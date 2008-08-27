@@ -24,6 +24,9 @@ package org.kalmeo.kuix.core.style;
 import org.kalmeo.util.LinkedListItem;
 
 /**
+ * A {@link StyleProperty} represents a name / value pair. For example
+ * <code>name : "color"</code> and <code>value : Color.RED</code>.
+ * 
  * @author bbeaulant
  */
 public class StyleProperty implements LinkedListItem {
@@ -78,13 +81,17 @@ public class StyleProperty implements LinkedListItem {
 	}
 
 	/**
-	 * @return the key
+	 * Returns the name of the styleProperty.
+	 * 
+	 * @return the name
 	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
+	 * Retuns the value of the styleProperty.
+	 * 
 	 * @return the value
 	 */
 	public Object getValue() {

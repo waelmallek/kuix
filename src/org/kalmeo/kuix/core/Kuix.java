@@ -37,7 +37,9 @@ import org.kalmeo.kuix.core.style.Style;
 import org.kalmeo.kuix.core.style.StyleProperty;
 import org.kalmeo.kuix.core.style.StyleSelector;
 import org.kalmeo.kuix.util.Method;
+import org.kalmeo.kuix.widget.Menu;
 import org.kalmeo.kuix.widget.Picture;
+import org.kalmeo.kuix.widget.PopupBox;
 import org.kalmeo.kuix.widget.Screen;
 import org.kalmeo.kuix.widget.Text;
 import org.kalmeo.kuix.widget.TextWidget;
@@ -65,9 +67,12 @@ public final class Kuix {
 	// List of registred styles
 	private static final LinkedList registredStyles = new LinkedList();
 
-	// Converter
-	private static KuixConverter converter = new KuixConverter();
+	// The converter used to convert string representation to java object
+	private static KuixConverter converter;
 	
+	// The KuixCanvas instance. Caution that this variable is null until initialize(KuixCanvas) invokation
+	private static KuixCanvas canvas;
+
 	/**
 	 * Construct a {@link Kuix}
 	 */
@@ -91,18 +96,289 @@ public final class Kuix {
 
 	/**
 	 * @param converter the converter to set
+	 * @deprecated override the <code>KuixMIDlet.createNewConverterInstance()</code> method instead.
 	 */
 	public static void setConverter(KuixConverter converter) {
-		Kuix.converter = converter;
+		throw new IllegalArgumentException("Deprecated");
 	}
 	
+	/**
+	 * Returns the {@link KuixCanvas} unique instance.
+	 * 
+	 * @return the canvas
+	 */
+	public static KuixCanvas getCanvas() {
+		if (canvas == null) {
+			throw new IllegalArgumentException("KuixCanvas not initialized");
+		}
+		return canvas;
+	}
+	
+	/**
+	 * Returns the Kuix engine initialization state.
+	 * 
+	 * @return <code>true</code> if the engine is initialized with a KuixCanvas.
+	 */
+	public static boolean isInitialized() {
+		return canvas != null;
+	}
+
+	/**
+	 * Initialize the Kuix engine be giving the {@link KuixCanvas} object
+	 * instance.
+	 * 
+	 * @param canvas the canvas to set
+	 * 
+	 */
+	public static void initialize(KuixCanvas canvas, KuixConverter converter) {
+		if (Kuix.canvas != null) {
+			throw new IllegalArgumentException("KuixCanvas could be defined only once");
+		}
+		Kuix.canvas = canvas;
+		Kuix.converter = converter == null ? new KuixConverter() : converter;
+	}
+
 	/**
 	 * Clean all instances
 	 */
 	public static void cleanUp() {
+		canvas = null;
+		converter = null;
 		frameHandler.removeAllFrames();
 		removeAllStyles();
 	}
+	
+	// PopupBox ////////////////////////////////////////////////////////////////////////////////////
+	
+	/**
+ 	 * Create and display a {@link PopupBox}.
+ 	 * This method is a full feature of all {@link PopupBox} helpers like alert, splash.
+ 	 * 
+ 	 * @param styleClass The {@link PopupBox} style class
+	 * @param duration the duration of the {@link PopupBox}
+	 * @param content the content could be a {@link Widget} or a {@link String}
+	 * @param progress a fixed-point integer representing progress value
+	 * @param buttonTexts The ordered buttons text
+	 * @param buttonShortcutKeyCodes The ordred buttons shortcut kuixKeyCode
+	 * @param buttonOnActions The ordred buttons onAction
+	 * @return The {@link PopupBox} instance
+	 */
+	public static PopupBox showPopupBox(String styleClass, int duration, Object content, int progress, String[] buttonTexts, int[] buttonShortcutKeyCodes, String[] buttonOnActions, String onCloseAction) {
+		if (Kuix.getCanvas() != null) {
+			
+			// Construct the PopupBox
+			PopupBox popupBox = new PopupBox();
+			popupBox.setStyleClass(styleClass);
+			popupBox.setDuration(duration);
+			popupBox.setContent(content);
+			popupBox.setProgress(progress);
+			popupBox.setButtons(buttonTexts, buttonShortcutKeyCodes, buttonOnActions);
+			popupBox.setOnAction(onCloseAction);
+			
+			// Add popupBox to desktop
+			Kuix.getCanvas().getDesktop().addPopup(popupBox);
+			
+			return popupBox;
+		}
+		return null;
+	}
+
+	// Splash ////////////////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * Display a splash {@link PopupBox}
+	 * 
+	 * @param duration the duration of the splash (in ms)
+	 * @param content the splash widget content
+	 * @return The {@link PopupBox} instance
+	 */
+	public static PopupBox splash(int duration, Widget content, String onCloseAction) {
+		return showPopupBox(KuixConstants.SPLASH_STYLE_CLASS, duration, content, -1, null, null, null, onCloseAction);
+	}
+	
+	// Alert ////////////////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * Create an open an alert box. An alert can only display text content. It
+	 * is usful to display simple text message, error, ask question, etc...<br>
+	 * The associated buttons are construct from the <code>options</code>
+	 * parameter.
+	 * <p>
+	 * Example:
+	 * </p>
+	 * 
+	 * <pre>
+	 * alert(&quot;Hello world&quot;, KuixConstants.ALERT_OK | KuixConstants.ALERT_INFO, &quot;doOk&quot;, null, null, null);
+	 * alert(&quot;Is it rainning ?&quot;, KuixConstants.ALERT_YES | KuixConstants.ALERT_NO | KuixConstants.ALERT_QUESTION, null, null, &quot;doYes&quot;, &quot;doNo&quot;);
+	 * </pre>
+	 * 
+	 * @param message the text message to display
+	 * @param options the options {@see KuixConstants}
+	 * @param okAction the ok onAction name
+	 * @param yesAction the yes onAction name
+	 * @param noAction the no onAction name
+	 * @param cancelAction the cancel onAction name
+	 * @return The {@link PopupBox} instance
+	 */
+	public static PopupBox alert(String message, int options, String okAction, String yesAction, String noAction, String cancelAction) {
+		
+		// Determine alert style class
+		String styleClass = KuixConstants.ALERT_DEFAULT_STYLE_CLASS;
+		if ((options & KuixConstants.ALERT_DEBUG) == KuixConstants.ALERT_DEBUG) {
+			styleClass = KuixConstants.ALERT_DEBUG_STYLE_CLASS;
+		}
+		if ((options & KuixConstants.ALERT_INFO) == KuixConstants.ALERT_INFO) {
+			styleClass = KuixConstants.ALERT_INFO_STYLE_CLASS;
+		}
+		if ((options & KuixConstants.ALERT_WARNING) == KuixConstants.ALERT_WARNING) {
+			styleClass = KuixConstants.ALERT_WARNING_STYLE_CLASS;
+		}
+		if ((options & KuixConstants.ALERT_ERROR) == KuixConstants.ALERT_ERROR) {
+			styleClass = KuixConstants.ALERT_ERROR_STYLE_CLASS;
+		}
+		if ((options & KuixConstants.ALERT_QUESTION) == KuixConstants.ALERT_QUESTION) {
+			styleClass = KuixConstants.ALERT_QUESTION_STYLE_CLASS;
+		}
+		
+		// Determine alert buttons
+		boolean[] buttons = new boolean[] 	{
+												(options & KuixConstants.ALERT_OK) == KuixConstants.ALERT_OK,
+												(options & KuixConstants.ALERT_YES) == KuixConstants.ALERT_YES,
+												(options & KuixConstants.ALERT_NO) == KuixConstants.ALERT_NO,
+												(options & KuixConstants.ALERT_CANCEL) == KuixConstants.ALERT_CANCEL
+											};
+		
+		// If no button : add default OK button
+		if (!buttons[0] && !buttons[1] && !buttons[2] && !buttons[3]) {
+			buttons[0] = true;
+		}
+		
+		int numButtons = 0;
+		int i = 0;
+		for (; i < 4; ++i) {
+			if (buttons[i]) {
+				numButtons++;
+			}
+		}
+		
+		String[] buttonTexts = new String[numButtons];
+		int[] buttonShortcutKeyCodes = new int[numButtons];
+		String[] buttonsOnActions = new String[numButtons];
+		i = 0;
+		if (buttons[0]) {
+			buttonTexts[i] = Kuix.getMessage(KuixConstants.OK_I18N_KEY);
+			buttonShortcutKeyCodes[i] = KuixConstants.KUIX_KEY_FIRE;
+			buttonsOnActions[i++] = okAction;
+		}
+		if (buttons[1]) {
+			buttonTexts[i] = Kuix.getMessage(KuixConstants.YES_I18N_KEY);
+			buttonShortcutKeyCodes[i] = KuixConstants.KUIX_KEY_SOFT_LEFT | KuixConstants.KUIX_KEY_FIRE;
+			buttonsOnActions[i++] = yesAction;
+		}
+		if (buttons[2]) {
+			buttonTexts[i] = Kuix.getMessage(KuixConstants.NO_I18N_KEY);
+			buttonShortcutKeyCodes[i] = KuixConstants.KUIX_KEY_SOFT_RIGHT | KuixConstants.KUIX_KEY_BACK;
+			buttonsOnActions[i++] = noAction;
+		}
+		if (buttons[3]) {
+			buttonTexts[i] = Kuix.getMessage(KuixConstants.CANCEL_I18N_KEY);
+			buttonShortcutKeyCodes[i] = KuixConstants.KUIX_KEY_SOFT_RIGHT | KuixConstants.KUIX_KEY_BACK;
+			buttonsOnActions[i] = cancelAction;
+		}
+		
+		// Prepare the alert box
+		PopupBox popupBox = showPopupBox(styleClass, -1, message, -1, buttonTexts, buttonShortcutKeyCodes, buttonsOnActions, null);
+		if (popupBox == null) {
+			System.out.println(message);
+		}
+		return popupBox;
+		
+	}
+	
+	/**
+	 * Open an alert box with options. This alert is a {@link PopupBox} with a
+	 * single text message an single OK button (mapped to FIRE key). If you try
+	 * to use other buttons with <code>options</code>, they will be ignored.
+	 * 
+	 * @param message the message to display
+	 * @param options {@see KuixConstants}
+	 * @return The {@link PopupBox} instance
+	 */
+	public static PopupBox alert(String message, int options) {
+		return alert(	message, 
+						options, 
+						null,
+						null,
+						null,
+						null);
+	}
+	
+	/**
+	 * Open an alert box with the message text and default style class.
+	 * 
+	 * @param message the message to display
+	 * @return The {@link PopupBox} instance
+	 */
+	public static PopupBox alert(String message) {
+		return alert(message, KuixConstants.ALERT_DEFAULT);
+	}
+	
+	/**
+	 * Open an alert box with the {@link Throwable} object message and 'alerterror'
+	 * style class.
+	 * 
+	 * @param message the message to display
+	 * @param throwable the {@link Throwable} to get message or class name
+	 * @return The {@link PopupBox} instance
+	 */
+	public static PopupBox alert(String message, Throwable throwable) {
+		
+		// Print stack trace for debug
+		if (throwable != null) {
+			throwable.printStackTrace();
+		}
+		
+		return alert(composeAltertMessage(message, throwable), KuixConstants.ALERT_ERROR | KuixConstants.ALERT_OK);
+	}
+	
+	/**
+	 * Open an alert box with the {@link Throwable} object message and
+	 * 'alerterror' style class.
+	 * 
+	 * @param throwable the {@link Throwable} to get message or class name
+	 * @return The {@link PopupBox} instance
+	 */
+	public static PopupBox alert(Throwable throwable) {
+		return alert(null, throwable);
+	}
+	
+	/**
+	 * Compose an alert message by using the given <code>message</code> and
+	 * <code>throwable</code>.
+	 * 
+	 * @param message
+	 * @param throwable
+	 * @return the composed String.
+	 */
+	protected static String composeAltertMessage(String message, Throwable throwable) {
+		StringBuffer buffer = new StringBuffer();
+		if (message != null) {
+			buffer.append(message);
+			if (throwable != null) {
+				buffer.append(" : ");
+			}
+		}
+		if (throwable != null) {
+			if (throwable.getMessage() != null) {
+				buffer.append(throwable.getMessage());
+			} else {
+				buffer.append(throwable.getClass().getName());
+			}
+		}
+		return buffer.toString();
+	}
+
+	// Screen ////////////////////////////////////////////////////////////////////////////////////
 	
 	/**
 	 * Load a {@link Screen} widget from a XML file. If <code>xmlFilePath</code>
@@ -130,6 +406,8 @@ public final class Kuix {
 		loadXml(screen, inputStream, dataProvider, true);
 		return screen;
 	}
+	
+	// Widget ////////////////////////////////////////////////////////////////////////////////////
 	
 	/**
 	 * Load a {@link Widget}, exactly a container (tag =
@@ -162,6 +440,46 @@ public final class Kuix {
 		loadXml(widget, inputStream, dataProvider, true);
 		return widget;
 	}
+	
+	// Menu ////////////////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * Reload the <code>menu</code> content from an xml definition.<br>
+	 * Caution that this method <code>cleanUp</code> and <code>removeAll</code>
+	 * previous menu content, but not its attributes (like <code>id</code> or
+	 * <code>class</code>).
+	 * 
+	 * @param menu
+	 * @param xmlFilePath
+	 * @param dataProvider
+	 * @since 1.0.1
+	 */
+	public static void loadMenu(Menu menu, String xmlFilePath, DataProvider dataProvider) {
+		loadMenu(menu, Kuix.getXmlResourceInputStream(xmlFilePath), dataProvider);
+	}
+
+	/**
+	 * Reload the first menu content from an xml definition provides by an
+	 * inputStream.<br>
+	 * Caution that this method <code>cleanUp</code> and <code>removeAll</code>
+	 * previous menu content, but not its attributes (like <code>id</code> or
+	 * <code>class</code>).
+	 * 
+	 * @param menu
+	 * @param inputStream
+	 * @param dataProvider
+	 * @since 1.0.1
+	 */
+	public static void loadMenu(Menu menu, InputStream inputStream, DataProvider dataProvider) {
+		if (menu != null) {
+			menu.hideMenuTree();
+			menu.cleanUp();
+			menu.removeAll();
+		}
+		Kuix.loadXml(menu, inputStream, dataProvider);
+	}
+	
+	// XML ////////////////////////////////////////////////////////////////////////////////////
 	
 	/**
 	 * Parse and load an XML ui definition and place the content as child of
@@ -203,10 +521,12 @@ public final class Kuix {
 		if (!append) {
 			rootWidget.removeAll();
 		}
-		parseXml(converter, rootWidget, inputStream, dataProvider);
+		parseXml(rootWidget, inputStream, dataProvider);
 		rootWidget.invalidate();
 	}
 
+	// CSS ////////////////////////////////////////////////////////////////////////////////////
+	
 	/**
 	 * Parse an load a CSS style definitions and register it into the
 	 * StyleManager. If <code>cssFilePath</code> is a relative path (i.e:
@@ -234,9 +554,11 @@ public final class Kuix {
 	 * @param inputStream
 	 */
 	public static void loadCss(InputStream inputStream) {
-		parseCss(converter, inputStream);
-		// Clear all style caches to use new loaded styles
-		clearStyleCache(KuixMIDlet.getDefault().getCanvas().getDesktop(), true);
+		parseCss(inputStream);
+		if (canvas != null) {
+			// Clear all style caches to use new loaded styles
+			clearStyleCache(canvas.getDesktop(), true);
+		}
 	}
 
 	/**
@@ -253,7 +575,9 @@ public final class Kuix {
 				
 				// Exit (exits the application)
 				if (KuixConstants.EXIT_ACTION.equals(method.getName())) {
-					KuixMIDlet.getDefault().destroyImpl();
+					if (canvas != null) {
+						canvas.getMidlet().destroyImpl();
+					}
 				}
 				
 			}
@@ -305,17 +629,18 @@ public final class Kuix {
 		return null;
 	}
 
+	// Parser ////////////////////////////////////////////////////////////////////////////////////
+	
 	/**
 	 * Parse the XML <code>inputStream</code> to build the corresponding
 	 * widget tree.
 	 * 
-	 * @param tagConverter
 	 * @param rootWidget
 	 * @param inputStream
 	 * @param dataProvider
 	 * @throws Exception
 	 */
-	public static void parseXml(final KuixConverter tagConverter, final Widget rootWidget, InputStream inputStream, final DataProvider dataProvider) {
+	private static void parseXml(final Widget rootWidget, InputStream inputStream, final DataProvider dataProvider) {
 		if (inputStream != null) {
 			
 			try {
@@ -360,7 +685,7 @@ public final class Kuix {
 								newWidget = widget.getInternalChildInstance(tag);
 								if (newWidget == null) {
 									// Try to create a new widget instance
-									newWidget = tagConverter.convertWidgetTag(tag);
+									newWidget = converter.convertWidgetTag(tag);
 								} else {
 									internal = true;
 								}
@@ -476,7 +801,7 @@ public final class Kuix {
 													}
 													
 													// Default include: file content is parsed and added to current widget
-													parseXml(tagConverter, widget, inputStream, includeDataProvider);
+													parseXml(widget, inputStream, includeDataProvider);
 													return;
 													
 												}
@@ -690,11 +1015,10 @@ public final class Kuix {
 	 * Parse a CSS <code>inputStream</code> and register extracted {@link Style} to the
 	 * styles list.
 	 * 
-	 * @param propertyConverter
 	 * @param inputStream
 	 * @throws IOException
 	 */
-	public static void parseCss(KuixConverter propertyConverter, InputStream inputStream) {
+	private static void parseCss(InputStream inputStream) {
 		if (inputStream != null) {
 			Reader reader = new InputStreamReader(inputStream);
 			try {
@@ -742,7 +1066,7 @@ public final class Kuix {
 							if (c == '}') {
 	
 								// Create the Style sheet from raw data
-								Style[] styles = extractStyleSheets(propertyConverter, rawSelectors.toString(), rawDefinitions.toString());
+								Style[] styles = converter.convertStyleSheets(rawSelectors.toString(), rawDefinitions.toString());
 								for (int i = 0; i < styles.length; ++i) {
 									registerStyle(styles[i]);
 								}
@@ -790,65 +1114,6 @@ public final class Kuix {
 	}
 
 	/**
-	 * Extract {@link Style} definitions from raw datas and return a list of
-	 * {@link Style} instance.
-	 * 
-	 * @param converter
-	 * @param rawSelectors
-	 * @param rawDefinitions
-	 * @return A list of {@link Style} instance.
-	 */
-	public static Style[] extractStyleSheets(KuixConverter converter, String rawSelectors, String rawDefinitions) {
-
-		// Extract Selectors
-		StringTokenizer selectors = new StringTokenizer(rawSelectors, ",");
-		int numSelectors = selectors.countTokens();
-		Style[] styles = new Style[numSelectors];
-		for (int i = 0; i < numSelectors; ++i) {
-
-			// Create the StyleSelector tree
-			StyleSelector previousStyleSelector = null;
-			StringTokenizer contextualSelectors = new StringTokenizer(selectors.nextToken(), " \t\n\r");
-			while (contextualSelectors.hasMoreTokens()) {
-				StyleSelector styleSelector = new StyleSelector(contextualSelectors.nextToken().toLowerCase());
-				if (previousStyleSelector != null) {
-					styleSelector.parent = previousStyleSelector;
-				}
-				previousStyleSelector = styleSelector;
-			}
-
-			// Create the Style
-			styles[i] = new Style(previousStyleSelector);
-
-		}
-
-		// Extract definitions
-		StringTokenizer definitions = new StringTokenizer(rawDefinitions, ";");
-		while (definitions.hasMoreTokens()) {
-			String definition = definitions.nextToken().trim();
-			if (definition.length() > 2) {
-				StringTokenizer property = new StringTokenizer(definition, ":");
-				if (property.countTokens() == 2) {
-
-					String name = property.nextToken().trim();
-					String rawValue = property.nextToken().trim();
-
-					// Convert the property value
-					Object value = converter.convertStyleProperty(name, rawValue);
-					
-					// Add property to all styles (Because of linked list, new instance is needed for each style)
-					for (int i = 0; i < styles.length; ++i) {
-						styles[i].add(new StyleProperty(name, value));
-					}
-
-				}
-			}
-		}
-
-		return styles;
-	}
-
-	/**
 	 * Returns the parsed {@link Method}, or null if no method could be extract.
 	 * 
 	 * @param data
@@ -888,7 +1153,7 @@ public final class Kuix {
 				if ("this".equals(widgetId)) {
 					widget = owner;
 				} else if (widgetId != null && widgetId.startsWith("#")) {
-					widget = KuixMIDlet.getDefault().getCanvas().getDesktop().getWidget(widgetId.substring(1));
+					widget = canvas != null ? canvas.getDesktop().getWidget(widgetId.substring(1)) : null;
 				}
 
 				if (widget != null) {
@@ -910,24 +1175,25 @@ public final class Kuix {
 		return null;
 	}
 
-	// Styles management
-	///////////////////////////////////////////////////////////////////////////////////
+	// Styles management ////////////////////////////////////////////////////////////////////////////////////
 	
 	/**
-	 * Register a {@link Style}
+	 * Register a {@link Style}. If an equivalent Style was already registred
+	 * the new style properties are copied.
 	 * 
 	 * @param style
 	 */
 	public static void registerStyle(final Style style) {
 		if (style != null) {
-			Style registredStyle = (Style) registredStyles.find(new Filter() {
-				public int accept(Object obj) {
-					return ((Style) obj).getSelector().equals(style.getSelector()) ? 1 : 0;
+			Style registredStyle = (Style) registredStyles.getFirst();
+			for (; registredStyle != null; registredStyle = (Style) registredStyle.getNext()) {
+				if (registredStyle.getSelector().equals(style.getSelector())) {
+					break;
 				}
-			});
+			}
 			if (registredStyle != null) {
-
-				// A style is already registred withe the same key, lets copy all StyleAttributes
+				
+				// A style is already registred with the same selector, lets copy all StyleProperties into it.
 				LinkedList properties = style.getProperties();
 				for (StyleProperty property = (StyleProperty) properties.getFirst(); property != null; property = (StyleProperty) property.getNext()) {
 					registredStyle.add(property.copy());
@@ -1068,8 +1334,7 @@ public final class Kuix {
 		}
 	}
 	
-	// Internationalization support
-	///////////////////////////////////////////////////////////////////////////////////
+	// Internationalization support ////////////////////////////////////////////////////////////////////////////////////
 	
 	/**
 	 * Initializes internationalization support based on currently set locale (obtained
@@ -1085,12 +1350,12 @@ public final class Kuix {
 	 *         problem.
 	 */
 	public static boolean initI18nSupport() {
-		String locale = null;
+		String deviceLocale = null;
 		try {
-			locale = System.getProperty("microedition.locale");
+			deviceLocale = System.getProperty("microedition.locale");
 		} catch (Exception e) {
 		}
-		return initI18nSupport(KuixConstants.DEFAULT_I18N_MESSAGES_BUNDLE, locale);
+		return initI18nSupport(KuixConstants.DEFAULT_I18N_MESSAGES_BUNDLE, deviceLocale);
 	}
 
 	/**

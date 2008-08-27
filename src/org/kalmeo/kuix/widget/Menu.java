@@ -21,8 +21,8 @@
 
 package org.kalmeo.kuix.widget;
 
+import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.kuix.core.KuixConstants;
-import org.kalmeo.kuix.core.KuixMIDlet;
 import org.kalmeo.kuix.core.focus.FocusManager;
 import org.kalmeo.kuix.core.model.DataProvider;
 import org.kalmeo.kuix.layout.LayoutData;
@@ -311,22 +311,22 @@ public class Menu extends MenuItem {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.MenuItem#hideMenuTree()
+	/**
+	 * Hide the menu tree
 	 */
-	public boolean hideMenuTree() {
-		if (!super.hideMenuTree()) {
+	public void hideMenuTree() {
+		if (parent != null && parent instanceof MenuPopup) {
+			((MenuPopup) parent).getMenu().hideMenuTree();
+		} else {
 			hidePopup();
-			return true;
 		}
-		return false;
 	}
 
 	/**
 	 * Hide all visible menuPopups
 	 */
 	protected static void hideAllMenuPopups() {
-		KuixMIDlet.getDefault().getCanvas().getDesktop().removeAllPopupFromTag(KuixConstants.MENU_POPUP_WIDGET_TAG);
+		Kuix.getCanvas().getDesktop().removeAllPopupFromTag(KuixConstants.MENU_POPUP_WIDGET_TAG);
 	}
 	
 	/* (non-Javadoc)
@@ -340,6 +340,16 @@ public class Menu extends MenuItem {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#removeAll()
+	 */
+	public void removeAll() {
+		super.removeAll();
+		if (popup != null) {
+			popup.removeAll();
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.MenuItem#processActionEvent()
 	 */
