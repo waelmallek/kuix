@@ -16,6 +16,11 @@
 - Add multi border-color capabilities on widgets. You can now set a different color for the 4 borders.
 - Add Kuix.loadMenuContent(Menu, String, DataProvider) and Kuix.loadMenuContent(Menu, InputStream, DataProvider) methods to reload menu content on the fly.
 
+- Add a new KuixInitializer interface which KuixMIDlet implements to be able to use Kuix engine without creating a KuixMIDlet. @see org.kalmeo.kuix.core.KuixInitializer javadoc comment for further informations.
+
+- Kuix.loadWidget(...) functions now return the real loaded XML root widget.
+
+- Remove unuseful List.newItemWidgetInstance(DataProvider item) method. Dynamic list can now be any kind of widget.
 - Remove unuseful Widget.drawBorder(...) and Widget.drawBackground(...) methods.
 - Remove unuseful MenuItem.hideMenuTree() method
 

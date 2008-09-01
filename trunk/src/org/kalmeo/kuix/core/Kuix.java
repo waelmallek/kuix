@@ -32,6 +32,8 @@ import java.util.Hashtable;
 import java.util.Stack;
 import java.util.Vector;
 
+import javax.microedition.lcdui.Display;
+
 import org.kalmeo.kuix.core.model.DataProvider;
 import org.kalmeo.kuix.core.style.Style;
 import org.kalmeo.kuix.core.style.StyleProperty;
@@ -49,6 +51,7 @@ import org.kalmeo.util.LinkedList;
 import org.kalmeo.util.StringTokenizer;
 import org.kalmeo.util.StringUtil;
 import org.kalmeo.util.frame.FrameHandler;
+import org.kalmeo.util.worker.Worker;
 import org.kalmeo.util.xml.LightXmlParser;
 import org.kalmeo.util.xml.LightXmlParserHandler;
 
@@ -96,7 +99,11 @@ public final class Kuix {
 
 	/**
 	 * @param converter the converter to set
-	 * @deprecated override the <code>KuixMIDlet.createNewConverterInstance()</code> method instead.
+	 * @deprecated override the
+	 *             <code>KuixMIDlet.createNewConverterInstance()</code> method
+	 *             or invoke
+	 *             <code>Kuix.initialize(KuixCanvas, KuixConverter)</code>
+	 *             instead.
 	 */
 	public static void setConverter(KuixConverter converter) {
 		throw new IllegalArgumentException("Deprecated");
@@ -127,15 +134,36 @@ public final class Kuix {
 	 * Initialize the Kuix engine be giving the {@link KuixCanvas} object
 	 * instance.
 	 * 
-	 * @param canvas the canvas to set
-	 * 
+	 * @param display the {@link Display} instance. Set this value to
+	 *            <code>null</code> if you don't want the <code>canvas</code> is
+	 *            displayed during this method.
+	 * @param canvas
+	 * @param converter
 	 */
-	public static void initialize(KuixCanvas canvas, KuixConverter converter) {
+	public static void initialize(Display display, KuixCanvas canvas, KuixConverter converter) {
+		
+		// The initialization process could be done only once
 		if (Kuix.canvas != null) {
 			throw new IllegalArgumentException("KuixCanvas could be defined only once");
 		}
+		
+		// Starts the Worker if not running
+		if (!Worker.instance.isRunning()) {
+			Worker.instance.start();
+		}
+		
+		// Store canvas and converter
 		Kuix.canvas = canvas;
 		Kuix.converter = converter == null ? new KuixConverter() : converter;
+		
+		// Set canvas as current
+		if (display != null) {
+			display.setCurrent(canvas);
+		}
+		
+		// Initialize the new KuixCanvas instance
+		canvas.initialize();
+		
 	}
 
 	/**
@@ -410,12 +438,10 @@ public final class Kuix {
 	// Widget ////////////////////////////////////////////////////////////////////////////////////
 	
 	/**
-	 * Load a {@link Widget}, exactly a container (tag =
-	 * KuixConstants.CONTAINER_WIDGET_TAG), from a XML file. If
-	 * <code>xmlFilePath</code> is a relative path (i.e:
-	 * <code>myWidget.xml</code>) the default xml folder location is
-	 * automaticaly added and the path become : <code>/xml/myWidget.xml</code>.
-	 * Absolute paths are kept.
+	 * Load a {@link Widget} from a XML file. If <code>xmlFilePath</code> is a
+	 * relative path (i.e: <code>myWidget.xml</code>) the default xml folder
+	 * location is automaticaly added and the path become :
+	 * <code>/xml/myWidget.xml</code>. Absolute paths are kept.
 	 * 
 	 * @param xmlFilePath
 	 * @param dataProvider
@@ -426,8 +452,7 @@ public final class Kuix {
 	}
 	
 	/**
-	 * Load a {@link Widget}, exactly a container (tag =
-	 * KuixConstants.CONTAINER_WIDGET_TAG), from an XML {@link InputStream}.<br>
+	 * Load a {@link Widget} from an XML {@link InputStream}.<br>
 	 * The <code>desiredWidgetClass</code> need to extends {@link Widget} and
 	 * correspond to the root xml widget tag.
 	 * 
@@ -436,9 +461,7 @@ public final class Kuix {
 	 * @return The loaded {@link Widget} instance
 	 */
 	public static Widget loadWidget(InputStream inputStream, DataProvider dataProvider) {
-		Widget widget = new Widget(KuixConstants.CONTAINER_WIDGET_TAG);
-		loadXml(widget, inputStream, dataProvider, true);
-		return widget;
+		return parseXml(null, inputStream, dataProvider);
 	}
 	
 	// Menu ////////////////////////////////////////////////////////////////////////////////////
@@ -576,7 +599,7 @@ public final class Kuix {
 				// Exit (exits the application)
 				if (KuixConstants.EXIT_ACTION.equals(method.getName())) {
 					if (canvas != null) {
-						canvas.getMidlet().destroyImpl();
+						canvas.getInitializer().destroyImpl();
 					}
 				}
 				
@@ -640,8 +663,10 @@ public final class Kuix {
 	 * @param dataProvider
 	 * @throws Exception
 	 */
-	private static void parseXml(final Widget rootWidget, InputStream inputStream, final DataProvider dataProvider) {
+	private static Widget parseXml(final Widget rootWidget, InputStream inputStream, final DataProvider dataProvider) {
 		if (inputStream != null) {
+			
+			final Widget[] rootWidgetHolder = (rootWidget == null) ? new Widget[1] : null;
 			
 			try {
 				LightXmlParser.parse(inputStream, KuixConstants.DEFAULT_CHARSET_NAME, new LightXmlParserHandler() {
@@ -676,13 +701,15 @@ public final class Kuix {
 							// Create widget
 							Widget newWidget = null;
 							boolean internal = false;
-							if (path.isEmpty() && tag.equals(rootWidget.getTag())) {
+							if (path.isEmpty() && rootWidget != null && tag.equals(rootWidget.getTag())) {
 								newWidget = rootWidget;
 								rootWidget.clearCachedStyle(true);
 								path.push(rootWidget);
 							} else {
-								// Try to retrieve an internal instance
-								newWidget = widget.getInternalChildInstance(tag);
+								if (widget != null) {
+									// Try to retrieve an internal instance
+									newWidget = widget.getInternalChildInstance(tag);
+								}
 								if (newWidget == null) {
 									// Try to create a new widget instance
 									newWidget = converter.convertWidgetTag(tag);
@@ -738,7 +765,9 @@ public final class Kuix {
 								}
 							}
 
-							if (widget != newWidget && !internal) {
+							if (widget == null && rootWidgetHolder != null) {
+								rootWidgetHolder[0] = newWidget;
+							} else if (newWidget != widget && !internal) {
 								widget.add(newWidget);
 							}
 							widget = newWidget;
@@ -1002,7 +1031,7 @@ public final class Kuix {
 
 				});
 				
-				return;
+				return (rootWidgetHolder == null) ? rootWidget : rootWidgetHolder[0];
 				
 			} catch (IOException e) {
 				e.printStackTrace();
