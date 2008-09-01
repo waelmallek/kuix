@@ -113,12 +113,14 @@ public class CheckBox extends ActionWidget {
 	 * @param selected the selected to set
 	 */
 	public void setSelected(boolean selected) {
-		this.selected = selected;
-		invalidateStylePropertiesCache(true);
-		if (selected && onSelect != null) {
-			Kuix.callActionMethod(Kuix.parseMethod(onSelect, this));
-		} else if (!selected && onUnselect != null) {
-			Kuix.callActionMethod(Kuix.parseMethod(onUnselect, this));
+		if (this.selected != selected) {
+			this.selected = selected;
+			invalidateStylePropertiesCache(true);
+			if (selected && onSelect != null) {
+				Kuix.callActionMethod(Kuix.parseMethod(onSelect, this));
+			} else if (!selected && onUnselect != null) {
+				Kuix.callActionMethod(Kuix.parseMethod(onUnselect, this));
+			}
 		}
 	}
 	
