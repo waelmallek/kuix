@@ -50,8 +50,8 @@ import org.kalmeo.util.worker.WorkerTask;
  */
 public final class KuixCanvas extends GameCanvas {
 
-	// Associated KuixMIDlet
-	private KuixMIDlet midlet;
+	// Associated KuixInitializer
+	private final KuixInitializer initializer;
 
 	// The root Desktop widget
 	private Desktop desktop;
@@ -99,36 +99,49 @@ public final class KuixCanvas extends GameCanvas {
 	private long lastFpsTickTime = 0;
 	
 	/**
-	 * Construct a {@link KuixCanvas}
+	 * Construct a {@link KuixCanvas}. By default the canvas is auto created by
+	 * the {@link KuixMIDlet}. But if you create it manualy, be careful to start
+	 * the worker.
 	 * 
-	 * @param midlet
+	 * @param initializer
 	 * @param fullscreen
 	 */
-	protected KuixCanvas(KuixMIDlet midlet, boolean fullscreen) {
+	public KuixCanvas(KuixInitializer initializer, boolean fullscreen) {
 		super(false);
-		this.midlet = midlet;
+		
+		if (initializer == null) {
+			throw new IllegalArgumentException("initializer couldn't be null");
+		}
+		this.initializer = initializer;
+		
 		setFullScreenMode(fullscreen);
 		
 		// Try to extract the debug infos key from the JAD file
-		String debugInfosKey = midlet.getAppProperty(KuixConstants.KUIX_DEBUG_INFOS_KEY_APP_PROPERTY);
-		if (debugInfosKey != null) {
-			byte[] shortcuts = KuixConverter.convertShortcuts(debugInfosKey);
-			if (shortcuts != null) {
-				setDebugInfosKuixKeyCode(NumberUtil.toInt(shortcuts, 0));
+		if (initializer.getMIDlet() != null) {
+			String debugInfosKey = initializer.getMIDlet().getAppProperty(KuixConstants.KUIX_DEBUG_INFOS_KEY_APP_PROPERTY);
+			if (debugInfosKey != null) {
+				byte[] shortcuts = KuixConverter.convertShortcuts(debugInfosKey);
+				if (shortcuts != null) {
+					setDebugInfosKuixKeyCode(NumberUtil.toInt(shortcuts, 0));
+				}
 			}
 		}
-		
-	}
 
+	}
+	
 	/**
-	 * @return the midlet
+	 * Returns the {@link KuixInitializer} instance. 
+	 * 
+	 * @return the initializer instance
 	 */
-	public KuixMIDlet getMidlet() {
-		return midlet;
+	public KuixInitializer getInitializer() {
+		return initializer;
 	}
 
 	/**
-	 * @return the desktop
+	 * Returns the {@link Desktop} instance. 
+	 * 
+	 * @return the desktop instance.
 	 */
 	public Desktop getDesktop() {
 		return desktop;
@@ -179,13 +192,15 @@ public final class KuixCanvas extends GameCanvas {
 	protected void initialize() {
 		
 		// Try to init statup locale
-		String locale = midlet.getAppProperty(KuixConstants.KUIX_LOCALE_APP_PROPERTY);
-		if (locale != null) {
-			Kuix.initI18nSupport(locale);
+		if (initializer.getMIDlet() != null) {
+			String locale = initializer.getMIDlet().getAppProperty(KuixConstants.KUIX_LOCALE_APP_PROPERTY);
+			if (locale != null) {
+				Kuix.initI18nSupport(locale);
+			}
 		}
 		
 		// Init the desktop styles
-		midlet.initDesktopStyles();
+		initializer.initDesktopStyles();
 		
 		// Create the desktop
 		desktop = new Desktop(this);
@@ -294,7 +309,7 @@ public final class KuixCanvas extends GameCanvas {
 		};
 		
 		// Init the desktop content (Populate the desktop for the first run)
-		midlet.initDesktopContent(desktop);
+		initializer.initDesktopContent(desktop);
 		
 		// Initialization complete
 		initialized = true;
@@ -318,8 +333,8 @@ public final class KuixCanvas extends GameCanvas {
 			// Draw the initialization splash screen. The duration of this screen depend on device
 			
 			// Extract custom atributes
-			String message = midlet.getInitializationMessage();
-			String imageFile = midlet.getInitializationImageFile();
+			String message = initializer.getInitializationMessage();
+			String imageFile = initializer.getInitializationImageFile();
 			Image image = null;
 			
 			// Construct image if exists
@@ -347,12 +362,12 @@ public final class KuixCanvas extends GameCanvas {
 			}
 			
 			// Draw background
-			g.setColor(midlet.getInitializationBackgroundColor());
+			g.setColor(initializer.getInitializationBackgroundColor());
 			g.fillRect(0, 0, getWidth(), getHeight());
 			
 			// Draw message
 			if (message != null) {
-				g.setColor(midlet.getInitializationMessageColor());
+				g.setColor(initializer.getInitializationMessageColor());
 				g.drawString(	message, 
 								(getWidth() - textWidth) / 2, 
 								(getHeight() - imageHeight - textHeight) / 2 + imageHeight, 
@@ -626,7 +641,7 @@ public final class KuixCanvas extends GameCanvas {
 				if ((debugInfosKuixKeyCode & kuixKeyCode) == kuixKeyCode) {
 					debugInfosKeyCounter++;
 					if (debugInfosKeyCounter >= 3) {
-						midlet.processDebugInfosKeyEvent();
+						initializer.processDebugInfosKeyEvent();
 						debugInfosKeyCounter = 0;
 					}
 				} else {
@@ -1063,30 +1078,7 @@ public final class KuixCanvas extends GameCanvas {
 
 	/**
 	 * Used to adopt key code to predefined constances, which are platform
-	 * independent. <p/> You can use this method in any kind of canvas, but
-	 * better at first time to call <code>getInstance()</code> method at the
-	 * beginning of midlet work, because initialisation takes time. <p/> Best
-	 * variant for usage is calling <code>adoptKeyCode()</code> to use
-	 * <code>keyPressed()</code> method in Canvas:
-	 * 
-	 * <pre>
-	 * protected void keyPressed(int keyCode) {
-	 * 	keyCode = adoptKeyCode(keyCode);
-	 * }
-	 * </pre>
-	 * 
-	 * and then you can use it:
-	 * 
-	 * <pre>
-	 * switch (keyCode) {
-	 * 	case KuixCanvas.UP_KEY:
-	 * 		break;
-	 * 	case KuixCanvas.SOFT_KEY_LEFT:
-	 * 		break;
-	 * }
-	 * </pre>
-	 * 
-	 * or send this code to any other clesses.
+	 * independent. 
 	 * 
 	 * @param keyCode This code is sent by platform to canvas and redirected
 	 *            here

@@ -31,18 +31,18 @@ import org.kalmeo.kuix.widget.Desktop;
 public class KuixDemo extends KuixMIDlet {
 
 	/* (non-Javadoc)
-	 * @see com.kalmeo.kuix.core.KuixCanvas#initDesktopStyles()
+	 * @see org.kalmeo.kuix.core.KuixMIDlet#initDesktopStyles()
 	 */
-	protected void initDesktopStyles() {
+	public void initDesktopStyles() {
 		Kuix.loadCss("/css/style.css");
 	}
 
 	/* (non-Javadoc)
-	 * @see com.kalmeo.kuix.core.KuixCanvas#initDesktop(com.kalmeo.kuix.widget.Desktop)
+	 * @see org.kalmeo.kuix.core.KuixMIDlet#initDesktopContent(org.kalmeo.kuix.widget.Desktop)
 	 */
-	protected void initDesktopContent(Desktop desktop) {
+	public void initDesktopContent(Desktop desktop) {
 		// Push the MainMenuFrame
 		Kuix.getFrameHandler().pushFrame(KuixDemoMainFrame.instance);
 	}
-	
+
 }

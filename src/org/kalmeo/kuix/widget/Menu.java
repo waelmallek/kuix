@@ -24,7 +24,6 @@ package org.kalmeo.kuix.widget;
 import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.kuix.core.KuixConstants;
 import org.kalmeo.kuix.core.focus.FocusManager;
-import org.kalmeo.kuix.core.model.DataProvider;
 import org.kalmeo.kuix.layout.LayoutData;
 import org.kalmeo.kuix.layout.StaticLayoutData;
 import org.kalmeo.kuix.util.Metrics;
@@ -156,13 +155,6 @@ public class Menu extends MenuItem {
 			return layoutData;
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.kalmeo.kuix.widget.List#newItemWidgetInstance(org.kalmeo.kuix.core.model.DataProvider)
-		 */
-		protected Widget newItemWidgetInstance(DataProvider item) {
-			return new MenuItem(item);
-		}
-
 		/**
 		 * Display the {@link MenuPopup}
 		 * 
@@ -228,26 +220,16 @@ public class Menu extends MenuItem {
 	 * Construct a {@link Menu}
 	 */
 	public Menu() {
-		this(null);
-	}
-	
-	/**
-	 * Construct a {@link Menu}
-	 *
-	 * @param dataProvider
-	 */
-	public Menu(DataProvider dataProvider) {
-		this(KuixConstants.MENU_WIDGET_TAG, dataProvider);
+		this(KuixConstants.MENU_WIDGET_TAG);
 	}
 	
 	/**
 	 * Construct a {@link Menu}
 	 *
 	 * @param tag
-	 * @param dataProvider
 	 */
-	public Menu(String tag, DataProvider dataProvider) {
-		super(tag, dataProvider);
+	public Menu(String tag) {
+		super(tag);
 	}
 	
 	/* (non-Javadoc)

@@ -24,7 +24,6 @@ package org.kalmeo.kuix.widget;
 import org.kalmeo.kuix.core.KuixConstants;
 import org.kalmeo.kuix.core.KuixConverter;
 import org.kalmeo.kuix.core.focus.FocusManager;
-import org.kalmeo.kuix.core.model.DataProvider;
 import org.kalmeo.kuix.layout.BorderLayout;
 import org.kalmeo.kuix.layout.BorderLayoutData;
 import org.kalmeo.kuix.layout.Layout;
@@ -269,13 +268,6 @@ public class TabFolder extends List {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.List#newItemWidgetInstance(org.kalmeo.kuix.core.model.DataProvider)
-	 */
-	protected Widget newItemWidgetInstance(DataProvider item) {
-		return new TabItem(item);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#add(org.kalmeo.kuix.widget.Widget)
 	 */
