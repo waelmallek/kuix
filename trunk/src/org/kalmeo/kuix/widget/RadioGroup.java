@@ -23,7 +23,6 @@ package org.kalmeo.kuix.widget;
 
 import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.kuix.core.KuixConstants;
-import org.kalmeo.kuix.core.model.DataProvider;
 
 /**
  * This class represents a radio buttons group. <br>
@@ -163,13 +162,6 @@ public class RadioGroup extends List {
 				Kuix.callActionMethod(Kuix.parseMethod(onChange, this));
 			}
 		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.List#newItemWidgetInstance(org.kalmeo.kuix.core.model.DataProvider)
-	 */
-	protected Widget newItemWidgetInstance(DataProvider item) {
-		return new RadioButton(item);
 	}
 	
 	/* (non-Javadoc)

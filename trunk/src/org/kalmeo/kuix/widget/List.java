@@ -161,16 +161,6 @@ public class List extends Widget {
 	}
 
 	/**
-	 * Create and returns a new instance of an item {@link Widget}.
-	 * 
-	 * @param item
-	 * @return a new instance of {@link Widget}.
-	 */
-	protected Widget newItemWidgetInstance(DataProvider item) {
-		return new ListItem(item);
-	}
-	
-	/**
 	 * Add an item value
 	 * 
 	 * @param item
@@ -230,13 +220,13 @@ public class List extends Widget {
 	 * @return The added {@link Widget}
 	 */
 	private Widget internalAddItem(DataProvider item, InputStream renderer, Widget referenceWidget, boolean after) {
-		Widget itemWidget = newItemWidgetInstance(item);
+		Widget itemWidget = Kuix.loadWidget(renderer, item);
+		itemWidget.setDataProvider(item);
 		if (referenceWidget != null) {
 			add(itemWidget, referenceWidget, after);
 		} else {
 			add(itemWidget);
 		}
-		Kuix.loadXml(itemWidget, renderer, item, true);
 		dataProvidersMapping.put(item, itemWidget);
 		return itemWidget;
 	}

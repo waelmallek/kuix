@@ -22,7 +22,6 @@
 package org.kalmeo.kuix.widget;
 
 import org.kalmeo.kuix.core.KuixConstants;
-import org.kalmeo.kuix.core.model.DataProvider;
 import org.kalmeo.kuix.widget.Menu.MenuPopup;
 
 /**
@@ -40,26 +39,16 @@ public class MenuItem extends ListItem {
 	 * Construct a {@link MenuItem}
 	 */
 	public MenuItem() {
-		this(null);
+		this(KuixConstants.MENU_ITEM_WIDGET_TAG);
 	}
 	
 	/**
 	 * Construct a {@link MenuItem}
 	 *
-	 * @param dataProvider
-	 */
-	public MenuItem(DataProvider dataProvider) {
-		this(KuixConstants.MENU_ITEM_WIDGET_TAG, dataProvider);
-	}
-
-	/**
-	 * Construct a {@link MenuItem}
-	 *
 	 * @param tag
-	 * @param dataProvider
 	 */
-	public MenuItem(String tag, DataProvider dataProvider) {
-		super(tag, dataProvider);
+	public MenuItem(String tag) {
+		super(tag);
 	}
 	
 	/* (non-Javadoc)

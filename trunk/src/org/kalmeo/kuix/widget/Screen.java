@@ -110,7 +110,7 @@ public class Screen extends Widget {
 		 * @param internal
 		 */
 		public ScreenMenu(String tag, StaticLayoutData layoutData, boolean internal) {
-			super(tag, null);
+			super(tag);
 			this.layoutData = layoutData;
 			this.internal = internal;
 		}

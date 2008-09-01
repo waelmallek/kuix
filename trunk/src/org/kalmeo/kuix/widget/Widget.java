@@ -1625,6 +1625,15 @@ public class Widget {
 	}
 	
 	/**
+	 * Returns the widget's invalidate status.
+	 *  
+	 * @return <code>true</code> if the widget is invalidated.
+	 */
+	public boolean isInvalidated() {
+		return invalidated;
+	}
+
+	/**
 	 * Invalidate the widget's size and position and propagate the information
 	 * to its parent. Calling this method will generate a call to the
 	 * <code>doLayout()</code> and </code>paint()</code> method on all

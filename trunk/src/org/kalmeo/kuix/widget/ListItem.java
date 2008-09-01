@@ -22,7 +22,6 @@
 package org.kalmeo.kuix.widget;
 
 import org.kalmeo.kuix.core.KuixConstants;
-import org.kalmeo.kuix.core.model.DataProvider;
 import org.kalmeo.kuix.layout.InlineLayout;
 import org.kalmeo.kuix.layout.Layout;
 import org.kalmeo.kuix.util.Alignment;
@@ -45,26 +44,16 @@ public class ListItem extends ActionWidget {
 	 * Construct a {@link ListItem}
 	 */
 	public ListItem() {
-		this(null);
+		this(KuixConstants.LIST_ITEM_WIDGET_TAG);
 	}
 	
 	/**
 	 * Construct a {@link ListItem}
 	 *
-	 * @param dataProvider
+	 * @param tag
 	 */
-	public ListItem(DataProvider dataProvider) {
-		this(KuixConstants.LIST_ITEM_WIDGET_TAG, dataProvider);
-	}
-
-	/**
-	 * Construct a {@link ListItem}
-	 *
-	 * @param dataProvider
-	 */
-	public ListItem(String tag, DataProvider dataProvider) {
+	public ListItem(String tag) {
 		super(tag);
-		setDataProvider(dataProvider);
 	}
 	
 	/* (non-Javadoc)

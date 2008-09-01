@@ -34,6 +34,7 @@ import org.kalmeo.kuix.widget.Desktop;
 import org.kalmeo.kuix.widget.PopupBox;
 import org.kalmeo.kuix.widget.Widget;
 import org.kalmeo.util.worker.Worker;
+import org.kalmeo.util.worker.WorkerErrorListener;
 import org.kalmeo.util.worker.WorkerTask;
 
 /**
@@ -43,7 +44,7 @@ import org.kalmeo.util.worker.WorkerTask;
  * 
  * @author bbeaulant
  */
-public abstract class KuixMIDlet extends MIDlet implements CommandListener {
+public abstract class KuixMIDlet extends MIDlet implements KuixInitializer, WorkerErrorListener, CommandListener {
 	
 	// The Midlet instance
 	private static KuixMIDlet defaultInstance;
@@ -59,6 +60,13 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 	 */
 	public KuixMIDlet() {
 		defaultInstance = this;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.core.KuixInitializer#getMIDlet()
+	 */
+	public MIDlet getMIDlet() {
+		return this;
 	}
 
 	/**
@@ -97,41 +105,38 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 		return true;
 	}
 	
-	/**
-	 * @return the initalization background color
-	 * @since 0.9.1
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.core.KuixInitializer#getInitializationBackgroundColor()
 	 */
-	protected int getInitializationBackgroundColor() {
+	public int getInitializationBackgroundColor() {
 		return 0xFFFFFF;
 	}
 	
-	/**
-	 * @return the initalization message color
-	 * @since 0.9.1
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.core.KuixInitializer#getInitializationMessageColor()
 	 */
-	protected int getInitializationMessageColor() {
+	public int getInitializationMessageColor() {
 		return 0x000000;
 	}
 	
-	/**
-	 * @return the initalization message
-	 * @since 0.9.1
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.core.KuixInitializer#getInitializationMessage()
 	 */
-	protected String getInitializationMessage() {
+	public String getInitializationMessage() {
 		return "Loading";
 	}
 
-	/**
-	 * @return the initalization image file full path
-	 * @since 0.9.1
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.core.KuixInitializer#getInitializationImageFile()
 	 */
-	protected String getInitializationImageFile() {
+	public String getInitializationImageFile() {
 		return null;
 	}
 	
 	/**
-	 * Returns a new KuixConverter object instance. Override this method to 
-	 * propose your own KuixConverter derived converter.
+	 * Returns a new KuixConverter object instance.<br>
+	 * Override this method to propose your own {@link KuixConverter} derived
+	 * converter.
 	 * 
 	 * @return the converter object instance
 	 * @since 1.0.1
@@ -140,23 +145,18 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 		return new KuixConverter();
 	}
 	
-	/**
-	 * Init the Desktop's styles.
-	 * @since 0.9.1
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.core.KuixInitializer#initDesktopStyles()
 	 */
-	protected abstract void initDesktopStyles();
+	public abstract void initDesktopStyles();
 
-	/**
-	 * Init the Desktop's content. This method is call during the initialization
-	 * process, then it is preferable to load the first screen there.
-	 * 
-	 * @param desktop
-	 * @since 0.9.1
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.core.KuixInitializer#initDesktopContent(org.kalmeo.kuix.widget.Desktop)
 	 */
-	protected abstract void initDesktopContent(Desktop desktop);
+	public abstract void initDesktopContent(Desktop desktop);
 	
-	/**
-	 * Destroyed the MIDlet implementation
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.core.KuixInitializer#destroyImpl()
 	 */
 	public void destroyImpl() {
 		if (Worker.instance.isRunning()) {
@@ -362,6 +362,7 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 		}
 		
 		// Start the worker
+		Worker.instance.setWorkerErrorListener(this);
 		Worker.instance.start();
 			
 		if (paused) {
@@ -376,13 +377,7 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 			KuixCanvas canvas = new KuixCanvas(this, isFullscreen());
 			
 			// Init Kuix engine
-			Kuix.initialize(canvas, createNewConverterInstance());
-			
-			// Set KuixCanvas as current displayable
-			display.setCurrent(canvas);
-			
-			// Initialize the new KuixCanvas instance
-			canvas.initialize();
+			Kuix.initialize(display, canvas, createNewConverterInstance());
 			
 			// Call the onStarted event
 			onStarted();
@@ -420,11 +415,10 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 		
 	}
 	
-	/**
-	 * This method is called when a Kuix internal debug infos key event occured.<br>
-	 * You can override this method to implement your own debug infos process.
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.core.KuixInitializer#processDebugInfosKeyEvent()
 	 */
-	protected void processDebugInfosKeyEvent() {
+	public void processDebugInfosKeyEvent() {
 		KuixCanvas canvas = Kuix.getCanvas();
 		if (canvas != null) {
 			canvas.setDebugInfosEnabled(!canvas.isDebugInfosEnabled());
@@ -459,5 +453,19 @@ public abstract class KuixMIDlet extends MIDlet implements CommandListener {
 	 */
 	protected void onDestroy() {
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.util.worker.WorkerErrorTracker#onWorkerError(java.lang.Error)
+	 */
+	public void onWorkerError(WorkerTask task, Error error) {
+		Kuix.alert(task != null ? task.toString() : null, error);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.util.worker.WorkerErrorTracker#onException(java.lang.Exception)
+	 */
+	public void onWorkerException(WorkerTask task, Exception exception) {
+		Kuix.alert(task != null ? task.toString() : null, exception);
+	}
+	
 }
