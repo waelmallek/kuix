@@ -152,4 +152,25 @@ public class Alignment {
 		return 0;
 	}
 	
+	/**
+	 * Combine <code>verticalAlignment</code> and
+	 * <code>horizontalAlignment</code> into a new {@link Alignment} instance.
+	 * 
+	 * @param alignment1
+	 * @param alignment2
+	 * @return a new combined alignment instance.
+	 */
+	public static Alignment combine(Alignment verticalAlignment, Alignment horizontalAlignment) {
+		if (verticalAlignment != null && horizontalAlignment != null) {
+			byte value = (byte) (((verticalAlignment.isTop() ? TOP_VALUE : 0) 
+											| (verticalAlignment.isVerticalCenter() ? CENTER_VALUE : 0)
+											| (verticalAlignment.isBottom() ? BOTTOM_VALUE : 0))
+								| ((horizontalAlignment.isLeft() ? LEFT_VALUE : 0) 
+											| (horizontalAlignment.isHorizontalCenter() ? CENTER_VALUE : 0)
+											| (horizontalAlignment.isRight() ? RIGHT_VALUE : 0)));
+			return new Alignment(value);
+		}
+		return null;
+	}
+	
 }

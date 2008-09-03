@@ -946,6 +946,9 @@ public class KuixConverter {
 					}
 				} catch (Exception e) {
 				}
+			} else {
+				Alignment alignment = convertAlignment(rawParams);
+				return new StaticLayoutData(alignment);
 			}
 			throw new IllegalArgumentException("Invalid sld value : " + rawParams);
 		}

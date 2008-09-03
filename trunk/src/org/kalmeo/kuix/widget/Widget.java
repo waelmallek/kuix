@@ -1566,8 +1566,9 @@ public class Widget {
 	}
 
 	/**
-	 * Remove all childs. <br/> <b>Caution</b> : this method do NOT cleanUp
-	 * child widgets. It only remove widgets from widget tree.
+	 * Remove all childs. <br>
+	 * <b>Caution</b> : this method do NOT cleanUp child widgets. It only remove
+	 * widgets from widget tree.
 	 */
 	public void removeAll() {
 		if (child != null) {

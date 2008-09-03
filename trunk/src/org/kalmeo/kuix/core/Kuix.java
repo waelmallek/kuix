@@ -478,7 +478,7 @@ public final class Kuix {
 	 * @since 1.0.1
 	 */
 	public static void loadMenuContent(Menu menu, String xmlFilePath, DataProvider dataProvider) {
-		loadMenuContent(menu, Kuix.getXmlResourceInputStream(xmlFilePath), dataProvider);
+		loadMenuContent(menu, getXmlResourceInputStream(xmlFilePath), dataProvider);
 	}
 
 	/**
@@ -565,10 +565,13 @@ public final class Kuix {
 				cssFilePath = new StringBuffer(KuixConstants.DEFAULT_CSS_RES_FOLDER).append(cssFilePath).toString();
 			}
 			// Use frameHandler.getClass() because of a Object.class bug
-			loadCss(frameHandler.getClass().getResourceAsStream(cssFilePath));
-			return;
+			InputStream inputStream = frameHandler.getClass().getResourceAsStream(cssFilePath);
+			if (inputStream != null) {
+				loadCss(inputStream);
+				return;
+			}
 		}
-		throw new IllegalArgumentException("Invalid cssFilePath");
+		throw new IllegalArgumentException("Unknow cssFilePath : " + cssFilePath);
 	}
 	
 	/**
@@ -624,9 +627,12 @@ public final class Kuix {
 				xmlFilePath = new StringBuffer(KuixConstants.DEFAULT_XML_RES_FOLDER).append(xmlFilePath).toString();
 			}
 			// Use frameHandler.getClass() because of a Object.class bug
-			return frameHandler.getClass().getResourceAsStream(xmlFilePath);
+			InputStream inputStream = frameHandler.getClass().getResourceAsStream(xmlFilePath);
+			if (inputStream != null) {
+				return inputStream;
+			}
 		}
-		return null;
+		throw new IllegalArgumentException("Unknow xmlFilePath : " + xmlFilePath);
 	}
 
 	/**
@@ -760,7 +766,7 @@ public final class Kuix {
 									attributeName = key.toLowerCase();
 									attributeValue = convertParsePropertyStringValues((String) attributes.get(key));
 									if (!newWidget.setAttribute(attributeName, attributeValue)) {
-										throw new IllegalArgumentException(attributeName);
+										throw new IllegalArgumentException("Unknow attribute : " + attributeName);
 									}
 								}
 							}

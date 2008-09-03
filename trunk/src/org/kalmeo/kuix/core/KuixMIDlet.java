@@ -403,7 +403,6 @@ public abstract class KuixMIDlet extends MIDlet implements KuixInitializer, Work
 		
 		// Stop the worker
 		Worker.instance.stop();
-		Worker.instance.removeAllTasks();
 		
 		// Cleanup Kuix
 		Kuix.cleanUp();
