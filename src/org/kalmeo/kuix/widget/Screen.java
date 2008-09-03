@@ -96,7 +96,9 @@ public class Screen extends Widget {
 	 */
 	public class ScreenMenu extends Menu {
 
-		private StaticLayoutData layoutData;
+		private LayoutData layoutData;
+		
+		private boolean first;
 		private boolean internal;
 		
 		private boolean desiredVisible = true;
@@ -109,9 +111,9 @@ public class Screen extends Widget {
 		 * @param layoutData
 		 * @param internal
 		 */
-		public ScreenMenu(String tag, StaticLayoutData layoutData, boolean internal) {
+		public ScreenMenu(String tag, boolean first, boolean internal) {
 			super(tag);
-			this.layoutData = layoutData;
+			this.first = first;
 			this.internal = internal;
 		}
 		
@@ -119,7 +121,25 @@ public class Screen extends Widget {
 		 * @see org.kalmeo.kuix.widget.Widget#getLayoutData()
 		 */
 		public LayoutData getLayoutData() {
+			if (layoutData == null) {
+				Alignment alignment = firstIsLeft && first || !firstIsLeft && !first ? Alignment.LEFT : Alignment.RIGHT;
+				LayoutData superLayoutData = super.getLayoutData();
+				if (superLayoutData instanceof StaticLayoutData) {
+					StaticLayoutData staticLayoutData = (StaticLayoutData) superLayoutData;
+					layoutData = new StaticLayoutData(Alignment.combine(staticLayoutData.alignment, alignment), staticLayoutData.width, staticLayoutData.height);
+				} else {
+					layoutData = new StaticLayoutData(alignment);
+				}
+			}
 			return layoutData;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.kalmeo.kuix.widget.Widget#clearCachedStyle(boolean)
+		 */
+		public void clearCachedStyle(boolean propagateToChildren) {
+			layoutData = null;
+			super.clearCachedStyle(propagateToChildren);
 		}
 
 		/* (non-Javadoc)
@@ -545,7 +565,7 @@ public class Screen extends Widget {
 	 */
 	public Menu getFirstMenu() {
 		if (firstMenu == null) {
-			firstMenu = new ScreenMenu(KuixConstants.SCREEN_FIRST_MENU_WIDGET_TAG, new StaticLayoutData(firstIsLeft ? Alignment.LEFT : Alignment.RIGHT), false);
+			firstMenu = new ScreenMenu(KuixConstants.SCREEN_FIRST_MENU_WIDGET_TAG, true, false);
 			getBottomBar().add(firstMenu);
 		}
 		return firstMenu;
@@ -558,7 +578,7 @@ public class Screen extends Widget {
 	 */
 	public Menu getSecondMenu() {
 		if (secondMenu == null) {
-			secondMenu = new ScreenMenu(KuixConstants.SCREEN_SECOND_MENU_WIDGET_TAG, new StaticLayoutData(firstIsLeft ? Alignment.RIGHT : Alignment.LEFT), false);
+			secondMenu = new ScreenMenu(KuixConstants.SCREEN_SECOND_MENU_WIDGET_TAG, false, false);
 			getBottomBar().add(secondMenu);
 		}
 		return secondMenu;
@@ -571,7 +591,7 @@ public class Screen extends Widget {
 	 */
 	protected ScreenMenu getFirstInternalMenu() {
 		if (firstInternalMenu == null) {
-			firstInternalMenu = new ScreenMenu(KuixConstants.SCREEN_FIRST_MENU_WIDGET_TAG, new StaticLayoutData(firstIsLeft ? Alignment.LEFT : Alignment.RIGHT), true);
+			firstInternalMenu = new ScreenMenu(KuixConstants.SCREEN_FIRST_MENU_WIDGET_TAG, true, true);
 			firstInternalMenu.add(new Text().setText(Kuix.getMessage(KuixConstants.SELECT_I18N_KEY)));
 			getBottomBar().add(firstInternalMenu);
 		}
@@ -585,7 +605,7 @@ public class Screen extends Widget {
 	 */
 	protected ScreenMenu getSecondInternalMenu() {
 		if (secondInternalMenu == null) {
-			secondInternalMenu = new ScreenMenu(KuixConstants.SCREEN_SECOND_MENU_WIDGET_TAG, new StaticLayoutData(firstIsLeft ? Alignment.RIGHT : Alignment.LEFT), true);
+			secondInternalMenu = new ScreenMenu(KuixConstants.SCREEN_SECOND_MENU_WIDGET_TAG, false, true);
 			secondInternalMenu.add(new Text().setText(Kuix.getMessage(KuixConstants.CANCEL_I18N_KEY)));
 			getBottomBar().add(secondInternalMenu);
 		}

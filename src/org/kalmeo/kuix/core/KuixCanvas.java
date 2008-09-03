@@ -744,6 +744,7 @@ public final class KuixCanvas extends GameCanvas {
 	private static final int SOFT_KEY_LEFT_MOTOROLA2 	= -20;
 	private static final int SOFT_KEY_LEFT_MOTOROLA1 	= 21;
 	private static final int SOFT_KEY_RIGHT_MOTOROLA1 	= 22;
+	private static final int DELETE_KEY_MOTOROLA		= -8;
 
 	private static final int SOFT_KEY_LEFT_INTENT 		= 57345;
 	private static final int SOFT_KEY_RIGHT_INTENT 		= 57346;
@@ -870,17 +871,17 @@ public final class KuixCanvas extends GameCanvas {
 				String softkeyLeftMoto = "";
 				try {
 					softkeyLeftMoto = getKeyName(SOFT_KEY_LEFT_MOTOROLA).toUpperCase();
-				} catch (IllegalArgumentException ilae) {
+				} catch (Exception e) {
 				}
 				String softkeyLeftMoto1 = "";
 				try {
 					softkeyLeftMoto1 = getKeyName(SOFT_KEY_LEFT_MOTOROLA1).toUpperCase();
-				} catch (IllegalArgumentException ilae) {
+				} catch (Exception e) {
 				}
 				String softkeyLeftMoto2 = "";
 				try {
 					softkeyLeftMoto2 = getKeyName(SOFT_KEY_LEFT_MOTOROLA2).toUpperCase();
-				} catch (IllegalArgumentException ilae) {
+				} catch (Exception e) {
 				}
 				if (softkeyLeftMoto.indexOf(SOFT_WORD) >= 0 && softkeyLeftMoto.indexOf("1") >= 0) {
 					return SOFT_KEY_LEFT_MOTOROLA;
@@ -955,17 +956,17 @@ public final class KuixCanvas extends GameCanvas {
 				String rightSoftMoto1 = "";
 				try {
 					rightSoftMoto1 = getKeyName(SOFT_KEY_LEFT_MOTOROLA1).toUpperCase();
-				} catch (IllegalArgumentException ilae) {
+				} catch (Exception e) {
 				}
 				String rightSoftMoto = "";
 				try {
 					rightSoftMoto = getKeyName(SOFT_KEY_RIGHT_MOTOROLA).toUpperCase();
-				} catch (IllegalArgumentException ilae) {
+				} catch (Exception e) {
 				}
 				String rightSoftMoto2 = "";
 				try {
 					rightSoftMoto2 = getKeyName(SOFT_KEY_RIGHT_MOTOROLA1).toUpperCase();
-				} catch (IllegalArgumentException ilae) {
+				} catch (Exception e) {
 				}
 				if (rightSoftMoto.indexOf(SOFT_WORD) >= 0 && rightSoftMoto.indexOf("2") >= 0) {
 					return SOFT_KEY_RIGHT_MOTOROLA;
@@ -1048,6 +1049,8 @@ public final class KuixCanvas extends GameCanvas {
 				return DELETE_KEY_DEFAULT;
 			} else if (platformName.equals(KuixConstants.PLATFORM_BLACKBERRY)) {
 				return DELETE_KEY_BLACKBERRY;
+			} else if (platformName.equals(KuixConstants.PLATFORM_MOTOROLA)) {
+				return DELETE_KEY_MOTOROLA;
 			}
 		} catch (Throwable e) {
 			return DELETE_KEY_DEFAULT;
