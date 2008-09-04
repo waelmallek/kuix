@@ -203,7 +203,7 @@ public final class KuixCanvas extends GameCanvas {
 		initializer.initDesktopStyles();
 		
 		// Create the desktop
-		desktop = new Desktop(this);
+		desktop = new Desktop();
 		desktop.setBounds(0, 0, getWidth(), getHeight());
 		
 		// Init keyCode adapter

@@ -25,6 +25,7 @@ import java.util.Stack;
 
 import javax.microedition.lcdui.Graphics;
 
+import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.kuix.core.KuixCanvas;
 import org.kalmeo.kuix.core.KuixConstants;
 import org.kalmeo.kuix.core.focus.FocusManager;
@@ -174,9 +175,6 @@ public class Desktop extends Widget {
 	// Instance of Desktop StaticLayoutData
 	private final StaticLayoutData layoutData = new StaticLayoutData(null, -1, -1);
 	
-	// The associated KuixCanvas
-	private final KuixCanvas canvas;
-
 	// FocusManagers
 	private final Stack popupFocusManagers;
 	private FocusManager screenFocusManager;
@@ -191,9 +189,8 @@ public class Desktop extends Widget {
 	/**
 	 * Construct a {@link Desktop}
 	 */
-	public Desktop(KuixCanvas canvas) {
+	public Desktop() {
 		super(KuixConstants.DESKTOP_WIDGET_TAG);
-		this.canvas = canvas;
 		
 		// Init focusManagers
 		popupFocusManagers = new Stack();
@@ -216,9 +213,10 @@ public class Desktop extends Widget {
 
 	/**
 	 * @return the canvas
+	 * @deprecated use <code>Kuix.getCanvas()</code>
 	 */
 	public KuixCanvas getCanvas() {
-		return canvas;
+		return Kuix.getCanvas();
 	}
 	
 	/* (non-Javadoc)
@@ -257,9 +255,11 @@ public class Desktop extends Widget {
 		Menu.hideAllMenuPopups();
 		
 		// Check transition
-		Transition transition = screen.getTransition();
-		if (transition != null && this.screen != null) {
-			getCanvas().setTransition(transition);
+		if (screen != null) {
+			Transition transition = screen.getTransition();
+			if (transition != null && this.screen != null) {
+				Kuix.getCanvas().setTransition(transition);
+			}
 		}
 		
 		this.screen = screen;
@@ -443,7 +443,7 @@ public class Desktop extends Widget {
 	 */
 	public void invalidate() {
 		super.invalidate();
-		getCanvas().revalidateNextFrame();
+		Kuix.getCanvas().revalidateNextFrame();
 	}
 
 	/**
@@ -465,7 +465,7 @@ public class Desktop extends Widget {
 	 * @see org.kalmeo.kuix.widget.Widget#invalidateAppearanceRegion(int, int, int, int)
 	 */
 	protected void invalidateAppearanceRegion(int x, int y, int width, int height) {
-		getCanvas().repaintNextFrame(x, y, width, height);
+		Kuix.getCanvas().repaintNextFrame(x, y, width, height);
 	}
 	
 	/* (non-Javadoc)

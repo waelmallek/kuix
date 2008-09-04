@@ -21,6 +21,7 @@
 
 package org.kalmeo.kuix.widget;
 
+import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.kuix.core.KuixConstants;
 import org.kalmeo.kuix.core.focus.FocusManager;
 import org.kalmeo.kuix.layout.BorderLayout;
@@ -325,7 +326,7 @@ public class PopupBox extends ActionWidget {
 			cleanUp();
 		}
 		processActionEvent();
-		parent.getDesktop().getCanvas().repaintNextFrame();
+		Kuix.getCanvas().repaintNextFrame();
 	}
 	
 }
