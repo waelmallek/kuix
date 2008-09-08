@@ -361,18 +361,25 @@ public abstract class KuixMIDlet extends MIDlet implements KuixInitializer, Work
 			
 		}
 		
-		// Start the worker
-		Worker.instance.setWorkerErrorListener(this);
-		Worker.instance.start();
-			
 		if (paused) {
+			
 			paused = false;
 			if (Kuix.isInitialized()) {
 				Kuix.getCanvas().repaintNextFrame();
 			}
+			
+			// Resume the Worker
+			Worker.instance.start();
+			
+			// Call the onResumed event
 			onResumed();
+			
 		} else if (!Kuix.isInitialized()) {
 			
+			// Init the worker (the worker will be started by Kuix.initialize(...)
+			Worker.instance.setWorkerErrorListener(this);
+			Worker.instance.removeAllTasks();
+				
 			// Create a new KuixCanvas instance
 			KuixCanvas canvas = new KuixCanvas(this, isFullscreen());
 			

@@ -100,8 +100,8 @@ public final class KuixCanvas extends GameCanvas {
 	
 	/**
 	 * Construct a {@link KuixCanvas}. By default the canvas is auto created by
-	 * the {@link KuixMIDlet}. But if you create it manualy, be careful to start
-	 * the worker.
+	 * the {@link KuixMIDlet}. But if you create it manualy @se
+	 * {@link KuixInitializer}.
 	 * 
 	 * @param initializer
 	 * @param fullscreen
