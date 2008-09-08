@@ -23,13 +23,13 @@ package org.kalmeo.kuix.widget;
 
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
+import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.TextBox;
 
 import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.kuix.core.KuixConstants;
-import org.kalmeo.kuix.core.KuixMIDlet;
 import org.kalmeo.kuix.util.Alignment;
 import org.kalmeo.kuix.util.Color;
 import org.kalmeo.kuix.util.Metrics;
@@ -325,7 +325,7 @@ public class TextField extends Text implements CommandListener {
 				});
 			}
 		}
-		KuixMIDlet.getDefault().getDisplay().setCurrent(Kuix.getCanvas());
+		Display.getDisplay(Kuix.getCanvas().getInitializer().getMIDlet()).setCurrent(Kuix.getCanvas());
 	}
 
 	/* (non-Javadoc)
@@ -374,7 +374,7 @@ public class TextField extends Text implements CommandListener {
 		textBox.setCommandListener(this);
 
 		// Show TextBox
-		KuixMIDlet.getDefault().getDisplay().setCurrent(textBox);
+		Display.getDisplay(Kuix.getCanvas().getInitializer().getMIDlet()).setCurrent(textBox);
 
 		return true;
 	}
