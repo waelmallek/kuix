@@ -101,6 +101,10 @@ public class InlineLayout implements Layout {
 		
 		for (Widget widget = target.getChild(); widget != null; widget = widget.next) {
 			
+			if (!widget.isIndividualyVisible()) {
+				continue;
+			}
+
 			if (KuixConstants.BREAK_WIDGET_TAG.equals(widget.getTag())) {
 				continue;
 			}

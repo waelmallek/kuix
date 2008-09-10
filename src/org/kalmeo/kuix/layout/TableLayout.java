@@ -85,6 +85,11 @@ public class TableLayout implements Layout {
 		Metrics current = null;
 
 		for (Widget widget = target.getChild(); widget != null; widget = widget.next) {
+
+			if (!widget.isIndividualyVisible()) {
+				continue;
+			}
+
 			if (KuixConstants.BREAK_WIDGET_TAG.equals(widget.getTag())) {
 				if (col != 0) {
 					col = 0;
@@ -131,6 +136,7 @@ public class TableLayout implements Layout {
 			}
 
 			col += colspan;
+			
 		}
 
 		int[] colWidths = new int[ncol];

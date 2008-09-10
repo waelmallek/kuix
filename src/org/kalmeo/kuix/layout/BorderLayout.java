@@ -84,6 +84,11 @@ public class BorderLayout implements Layout {
 		Widget southWidget = null;
 		Widget centerWidget = null;
 		for (Widget widget = target.getChild(); widget != null; widget = widget.next) {
+			
+			if (!widget.isIndividualyVisible()) {
+				continue;
+			}
+			
 			LayoutData layoutData = widget.getLayoutData();
 			if (layoutData != null && layoutData instanceof BorderLayoutData) {
 				byte position = ((BorderLayoutData) layoutData).position;
@@ -113,6 +118,7 @@ public class BorderLayout implements Layout {
 			} else if (centerWidget == null) {
 				centerWidget = widget;
 			}
+			
 		}
 
 		

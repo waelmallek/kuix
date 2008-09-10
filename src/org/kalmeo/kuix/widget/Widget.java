@@ -662,7 +662,10 @@ public class Widget {
 	}
 	
 	/**
-	 * @return the visible
+	 * Returns the widget's visibility state. If the parent or an ancestror of
+	 * the widget is not visible the function returns <code>false</code>.
+	 * 
+	 * @return the visibility state
 	 */
 	public boolean isVisible() {
 		if (visible && parent != null) {
@@ -672,10 +675,20 @@ public class Widget {
 	}
 	
 	/**
+	 * Returns the widget only visibility state.
+	 * 
+	 * @return the visible
+	 */
+	public boolean isIndividualyVisible() {
+		return visible;
+	}
+	
+	/**
 	 * @param visible the visible to set
 	 */
 	public void setVisible(boolean visible) {
 		this.visible = visible;
+		invalidate();
 	}
 	
 	/**
@@ -1775,33 +1788,33 @@ public class Widget {
 			// Top
 			g.setColor(borderColor[0].getRGB());
 			if (border.top == 1) {
-				g.drawLine(x, y, x + width - 1, y);
+				g.drawLine(x, y, x + width - border.right - 1, y);
 			} else if (border.top != 0) {
-				g.fillRect(x, y, width, border.top);
+				g.fillRect(x, y, width - border.right, border.top);
 			}
 			
 			// Right
 			g.setColor(borderColor[1].getRGB());
 			if (border.right == 1) {
-				g.drawLine(x + width - 1, y, x + width - 1, y + height - 1);
+				g.drawLine(x + width - 1, y, x + width - 1, y + height - border.bottom - 1);
 			} else if (border.right != 0) {
-				g.fillRect(x + width - border.right, y, border.right, height);
+				g.fillRect(x + width - border.right, y, border.right, height - border.bottom);
 			}
 			
 			// Bottom
 			g.setColor(borderColor[2].getRGB());
 			if (border.bottom == 1) {
-				g.drawLine(x, y + height - 1, x + width - 1, y + height - 1);
+				g.drawLine(x + border.left, y + height - 1, x + width - 1, y + height - 1);
 			} else if (border.bottom != 0) {
-				g.fillRect(x, y + height - border.bottom, width, border.bottom);
+				g.fillRect(x + border.left, y + height - border.bottom, width - border.left, border.bottom);
 			}
 			
 			// Left
 			g.setColor(borderColor[3].getRGB());
 			if (border.left == 1) {
-				g.drawLine(x, y, x, y + height - 1);
+				g.drawLine(x, y + border.top, x, y + height - 1);
 			} else if (border.left != 0) {
-				g.fillRect(x, y, border.left, height);
+				g.fillRect(x, y + border.top, border.left, height - border.top);
 			}
 			
 		}

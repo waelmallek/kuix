@@ -95,6 +95,11 @@ public class GridLayout implements Layout {
 		int preferredContentHeight = 0;
 		
 		for (Widget widget = target.getChild(); widget != null; widget = widget.next) {
+			
+			if (!widget.isIndividualyVisible()) {
+				continue;
+			}
+			
 			if (layout) {
 				widget.setBounds(	insets.left + col * (cellWidth + gap.horizontalGap), 
 									insets.top + row * (cellHeight + gap.verticalGap), 
@@ -113,6 +118,7 @@ public class GridLayout implements Layout {
 					break;
 				}
 			}
+			
 		}
 		
 		if (!layout) {
