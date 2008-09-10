@@ -3,8 +3,10 @@
 ##Version 1.0.1 (2008-XX-XX)
 
 - Bug fix : avoid the OutOfMemoryException while closing a MenuPopup
+- Bug fix : fix some detection problem on **Motorola** phones 
 
 - Add **Blackberry** platform detection support and Soft keys emulation through action menu.
+
 - Add a processDebugInfosKeyEvent() method to KuixMIDlet to be able to customize debug infos key event action. By default it displays Kuix debug infos on the screen.
 - Add KuixMIDlet.fatal(String) and KuixMIDlet.fatal(String, Throwable) methods to display fatal error LCDUI alert messages. 
 - Add default kuix actions available in xml actions (like onAction="...") :
@@ -23,6 +25,8 @@
 - Remove unuseful List.newItemWidgetInstance(DataProvider item) method. Dynamic list can now be any kind of widget.
 - Remove unuseful Widget.drawBorder(...) and Widget.drawBackground(...) methods.
 - Remove unuseful MenuItem.hideMenuTree() method
+
+- **Visible** attribute on widgets now hide completly the widget and its children and revalidate the layout on change. 
 
 - Default "Please select" text is displayed when a Choice has no selected radioButton.
   

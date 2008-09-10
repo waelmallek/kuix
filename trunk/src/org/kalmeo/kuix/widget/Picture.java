@@ -200,6 +200,8 @@ public class Picture extends Widget {
 	}
 	
 	/**
+	 * Set the width of a slice in source image for animation.
+	 * 
 	 * @param frameWidth
 	 * @since 1.0.1
 	 */
@@ -210,6 +212,8 @@ public class Picture extends Widget {
 	}
 
 	/**
+	 * Set the height of a slice in source image for animation.
+	 * 
 	 * @param frameHeight
 	 * @since 1.0.1
 	 */
@@ -220,6 +224,8 @@ public class Picture extends Widget {
 	}
 
 	/**
+	 * Set the sequence of a frame index for animation.
+	 * 
 	 * @param frameSequence
 	 * @since 1.0.1
 	 */
@@ -229,6 +235,8 @@ public class Picture extends Widget {
 	}
 	
 	/**
+	 * Set the duration of a frame for animation.
+	 * 
 	 * @param frameDuration
 	 * @since 1.0.1
 	 */

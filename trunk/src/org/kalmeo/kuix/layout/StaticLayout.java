@@ -74,12 +74,21 @@ public class StaticLayout implements Layout {
 		int maxWidth = 0;
 		int maxHeight = 0;
 		
+		int x = 0;
+		int y = 0;
+		int widgetWidth = 0;
+		int widgetHeight = 0;
+
 		for (Widget widget = target.getChild(); widget != null; widget = widget.next) {
 			
-			int x = 0;
-			int y = 0;
-			int widgetWidth = 0;
-			int widgetHeight = 0;
+			if (!widget.isIndividualyVisible()) {
+				continue;
+			}
+
+			x = 0;
+			y = 0;
+			widgetWidth = 0;
+			widgetHeight = 0;
 			
 			LayoutData layoutData = widget.getLayoutData();
 			if (layoutData != null && layoutData instanceof StaticLayoutData) {

@@ -108,6 +108,10 @@ public class FlowLayout implements Layout {
 
 		for (Widget widget = target.getChild(); widget != null; widget = widget.next) {
 			
+			if (!widget.isIndividualyVisible()) {
+				continue;
+			}
+			
 			boolean isBreak = KuixConstants.BREAK_WIDGET_TAG.equals(widget.getTag());
 			
 			Metrics preferredSize = widget.getPreferredSize(width);
