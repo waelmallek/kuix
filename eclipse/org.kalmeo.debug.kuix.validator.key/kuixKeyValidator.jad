@@ -3,5 +3,5 @@ MIDlet-Vendor: Kalmeo
 MIDlet-Jar-URL: kuixKeyValidator.jar
 MicroEdition-Configuration: CLDC-1.0
 MicroEdition-Profile: MIDP-2.0
-MIDlet-1: KuixKayValidator,,org.kalmeo.debug.kuix.validator.key.KuixKeyValidator
+
 MIDlet-Name: KuixKeyValidator
