@@ -46,6 +46,7 @@ import org.kalmeo.kuix.widget.Screen;
 import org.kalmeo.kuix.widget.Text;
 import org.kalmeo.kuix.widget.TextWidget;
 import org.kalmeo.kuix.widget.Widget;
+import org.kalmeo.util.BooleanUtil;
 import org.kalmeo.util.Filter;
 import org.kalmeo.util.LinkedList;
 import org.kalmeo.util.StringTokenizer;
@@ -431,7 +432,7 @@ public final class Kuix {
 	 */
 	public static Screen loadScreen(InputStream inputStream, DataProvider dataProvider) {
 		Screen screen = new Screen();
-		loadXml(screen, inputStream, dataProvider, true);
+		loadXml(screen, inputStream, dataProvider, true, true);
 		return screen;
 	}
 	
@@ -461,7 +462,7 @@ public final class Kuix {
 	 * @return The loaded {@link Widget} instance
 	 */
 	public static Widget loadWidget(InputStream inputStream, DataProvider dataProvider) {
-		return parseXml(null, inputStream, dataProvider);
+		return parseXml(null, inputStream, dataProvider, false);
 	}
 	
 	// Menu ////////////////////////////////////////////////////////////////////////////////////
@@ -505,20 +506,20 @@ public final class Kuix {
 	// XML ////////////////////////////////////////////////////////////////////////////////////
 	
 	/**
-	 * Parse and load an XML ui definition and place the content as child of
-	 * <code>widget</code>
+	 * Parse and load an XML UI definition and place the content as child of
+	 * <code>rootWidget</code>. Initial <code>rootWidget</code> content is removed.
 	 * 
 	 * @param rootWidget
 	 * @param inputStream
 	 * @throws Exception
 	 */
 	public static void loadXml(Widget rootWidget, InputStream inputStream) {
-		loadXml(rootWidget, inputStream, null, false);
+		loadXml(rootWidget, inputStream, null, false, true);
 	}
 
 	/**
-	 * Parse and load an XML ui definition and place the content as child of
-	 * <code>widget</code>
+	 * Parse and load an XML UI definition and place the content as child of
+	 * <code>rootWidget</code>. Initial <code>rootWidget</code> content is removed.
 	 * 
 	 * @param rootWidget
 	 * @param inputStream
@@ -526,25 +527,30 @@ public final class Kuix {
 	 * @throws Exception
 	 */
 	public static void loadXml(Widget rootWidget, InputStream inputStream, DataProvider dataProvider) {
-		loadXml(rootWidget, inputStream, dataProvider, false);
+		loadXml(rootWidget, inputStream, dataProvider, false, true);
 	}
 
 	/**
 	 * Parse an load an XML ui definition and place the content as child of
-	 * <code>widget</code>
+	 * <code>rootWidget</code>.
 	 * 
 	 * @param rootWidget
 	 * @param inputStream
 	 * @param dataProvider
 	 * @param append if <code>false</code> loaded content replace current
-	 *            <code>widget</code>'s content.
+	 *            <code>rootWidget</code>'s content.
+	 * @param mergeRootWidget if <code>true</code> and if loaded content's root
+	 *            widget tag equals <code>rootWidget</code>'s tag the given
+	 *            <code>rootWidget</code> instance represents the new content
+	 *            root else a new widget instance is created and added to the
+	 *            <code>rootWidget</code>.
 	 * @throws Exception
 	 */
-	public static void loadXml(Widget rootWidget, InputStream inputStream, DataProvider dataProvider, boolean append) {
+	public static void loadXml(Widget rootWidget, InputStream inputStream, DataProvider dataProvider, boolean append, boolean mergeRootWidget) {
 		if (!append) {
 			rootWidget.removeAll();
 		}
-		parseXml(rootWidget, inputStream, dataProvider);
+		parseXml(rootWidget, inputStream, dataProvider, mergeRootWidget);
 		rootWidget.invalidate();
 	}
 
@@ -667,9 +673,10 @@ public final class Kuix {
 	 * @param rootWidget
 	 * @param inputStream
 	 * @param dataProvider
+	 * @param mergeRootWidget
 	 * @throws Exception
 	 */
-	private static Widget parseXml(final Widget rootWidget, InputStream inputStream, final DataProvider dataProvider) {
+	private static Widget parseXml(final Widget rootWidget, InputStream inputStream, final DataProvider dataProvider, final boolean mergeRootWidget) {
 		if (inputStream != null) {
 			
 			final Widget[] rootWidgetHolder = (rootWidget == null) ? new Widget[1] : null;
@@ -707,10 +714,9 @@ public final class Kuix {
 							// Create widget
 							Widget newWidget = null;
 							boolean internal = false;
-							if (path.isEmpty() && rootWidget != null && tag.equals(rootWidget.getTag())) {
+							if (path.isEmpty() && mergeRootWidget && rootWidget != null && tag.equals(rootWidget.getTag())) {
 								newWidget = rootWidget;
 								rootWidget.clearCachedStyle(true);
-								path.push(rootWidget);
 							} else {
 								if (widget != null) {
 									// Try to retrieve an internal instance
@@ -753,8 +759,8 @@ public final class Kuix {
 								if (newWidget == null) {
 									throw new IllegalArgumentException("Unknow tag : " + tag);
 								}
-								path.push(newWidget);
 							}
+							path.push(newWidget);
 
 							// Extract attributes
 							if (attributes != null) {
@@ -795,18 +801,25 @@ public final class Kuix {
 							if (characters.startsWith(KuixConstants.INCLUDE_KEYWORD_PATTERN)) {
 								String fileName = null;
 								String dataProviderProperty = null;
+								boolean mergeRootWidgetParameter = true;
 								String rawParams = StringUtil.extractRawParams(KuixConstants.INCLUDE_KEYWORD_PATTERN, characters);
 								if (rawParams != null) {
-									StringTokenizer st = new StringTokenizer(rawParams, ", ");
+									StringTokenizer st = new StringTokenizer(rawParams, ",");
 									if (st.hasMoreElements()) {
-										fileName = st.nextToken();
+										
+										// Extract parameters (File name accept parse properties)
+										fileName = convertParsePropertyStringValues(st.nextToken().trim());
 										if (st.countTokens() >= 1) {
 											dataProviderProperty = st.nextToken().trim();
+											if (dataProviderProperty.equals("null")) {
+												dataProviderProperty = null;
+											}
 										}
-										if (fileName != null) {
-											// File names accept parse properties
-											fileName = convertParsePropertyStringValues(fileName.trim());
+										if (st.countTokens() >= 1) {
+											mergeRootWidgetParameter = BooleanUtil.parseBoolean(st.nextToken().trim());
 										}
+										
+										// Retrieve pointed resource
 										InputStream inputStream = getXmlResourceInputStream(fileName);
 										if (inputStream != null) {
 											try {
@@ -836,7 +849,7 @@ public final class Kuix {
 													}
 													
 													// Default include: file content is parsed and added to current widget
-													parseXml(widget, inputStream, includeDataProvider);
+													parseXml(widget, inputStream, includeDataProvider, mergeRootWidgetParameter);
 													return;
 													
 												}

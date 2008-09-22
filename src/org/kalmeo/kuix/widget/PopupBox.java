@@ -114,10 +114,6 @@ public class PopupBox extends ActionWidget {
 		// Create the FocusManager
 		focusManager = new FocusManager(this, false);
 		
-		// Define popupBox close shortcut key
-		setShortcutKeyCodes(KuixConstants.KUIX_KEY_BACK, KuixConstants.KEY_PRESSED_EVENT_TYPE);
-		focusManager.addShortcutHandler(this);
-		
 		// Add content containers
 		add(container);
 		add(buttonsContainer);
@@ -283,17 +279,6 @@ public class PopupBox extends ActionWidget {
 		
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.AbstractActionWidget#processShortcutKeyEvent(byte, int)
-	 */
-	public boolean processShortcutKeyEvent(byte type, int kuixKeyCode) {
-		if (type == KuixConstants.KEY_PRESSED_EVENT_TYPE) {
-			remove();
-			return true;
-		}
-		return false;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#onAdded(org.kalmeo.kuix.widget.Widget)
 	 */

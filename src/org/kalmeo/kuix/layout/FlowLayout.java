@@ -121,7 +121,7 @@ public class FlowLayout implements Layout {
 				contentWidth = Math.max(contentWidth, currentLine.width);
 				contentHeight += currentLine.height + (contentHeight == 0 ? 0 : gap.verticalGap);
 				
-				// Create au new line
+				// Create a new line
 				currentLine.next = new LineInfo();
 				currentLine = currentLine.next;
 				currentLine.width = preferredSize.width;

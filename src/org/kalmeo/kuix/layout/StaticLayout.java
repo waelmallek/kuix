@@ -78,6 +78,7 @@ public class StaticLayout implements Layout {
 		int y = 0;
 		int widgetWidth = 0;
 		int widgetHeight = 0;
+		Metrics preferredSize;
 
 		for (Widget widget = target.getChild(); widget != null; widget = widget.next) {
 			
@@ -89,9 +90,10 @@ public class StaticLayout implements Layout {
 			y = 0;
 			widgetWidth = 0;
 			widgetHeight = 0;
+			preferredSize = null;
 			
 			LayoutData layoutData = widget.getLayoutData();
-			if (layoutData != null && layoutData instanceof StaticLayoutData) {
+			if (layoutData instanceof StaticLayoutData) {
 				
 				StaticLayoutData staticLayoutData = (StaticLayoutData) layoutData;
 				Alignment alignment = staticLayoutData.alignment;
@@ -99,30 +101,32 @@ public class StaticLayout implements Layout {
 				x = staticLayoutData.x;
 				y = staticLayoutData.y;
 				
-				if (staticLayoutData.width < 0 || staticLayoutData.height < 0) {
-					Metrics preferredSize = widget.getPreferredSize(width);
-					if (staticLayoutData.width < 0) {
-						widgetWidth = preferredSize.width;
-					}
-					if (staticLayoutData.height < 0) {
-						widgetHeight = preferredSize.height;
-					}
+				// Width
+				if (staticLayoutData.width > MathFP.ONE) {
+					// Pixel
+					widgetWidth = MathFP.toInt(staticLayoutData.width);
+				} else if (staticLayoutData.width < 0) {
+					// Min-size
+					preferredSize = widget.getPreferredSize(width);
+					widgetWidth = preferredSize.width;
+				} else {
+					// %
+					widgetWidth = MathFP.toInt(MathFP.mul(MathFP.toFP(width), staticLayoutData.width));
 				}
-				if (widgetWidth == 0) {
-					if (staticLayoutData.width > MathFP.ONE) {
-						widgetWidth = staticLayoutData.width;
-					} else {
-						widgetWidth = MathFP.mul(MathFP.toFP(width), staticLayoutData.width);
+				
+				// Height
+				if (staticLayoutData.height > MathFP.ONE) {
+					// Pixel
+					widgetHeight = MathFP.toInt(staticLayoutData.height);
+				} else if (staticLayoutData.height < 0) {
+					// Min-size
+					if (preferredSize == null) {
+						preferredSize = widget.getPreferredSize(widgetWidth);
 					}
-					widgetWidth = MathFP.toInt(widgetWidth);
-				}
-				if (widgetHeight == 0) {
-					if (staticLayoutData.height > MathFP.ONE) {
-						widgetHeight = staticLayoutData.height;
-					} else {
-						widgetHeight = MathFP.mul(MathFP.toFP(height), staticLayoutData.height);
-					}
-					widgetHeight = MathFP.toInt(widgetHeight);
+					widgetHeight = preferredSize.height;
+				} else {
+					// %
+					widgetHeight = MathFP.toInt(MathFP.mul(MathFP.toFP(height), staticLayoutData.height));
 				}
 				
 				if (alignment != null) {
@@ -140,7 +144,7 @@ public class StaticLayout implements Layout {
 				
 			} else {
 				
-				Metrics preferredSize = widget.getPreferredSize(width);
+				preferredSize = widget.getPreferredSize(width);
 				widgetWidth = preferredSize.width;
 				widgetHeight = preferredSize.height;
 				

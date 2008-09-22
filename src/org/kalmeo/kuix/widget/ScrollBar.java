@@ -58,6 +58,7 @@ public class ScrollBar extends Widget {
 	private int pressedX = 0;
 	private int pressedY = 0;
 	private int pressedValue = 0;
+	private boolean barHidden = true;
 	
 	/**
 	 * Construct a {@link ScrollBar}
@@ -71,7 +72,7 @@ public class ScrollBar extends Widget {
 	 */
 	public ScrollBar(String tag) {
 		super(tag);
-		barLayoutData = new StaticLayoutData(null, -1, 0);
+		barLayoutData = new StaticLayoutData(null, 0, 0);
 		bar = new Widget(KuixConstants.SCROLL_BAR_BAR_WIDGET_TAG) {
 
 			/* (non-Javadoc)
@@ -80,9 +81,17 @@ public class ScrollBar extends Widget {
 			public LayoutData getLayoutData() {
 				return barLayoutData;
 			}
+
+			/* (non-Javadoc)
+			 * @see org.kalmeo.kuix.widget.Widget#paintImpl(javax.microedition.lcdui.Graphics)
+			 */
+			public void paintImpl(Graphics g) {
+				if (!barHidden) {
+					super.paintImpl(g);
+				}
+			}
 			
 		};
-		bar.setVisible(false);
 		add(bar);
 	}
 
@@ -145,7 +154,7 @@ public class ScrollBar extends Widget {
 			barLayoutData.width = -1;
 			barLayoutData.height = this.selection;
 		}
-		bar.setVisible(this.selection != MathFP.ONE && this.selection != 0);
+		barHidden = this.selection == MathFP.ONE || this.selection == 0;
 		bar.invalidate();
 	}
 

@@ -504,7 +504,8 @@ public final class KuixCanvas extends GameCanvas {
 	private void forceRepaint() {
 		
 		// Define clip rect region
-		if (!repaintRegion.isEmpty()) {
+		boolean repaintRegionOnly = !repaintRegion.isEmpty();
+		if (repaintRegionOnly) {
 			imageBufferGraphics.setClip(repaintRegion.x, repaintRegion.y, repaintRegion.width, repaintRegion.height);
 		}
 
@@ -525,14 +526,19 @@ public final class KuixCanvas extends GameCanvas {
 			// Paint buffured image
 			canvasGraphics.drawImage(imageBuffer, 0, 0, 0);
 		}
-		repaintRegion.setBounds(0, 0, 0, 0);
 		
 		// Debug infos
 		if (debugInfosEnabled) {
 			drawDebugInfos(canvasGraphics);
 		}
 		
-		flushGraphics();
+		// FlushGraphics
+		if (repaintRegionOnly) {
+			flushGraphics(repaintRegion.x, repaintRegion.y, repaintRegion.width, repaintRegion.height);
+		} else {
+			flushGraphics();
+		}
+		repaintRegion.setBounds(0, 0, 0, 0);
 		
 		needToRepaint = false || transitionRunning;
 	}

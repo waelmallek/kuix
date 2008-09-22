@@ -90,7 +90,7 @@ public class BorderLayout implements Layout {
 			}
 			
 			LayoutData layoutData = widget.getLayoutData();
-			if (layoutData != null && layoutData instanceof BorderLayoutData) {
+			if (layoutData instanceof BorderLayoutData) {
 				byte position = ((BorderLayoutData) layoutData).position;
 				switch (position) {
 					

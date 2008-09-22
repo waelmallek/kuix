@@ -249,7 +249,7 @@ public class Widget {
 	// The widget style defined by the xml author
 	private Style authorStyle;
 	
-	// Define if the widget will be paint
+	// Define the widget visibility state
 	private boolean visible = true;
 	
 	// Shortcuts are represented by a byte array that embed : keyCodes mask (4 bytes), and a list of keyCode (4 bytes) / action (2 + length bytes)
@@ -684,6 +684,9 @@ public class Widget {
 	}
 	
 	/**
+	 * Set the widget's visibility state. An invisible widget is ignore from
+	 * layout and paint process.
+	 * 
 	 * @param visible the visible to set
 	 */
 	public void setVisible(boolean visible) {
@@ -1210,7 +1213,13 @@ public class Widget {
 	 * @return the child {@link Widget} under mx, my point
 	 */
 	public Widget getWidgetAt(int mx, int my) {
-		return getWidgetAt(mx, my, x, y, width, height);
+		Insets margin = getMargin();	// Exclude margin from widget detection
+		return getWidgetAt(	mx, 
+							my, 
+							x + margin.left, 
+							y + margin.top, 
+							width - margin.left - margin.right,
+							height - margin.top - margin.bottom);
 	}
 	
 	/**
@@ -1226,13 +1235,10 @@ public class Widget {
 	 * @return the child {@link Widget} under mx, my point
 	 */
 	public Widget getWidgetAt(int mx, int my, int x, int y, int width, int height) {
-		// Do not use 'isVisible()' instead of 'visible' because of recurcive call of getWidgetAt. 
+		// We don't use 'isVisible()' instead of 'visible' because of recurcive call of getWidgetAt. 
 		// But calling this method if widget's parent is not visible could return wrong.
 		if (visible && (mx >= x) && (my >= y) && (mx < x + width) && (my < y + height)) {
-			if (child == null) {
-				return this;
-			}
-			Widget inside = getWidgetAt(child, mx - x, my - y);
+			Widget inside = getWidgetAt(child, mx - this.x, my - this.y);
 			return (inside != null) ? inside : this;
 		}
 		return null;
