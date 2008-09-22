@@ -1,0 +1,28 @@
+org.kalmeo.kuix is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+org.kalmeo.kuix is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+
+Copyright 2007-2008, Kalmeo <http://www.kalmeo.com>
+
+Requirement
+-----------
+
+This library depends on kutil library available at <http://www.kalmeo.org/projects/kutil>
+
+This library require the Sun Java Wireless ToolKit (WTK) <http://java.sun.com/products/sjwtoolkit>
+or equivalent CLDC 1.0 and MIDP 2.0 implementation SDK.
+
+Documentation
+-------------
+
+For further information on how to use or compile Kuix, please check the online 
+documentation at : <http://www.kalmeo.org/projects/kuix/docs>
