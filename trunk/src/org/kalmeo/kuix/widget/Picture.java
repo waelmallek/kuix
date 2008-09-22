@@ -252,8 +252,8 @@ public class Picture extends Widget {
 		if (needToComputePreferredSize(preferredWidth)) {
 			metrics = super.getPreferredSize(preferredWidth);
 			if (image != null) {
-				metrics.width += image.getWidth();
-				metrics.height += image.getHeight();
+				metrics.width += frameWidth;
+				metrics.height += frameHeight;
 			}
 		} else {
 			metrics = getCachedMetrics();
@@ -270,7 +270,7 @@ public class Picture extends Widget {
 		}
 		return super.getDefaultStylePropertyValue(name);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#add(org.kalmeo.kuix.widget.Widget)
 	 */

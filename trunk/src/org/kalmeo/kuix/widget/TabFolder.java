@@ -93,7 +93,7 @@ public class TabFolder extends List {
 			public LayoutData getLayoutData() {
 				return BorderLayoutData.instanceCenter;
 			}
-
+			
 			/* (non-Javadoc)
 			 * @see org.kalmeo.kuix.widget.Widget#onChildRemoved(org.kalmeo.kuix.widget.Widget)
 			 */
@@ -302,11 +302,21 @@ public class TabFolder extends List {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.List#removeAllItems()
+	 */
+	public void removeAllItems() {
+		if (defaultTabItem != null) {
+			defaultTabItem.remove();		// Remove the default tab item to keep the data binding it will be restaured later by the removeAll method
+		}
+		super.removeAllItems();
+	}
+
+	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#removeAll()
 	 */
 	public void removeAll() {
 		container.removeAll();
-		initDefaultTabItem();
+		initDefaultTabItem();				// Restaure the defaultTabItem
 		setCurrentTabItem(null);			// No tabItem : setCurrent to null
 	}
 	
