@@ -1,6 +1,6 @@
 # Kuix Changelog
 
-##Version 1.0.1 (2008-XX-XX)
+##Version 1.0.1 (2008-10-01)
 
 - Bug fix : avoid the OutOfMemoryException while closing a MenuPopup
 - Bug fix : fix some detection problem on **Motorola** phones 
@@ -18,6 +18,7 @@
 - Add "Multi" DataProvider capabilities. A DataProvider can now be a slave of an other, to be able to load a Screen with more thant one data model.
 - Add backwardTabKey and forwardTabKey attribute on TabFilder widget to be able to change the default left and right keys of tab navigation.
 - Add multi border-color capabilities on widgets. You can now set a different color for the 4 borders.
+- Add *focusedwidget* keyword detection in Kuix.parseMethod() function. It is now, for example, possible to retrieve the focused widget in onAction="doMyAction(focusedwidget)".
 
 - Add a new KuixInitializer interface which KuixMIDlet implements to be able to use Kuix engine without creating a KuixMIDlet. @see org.kalmeo.kuix.core.KuixInitializer javadoc comment for further informations.
 
