@@ -346,10 +346,8 @@ public class DataProvider implements LinkedListItem {
 		if (items != null) {
 			Filter filter = null;
 			if (useFilter && itemsFilters != null) {
-				try {
-					filter = (Filter) itemsFilters.get(property);
-				} catch (NullPointerException e) {
-				}
+				// Retrieved filter could be null
+				filter = (Filter) itemsFilters.get(property);
 			}
 			return items.enumerate(filter);
 		}
@@ -489,10 +487,21 @@ public class DataProvider implements LinkedListItem {
 	public void setItemsFilter(String property, Filter filter) {
 		LinkedList items = getItemsValue(property);
 		if (items != null) {
-			if (itemsFilters == null) {
-				itemsFilters = new Hashtable();
+			if (filter == null) {
+				if (itemsFilters == null) {
+					// No previous filter and no new filter : do nothing
+					return;
+				}	
+				if (itemsFilters.containsKey(property)) {
+					// Previous filter is removed from filter list
+					itemsFilters.remove(property);
+				}
+			} else {
+				if (itemsFilters == null) {
+					itemsFilters = new Hashtable();
+				}
+				itemsFilters.put(property, filter);
 			}
-			itemsFilters.put(property, filter);
 			LinkedListEnumeration itemsEnumeration = items.enumerate(filter);
 			dispatchItemsUpdateEvent(FILTER_MODEL_UPDATE_EVENT_TYPE, property, null, itemsEnumeration);
 		}

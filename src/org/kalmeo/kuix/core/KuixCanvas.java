@@ -277,7 +277,7 @@ public final class KuixCanvas extends GameCanvas {
 								for (int i = 0; i < pointerEvents.size(); ++i) {
 									int[] pointerEvent = ((int[]) pointerEvents.elementAt(i));
 									FocusManager focusManager = desktop.getCurrentFocusManager();
-									if (focusManager.processPointerEvent((byte) pointerEvent[0], pointerEvent[1], pointerEvent[2])) {
+									if (focusManager != null && focusManager.processPointerEvent((byte) pointerEvent[0], pointerEvent[1], pointerEvent[2])) {
 										repaintNextFrame();
 									} else if ((byte) pointerEvent[0] == KuixConstants.POINTER_DROPPED_EVENT_TYPE) {
 										if (desktop.getDraggedWidget() != null) {

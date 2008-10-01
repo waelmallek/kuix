@@ -34,6 +34,7 @@ import java.util.Vector;
 
 import javax.microedition.lcdui.Display;
 
+import org.kalmeo.kuix.core.focus.FocusManager;
 import org.kalmeo.kuix.core.model.DataProvider;
 import org.kalmeo.kuix.core.style.Style;
 import org.kalmeo.kuix.core.style.StyleProperty;
@@ -1200,6 +1201,11 @@ public final class Kuix {
 				Widget widget = null;
 				if ("this".equals(widgetId)) {
 					widget = owner;
+				} else if ("focusedwidget".equals(widgetId)) {
+					FocusManager focusManager = owner.getFocusManager();
+					if (focusManager != null) {
+						widget = focusManager.getVirtualFocusedWidget();
+					}
 				} else if (widgetId != null && widgetId.startsWith("#")) {
 					widget = canvas != null ? canvas.getDesktop().getWidget(widgetId.substring(1)) : null;
 				}

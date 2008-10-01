@@ -101,7 +101,7 @@ text.tooltip {
 }
 
 radiobutton {
-	bg-image: url(rb.png,0,0,11,11);
+	bg-image: url(rb.png,0,0,13,13);
 	bg-align: left;
 	bg-repeat: 1 1;
 	padding: 0 3 0 16;
@@ -109,28 +109,28 @@ radiobutton {
 }
 
 radiobutton:hover {
-	bg-image: url(rb.png,11,0,11,11);
+	bg-image: url(rb.png,13,0,13,13);
 }
 
 radiobutton:selected {
-	bg-image: url(rb.png,22,0,11,11);
+	bg-image: url(rb.png,26,0,13,13);
 }
 
 radiobutton:hover:selected {
-	bg-image: url(rb.png,33,0,11,11);
+	bg-image: url(rb.png,39,0,13,13);
 }
 
 tabitembutton {
 	padding: -3 0 -2 1;
 	border: 7 8 6 7;
 	border-image: url(tb.png) 7 8 6 7;
-	bg-color: none;
+	bg-color: #003d3d;
 	color: #e95711;
 }
 
 tabitembutton:selected {
 	border-image: url(tb_s.png) 7 8 6 7;
-	bg-color: none;
+	bg-color: #003d3d;
 }
 
 tabitembutton:disabled {
