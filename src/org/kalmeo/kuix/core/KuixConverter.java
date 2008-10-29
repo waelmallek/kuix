@@ -700,24 +700,7 @@ public class KuixConverter {
 						int transform = Sprite.TRANS_NONE;
 						
 						if (numTokens == 6) {
-							String transformStr = st.nextToken();
-							if (transformStr != null) {
-								if (transformStr.equals("mirror")) {
-									transform = Sprite.TRANS_MIRROR;
-								} else if (transformStr.equals("mirror_rot270")) {
-									transform = Sprite.TRANS_MIRROR_ROT270;
-								} else if (transformStr.equals("mirror_rot180")) {
-									transform = Sprite.TRANS_MIRROR_ROT180;
-								} else if (transformStr.equals("mirror_rot90")) {
-									transform = Sprite.TRANS_MIRROR_ROT90;
-								} else if (transformStr.equals("rot270")) {
-									transform = Sprite.TRANS_ROT270;
-								} else if (transformStr.equals("rot180")) {
-									transform = Sprite.TRANS_ROT180;
-								} else if (transformStr.equals("rot90")) {
-									transform = Sprite.TRANS_ROT90;
-								}
-							}
+							transform = convertTransform(st.nextToken());
 						}
 						
 						try {
@@ -953,6 +936,31 @@ public class KuixConverter {
 			throw new IllegalArgumentException("Invalid sld value : " + rawParams);
 		}
 		throw new IllegalArgumentException("Bad layout data value");
+	}
+	
+	/**
+	 * @param rawData
+	 * @return The converted image transform
+	 */
+	public static int convertTransform(String rawData) {
+		if (rawData != null) {
+			if (rawData.equals("mirror")) {
+				return Sprite.TRANS_MIRROR;
+			} else if (rawData.equals("mirror_rot270")) {
+				return Sprite.TRANS_MIRROR_ROT270;
+			} else if (rawData.equals("mirror_rot180")) {
+				return Sprite.TRANS_MIRROR_ROT180;
+			} else if (rawData.equals("mirror_rot90")) {
+				return Sprite.TRANS_MIRROR_ROT90;
+			} else if (rawData.equals("rot270")) {
+				return Sprite.TRANS_ROT270;
+			} else if (rawData.equals("rot180")) {
+				return Sprite.TRANS_ROT180;
+			} else if (rawData.equals("rot90")) {
+				return Sprite.TRANS_ROT90;
+			}
+		}
+		return Sprite.TRANS_NONE;
 	}
 	
 	/**

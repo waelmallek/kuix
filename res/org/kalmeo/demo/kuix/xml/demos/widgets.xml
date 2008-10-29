@@ -32,7 +32,7 @@
 				</radioGroup>
 				<container class="separator" />
 				<text class="label">Gauge :</text>
-				<gauge value="0.4" />
+				<gauge value="0.4" focusable="true" />
 			</scrollPane>
 		</tabitem>
 		<tabitem label="Choice">

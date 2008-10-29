@@ -29,7 +29,7 @@ public interface KuixConstants {
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Commons
 	
-	public static final String VERSION										= "1.0.1";
+	public static final String VERSION										= "1.0.2";
 	
 	public static final String DEFAULT_XML_RES_FOLDER						= "/xml/";
 	public static final String DEFAULT_CSS_RES_FOLDER						= "/css/";
@@ -38,7 +38,6 @@ public interface KuixConstants {
 	
 	public static final String KUIX_DEFAULT_I18N_MESSAGES_BUNDLE			= "/org/kalmeo/kuix/core/i18n/messages.properties";
 	public static final String DEFAULT_I18N_MESSAGES_BUNDLE					= DEFAULT_I18N_RES_FOLDER + "messages.properties";
-	public static final String DEFAULT_UNKNOWN_I18N_MESSAGE					= "???";
 	
 	public static final String INCLUDE_KEYWORD_PATTERN						= "#inc";
 	
@@ -57,10 +56,11 @@ public interface KuixConstants {
 	public static final short ALERT_ERROR									= 1 << 3;
 	public static final short ALERT_QUESTION								= 1 << 4;
 	
-	public static final short ALERT_OK										= 1 << 5;
-	public static final short ALERT_YES										= 1 << 6;
-	public static final short ALERT_NO										= 1 << 7;
-	public static final short ALERT_CANCEL									= 1 << 8;
+	public static final short ALERT_NO_BUTTON								= 1 << 5;
+	public static final short ALERT_OK										= 1 << 6;
+	public static final short ALERT_YES										= 1 << 7;
+	public static final short ALERT_NO										= 1 << 8;
+	public static final short ALERT_CANCEL									= 1 << 9;
 	
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Default i18n keys
@@ -114,6 +114,7 @@ public interface KuixConstants {
 	public static final String STYLE_ATTRIBUTE 								= "style";
 	public static final String SRC_ATTRIBUTE 								= "src";
 	public static final String IMAGE_ATTRIBUTE 								= "image";
+	public static final String TRANSFORM_ATTRIBUTE 							= "transform";
 	public static final String FRAME_WIDTH_ATTRIBUTE 						= "framewidth";
 	public static final String FRAME_HEIGHT_ATTRIBUTE 						= "frameheight";
 	public static final String FRAME_SEQUENCE_ATTRIBUTE 					= "framesequence";

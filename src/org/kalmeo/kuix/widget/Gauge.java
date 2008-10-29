@@ -196,6 +196,9 @@ public class Gauge extends FocusableWidget {
 		// Layout the bar
 		Insets insets = getInsets();
 		int barWidth = MathFP.mul(MathFP.toFP(getWidth() - insets.left - insets.right),  value);
+		if (barWidth != 0 && barWidth < MathFP.ONE) {
+			barWidth = MathFP.toFP("1.1");	// 1.1 to be sure to have a pixel size (value > 1.0) and not a percent bar size
+		}
 		barLayoutData.width = barWidth;
 		
 		super.doLayout();

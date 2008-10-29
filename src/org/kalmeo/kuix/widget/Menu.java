@@ -329,6 +329,7 @@ public class Menu extends MenuItem {
 		super.removeAll();
 		if (popup != null) {
 			popup.removeAll();
+			popup = null;
 		}
 	}
 	

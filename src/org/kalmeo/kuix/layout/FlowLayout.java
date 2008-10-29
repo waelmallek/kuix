@@ -33,6 +33,9 @@ import org.kalmeo.kuix.widget.Widget;
  */
 public class FlowLayout implements Layout {
 
+	/**
+	 * This class hold line infos
+	 */
 	private class LineInfo {
 		
 		public LineInfo next;

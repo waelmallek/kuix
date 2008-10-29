@@ -55,7 +55,7 @@ public class TextArea extends TextWidget {
 	// Indicate is the text input need to be parse to extract HTML style tags during reflow 
 	private boolean styled = false;
 
-	// Indicate if the textArea need to be reflow befaore next getPreferredSize call
+	// Indicate if the textArea need to be reflow before next getPreferredSize call
 	private boolean needToReflow;
 	
 	// The cached objects

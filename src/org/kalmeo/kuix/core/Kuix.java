@@ -279,7 +279,7 @@ public final class Kuix {
 											};
 		
 		// If no button : add default OK button
-		if (!buttons[0] && !buttons[1] && !buttons[2] && !buttons[3]) {
+		if (!buttons[0] && !buttons[1] && !buttons[2] && !buttons[3] && (options & KuixConstants.ALERT_NO_BUTTON) != KuixConstants.ALERT_NO_BUTTON) {
 			buttons[0] = true;
 		}
 		
@@ -1531,14 +1531,16 @@ public final class Kuix {
 	public static final String getMessage(String key, Object[] args) {
 		if (messageTable == null) {
 			if (!initI18nSupport()) {
-				return KuixConstants.DEFAULT_UNKNOWN_I18N_MESSAGE;
+				// Error while init i18n support : return the key
+				return key;
 			}
 		}
 		String s = (String) messageTable.get(key);
 		if (s != null) {
 			return StringUtil.format(s, args);
 		}
-		return KuixConstants.DEFAULT_UNKNOWN_I18N_MESSAGE;
+		// The key is not defined : return the key
+		return key;
 	}
 
 	/**
@@ -1779,7 +1781,7 @@ public final class Kuix {
 								break;
 							default:
 								// return KuixConstants.DEFAULT_UNKNOWN_I18N_MESSAGE STRING if there is any problem
-								return KuixConstants.DEFAULT_UNKNOWN_I18N_MESSAGE;
+								return "???";
 						}
 					}
 					outBuffer.append((char) value);
