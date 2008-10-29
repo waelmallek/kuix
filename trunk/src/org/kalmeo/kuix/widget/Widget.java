@@ -1792,35 +1792,43 @@ public class Widget {
 			}
 			
 			// Top
-			g.setColor(borderColor[0].getRGB());
-			if (border.top == 1) {
-				g.drawLine(x, y, x + width - border.right - 1, y);
-			} else if (border.top != 0) {
-				g.fillRect(x, y, width - border.right, border.top);
+			if (borderColor[0] != null) {
+				g.setColor(borderColor[0].getRGB());
+				if (border.top == 1) {
+					g.drawLine(x, y, x + width - border.right - 1, y);
+				} else if (border.top != 0) {
+					g.fillRect(x, y, width - border.right, border.top);
+				}
 			}
 			
 			// Right
-			g.setColor(borderColor[1].getRGB());
-			if (border.right == 1) {
-				g.drawLine(x + width - 1, y, x + width - 1, y + height - border.bottom - 1);
-			} else if (border.right != 0) {
-				g.fillRect(x + width - border.right, y, border.right, height - border.bottom);
+			if (borderColor[1] != null) {
+				g.setColor(borderColor[1].getRGB());
+				if (border.right == 1) {
+					g.drawLine(x + width - 1, y, x + width - 1, y + height - border.bottom - 1);
+				} else if (border.right != 0) {
+					g.fillRect(x + width - border.right, y, border.right, height - border.bottom);
+				}
 			}
 			
 			// Bottom
-			g.setColor(borderColor[2].getRGB());
-			if (border.bottom == 1) {
-				g.drawLine(x + border.left, y + height - 1, x + width - 1, y + height - 1);
-			} else if (border.bottom != 0) {
-				g.fillRect(x + border.left, y + height - border.bottom, width - border.left, border.bottom);
+			if (borderColor[2] != null) {
+				g.setColor(borderColor[2].getRGB());
+				if (border.bottom == 1) {
+					g.drawLine(x + border.left, y + height - 1, x + width - 1, y + height - 1);
+				} else if (border.bottom != 0) {
+					g.fillRect(x + border.left, y + height - border.bottom, width - border.left, border.bottom);
+				}
 			}
 			
 			// Left
-			g.setColor(borderColor[3].getRGB());
-			if (border.left == 1) {
-				g.drawLine(x, y + border.top, x, y + height - 1);
-			} else if (border.left != 0) {
-				g.fillRect(x, y + border.top, border.left, height - border.top);
+			if (borderColor[3] != null) {
+				g.setColor(borderColor[3].getRGB());
+				if (border.left == 1) {
+					g.drawLine(x, y + border.top, x, y + height - 1);
+				} else if (border.left != 0) {
+					g.fillRect(x, y + border.top, border.left, height - border.top);
+				}
 			}
 			
 		}

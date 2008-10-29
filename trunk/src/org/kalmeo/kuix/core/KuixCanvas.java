@@ -37,6 +37,7 @@ import org.kalmeo.kuix.core.focus.FocusManager;
 import org.kalmeo.kuix.transition.Transition;
 import org.kalmeo.kuix.util.Metrics;
 import org.kalmeo.kuix.widget.Desktop;
+import org.kalmeo.kuix.widget.Widget;
 import org.kalmeo.util.NumberUtil;
 import org.kalmeo.util.StringTokenizer;
 import org.kalmeo.util.worker.Worker;
@@ -71,6 +72,9 @@ public final class KuixCanvas extends GameCanvas {
 	
 	// Double buffering image for devices that doesn't implement it natively
 	private Image imageBuffer = null;
+	
+	// Unpaintable regions (represented by a list of widget)
+	private Vector unpaintableWidgets;
 
 	// Transition stuff
 	private Transition transition;
@@ -446,7 +450,7 @@ public final class KuixCanvas extends GameCanvas {
 	
 	/**
 	 * Revalidate (and repaint) the desktop as soon as possible. If the current
-	 * thread is the worker thread the task is done imm�dialty else it is
+	 * thread is the worker thread the task is done immedialty else it is
 	 * deferred to the next frame.
 	 */
 	public void revalidateAsSoonAsPossible() {
@@ -460,7 +464,7 @@ public final class KuixCanvas extends GameCanvas {
 	
 	/**
 	 * Repaint the desktop as soon as possible. If the current thread is the
-	 * worker thread the task is done imm�dialty else it is deferred to the next
+	 * worker thread the task is done immedialty else it is deferred to the next
 	 * frame.
 	 */
 	public void repaintAsSoonAsPossible() {
@@ -508,6 +512,11 @@ public final class KuixCanvas extends GameCanvas {
 		if (repaintRegionOnly) {
 			imageBufferGraphics.setClip(repaintRegion.x, repaintRegion.y, repaintRegion.width, repaintRegion.height);
 		}
+		
+		// Clear unpaintable widget list (this list would be reconstruct with the recursive Widget.paintImpl() method)
+		if (unpaintableWidgets != null) {
+			clearUnpaintableWidgets();
+		}
 
 		if (transition != null) {
 			if (!transitionRunning) {
@@ -533,14 +542,166 @@ public final class KuixCanvas extends GameCanvas {
 		}
 		
 		// FlushGraphics
-		if (repaintRegionOnly) {
-			flushGraphics(repaintRegion.x, repaintRegion.y, repaintRegion.width, repaintRegion.height);
+		if (unpaintableWidgets == null || unpaintableWidgets.isEmpty()) {
+			if (repaintRegionOnly) {
+				flushGraphics(repaintRegion.x, repaintRegion.y, repaintRegion.width, repaintRegion.height);
+			} else {
+				flushGraphics();
+			}
 		} else {
-			flushGraphics();
+			if (repaintRegionOnly) {
+				flushRegion(repaintRegion.x, repaintRegion.y, repaintRegion.width, repaintRegion.height);
+			} else {
+				flushRegion(0, 0, getWidth(), getHeight());
+			}
 		}
 		repaintRegion.setBounds(0, 0, 0, 0);
 		
 		needToRepaint = false || transitionRunning;
+	}
+
+	/**
+	 * Flush graphics on a specific region by excluding unpaintaible regions
+	 * represented by the unpaintableWidgets list.
+	 * 
+	 * @param xMin
+	 * @param yMin
+	 * @param xMax
+	 * @param yMax
+	 */
+	private void flushRegion(int xMin, int yMin, int xMax, int yMax) {
+		
+		// Search first intersect widget
+		Widget widget = null;
+		for (int i = unpaintableWidgets.size() - 1; i >= 0 ; --i) {
+			Widget tmpWidget = (Widget) unpaintableWidgets.elementAt(i);
+			if (intersect(tmpWidget, xMin, yMin, xMax, yMax)) {
+				widget = tmpWidget;
+				break;
+			}
+		}
+		if (widget == null) {
+			// Flush the current display area
+			flushGraphics(xMin, yMin, xMax, yMax); 
+			return;
+		}
+		
+		int top = Math.max(0, widget.getY() - yMin);
+		int right = Math.max(0, xMax - (widget.getX() + widget.getWidth()));
+		int bottom = Math.max(0, yMax - (widget.getY() + widget.getHeight()));
+		int left = Math.max(0, widget.getX() - xMin);
+		
+		// Top
+		if (top != 0) {
+			if (left != 0) {
+				flushRegion(xMin, 
+						yMin, 
+						xMin + left, 
+						yMin + top);
+			}
+			flushRegion(xMin + left, 
+					yMin, 
+					xMax - right, 
+					yMin + top);
+			if (right != 0) {
+				flushRegion(xMax - right, 
+						yMin, 
+						xMax, 
+						yMin + top);
+			}
+		}
+		
+		// Center
+		if (left != 0) {
+			flushRegion(xMin, 
+					yMin + top, 
+					xMin + left, 
+					yMax - bottom);
+		}
+		if (right != 0) {
+			flushRegion(xMax - right, 
+					yMin + top, 
+					xMax, 
+					yMax - bottom);
+		}
+		
+		// Bottom
+		if (bottom != 0) {
+			if (left != 0) {
+				flushRegion(xMin, 
+						yMax - bottom, 
+						xMin + left, 
+						yMax);
+			}
+			flushRegion(xMin + left, 
+					yMax - bottom, 
+					xMax - right, 
+					yMax);
+			if (right != 0) {
+				flushRegion(xMax - right, 
+						yMax - bottom, 
+						xMax, 
+						yMax);
+			}
+		}
+		
+	}
+	
+	/**
+	 * Check regions intersection.
+	 * 
+	 * @param widget
+	 * @param xMin
+	 * @param yMin
+	 * @param xMax
+	 * @param yMax
+	 * @return <code>true</code> if the <code>widget</code> region intersects
+	 *         the <code>xMin</code>, <code>yMin</code>, <code>xMax</code>,
+	 *         <code>yMax</code> région.
+	 */
+	private boolean intersect(Widget widget, int xMin, int yMin, int xMax, int yMax) {
+    	return (xMax > widget.getX()
+	    		&& yMax > widget.getY()
+	    		&& widget.getX() + widget.getWidth() > xMin
+	    		&& widget.getY() + widget.getHeight() > yMin);
+	}
+
+	/**
+	 * Add a new unpaintable widget to the unpaintableWidgets list.<br>
+	 * Caution that adding a widget to this list mask a region of the display
+	 * event if the given widget is not on top : popup over this region may be
+	 * masked and invisible.<br>
+	 * <b>The unpaintableWidgets list is cleared before each repaint.</b> 
+	 * 
+	 * @param widget
+	 */
+	public void addUnpaintableWidget(Widget widget) {
+		if (unpaintableWidgets == null) {
+			unpaintableWidgets = new Vector();
+		}
+		if (!unpaintableWidgets.contains(widget)) {
+			unpaintableWidgets.addElement(widget);
+		}
+	}
+	
+	/**
+	 * Add a widget from the unpaintableWidgets list.
+	 * 
+	 * @param widget
+	 */
+	public void removeUnpaintableWidget(Widget widget) {
+		if (unpaintableWidgets != null) {
+			unpaintableWidgets.removeElement(widget);
+		}
+	}
+	
+	/**
+	 * Remove all unpaintable widgets.
+	 */
+	public void clearUnpaintableWidgets() {
+		if (unpaintableWidgets != null) {
+			unpaintableWidgets.removeAllElements();
+		}
 	}
 	
 	/**
@@ -600,6 +761,7 @@ public final class KuixCanvas extends GameCanvas {
 		
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Kuix ").append(KuixConstants.VERSION).append(" (").append(Worker.instance.getFrameDuration()).append("ms)")
+				.append("\ndisplay : ").append(getWidth()).append("x").append(getHeight())
 		 		.append("\nfps : ").append(fps)
 				.append("\nplatform : ").append(getPlatformName())
 				.append("\ntotalMemory : ").append(totalMemory)

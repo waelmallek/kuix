@@ -62,6 +62,9 @@ public class Picture extends Widget {
 	// Duration of each frame
 	private int frameDuration;
 	
+	// The associated transform
+	private int transform = Sprite.TRANS_NONE;
+	
 	// Animated sprite
 	private Sprite sprite;
 	
@@ -92,6 +95,10 @@ public class Picture extends Widget {
 	public boolean setAttribute(String name, String value) {
 		if (KuixConstants.SRC_ATTRIBUTE.equals(name)) {
 			setSource(value);
+			return true;
+		}
+		if (KuixConstants.TRANSFORM_ATTRIBUTE.equals(name)) {
+			setTransform(KuixConverter.convertTransform(value));
 			return true;
 		}
 		if (KuixConstants.FRAME_WIDTH_ATTRIBUTE.equals(name)) {
@@ -200,6 +207,14 @@ public class Picture extends Widget {
 	}
 	
 	/**
+	 * @param transform
+	 */
+	public void setTransform(int transform) {
+		this.transform = transform;
+		needToResetSprite = true;
+	}
+
+	/**
 	 * Set the width of a slice in source image for animation.
 	 * 
 	 * @param frameWidth
@@ -252,8 +267,9 @@ public class Picture extends Widget {
 		if (needToComputePreferredSize(preferredWidth)) {
 			metrics = super.getPreferredSize(preferredWidth);
 			if (image != null) {
-				metrics.width += frameWidth;
-				metrics.height += frameHeight;
+				boolean rotate = isRotate();
+				metrics.width += rotate ? frameHeight : frameWidth;
+				metrics.height += rotate ? frameWidth : frameHeight;
 			}
 		} else {
 			metrics = getCachedMetrics();
@@ -269,6 +285,13 @@ public class Picture extends Widget {
 			return PICTURE_DEFAULT_ALIGN;
 		}
 		return super.getDefaultStylePropertyValue(name);
+	}
+	
+	/**
+	 * @return <code>true</code> if the <code>transform</code> applied on this picture swap width and height.
+	 */
+	private boolean isRotate() {
+		return transform == Sprite.TRANS_ROT90 || transform == Sprite.TRANS_ROT270 || transform == Sprite.TRANS_MIRROR_ROT90 || transform == Sprite.TRANS_MIRROR_ROT270;
 	}
 	
 	/* (non-Javadoc)
@@ -297,6 +320,7 @@ public class Picture extends Widget {
 				sprite.setImage(image, frameWidth, frameHeight);
 				needToResetSprite = false;
 			}
+			sprite.setTransform(transform);
 			
 			if (frameSequence != null) {
 				sprite.setFrameSequence(frameSequence);
@@ -308,8 +332,9 @@ public class Picture extends Widget {
 			
 			Alignment alignment = getAlign();
 			if (alignment != null) {
-				spriteX += alignment.alignX(getWidth() - insets.left - insets.right, frameWidth);
-				spriteY += alignment.alignY(getHeight() - insets.top - insets.bottom, frameHeight);
+				boolean rotate = isRotate();
+				spriteX += alignment.alignX(getWidth() - insets.left - insets.right, rotate ? frameHeight : frameWidth);
+				spriteY += alignment.alignY(getHeight() - insets.top - insets.bottom, rotate ? frameWidth : frameHeight);
 			}
 			
 			sprite.setPosition(spriteX, spriteY);
@@ -336,10 +361,14 @@ public class Picture extends Widget {
 						 */
 						public boolean run() {
 							
-							if (isVisible() && System.currentTimeMillis() - lastFrameTime > frameDuration) {
-								sprite.nextFrame();
-								lastFrameTime = System.currentTimeMillis();
-								invalidateAppearance();
+							if (isVisible()) {
+								if (lastFrameTime == 0) {
+									lastFrameTime = System.currentTimeMillis();
+								} else if (System.currentTimeMillis() - lastFrameTime > frameDuration) {
+									lastFrameTime = System.currentTimeMillis();
+									sprite.nextFrame();
+									invalidateAppearance();
+								}
 							}
 							
 							// Remove the WorkerTask if the widget is not in the widget tree
