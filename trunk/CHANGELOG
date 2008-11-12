@@ -5,10 +5,15 @@
 - Bug fix : avoid the bug when setting a very small value in Gauge
 - Bug fix : avoid a NullPointerException when define null border multi color
 - Bug fix : avoid lack of clean up in Menu widget when calling the removeAll() method
+- Bug fix : avoid TextField tooltip style inheritance problem 
+
+- Remove all static method in KuixConverter. Use Kuix.getConverter() instead.
+- Remove the ScrollPane **useMarkers** attribute. This notion is now manged automaticaly
 
 - Add KuixCanvas.addUnpaintableWidget(Widget widget), KuixCanvas.removeUnpaintableWidget(Widget widget)and KuixCanvas.clearUnpaintableWidgets() methods to mask region of display from Kuix repaint process.
 
 - Add a new **transform** attribute to the Picture widget to be able to apply rot and mirror transform on the source image
+- Picture src attribute accept now clipped image like url(x,y,width,height,transform) in css file
 
 ##Version 1.0.1 (2008-10-01)
 

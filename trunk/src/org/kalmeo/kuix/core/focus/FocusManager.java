@@ -140,10 +140,14 @@ public class FocusManager {
 	}
 	
 	/**
+	 * Try to retrieve the direct or indirect parent scrollPane of the given
+	 * <code>widget</code> instance.
+	 * 
 	 * @param widget
-	 * @return The direct or indirect parent {@link ScrollPane} if it exists or <code>null</code>
+	 * @return The direct or indirect parent {@link ScrollPane} if it exists or
+	 *         <code>null</code>
 	 */
-	public ScrollPane findFirstScrollContainerParent(Widget widget) {
+	public ScrollPane findFirstScrollPaneParent(Widget widget) {
 		for (Widget container = widget.parent; container != null; container = container.parent) {
 			if (container instanceof ScrollPane) {
 				return ((ScrollPane) container);
@@ -188,19 +192,26 @@ public class FocusManager {
 		}
 		Widget otherFocus = ((startWidget == null) ? rootWidget : startWidget).getOtherFocus(rootWidget, startWidget, null, forward, direction, true, true);
 		if (otherFocus != null) {
-			ScrollPane scrollContainer = findFirstScrollContainerParent(otherFocus);
-			if (scrollContainer != null) {
-				if (!scrollContainer.bestScrollToChild(otherFocus, startWidget != null)) {
+			ScrollPane scrollPane = findFirstScrollPaneParent(otherFocus);
+			if (scrollPane != null) {
+				if (!scrollPane.bestScrollToChild(otherFocus, startWidget != null)) {
+					return;
+				}
+				if (scrollPane.isMarkerWidget(otherFocus)) {
+					// Special case if there is no focussedWidget. The focus need to be give to the marker first.
+					if (focusedWidget == null) {
+						requestFocus(otherFocus);
+					}
+					// Markers couldn't request focus, try to request an other focus.
+					requestOtherFocus(otherFocus, forward, direction, ++loopCount);
 					return;
 				}
 			}
 			requestFocus(otherFocus);
 		} else if (!loop && focusedWidget != null) {
-			ScrollPane scrollContainer = findFirstScrollContainerParent(focusedWidget);
-			if (scrollContainer != null) {
-				if (!scrollContainer.bestScrollToChild(focusedWidget, true)) {
-					return;
-				}
+			ScrollPane scrollPane = findFirstScrollPaneParent(focusedWidget);
+			if (scrollPane != null && !scrollPane.isMarkerWidget(startWidget)) {
+				scrollPane.bestScrollToChild(focusedWidget, true);
 			}
 		} else if (loop) {
 			requestFocus(null);

@@ -213,6 +213,7 @@ public class TextField extends Text implements CommandListener {
 	public void setTooltip(String text) {
 		if (tooltipText == null) {
 			tooltipText = new Text();
+			tooltipText.parent = this;
 			tooltipText.setStyleClass(KuixConstants.TEXT_FIELD_TOOLTIP_STYLE_CLASS);
 		}
 		tooltipText.setText(text);

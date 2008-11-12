@@ -1,6 +1,6 @@
 <screen>
 	<_title>%FORM%</_title>
-	<scrollPane usemarkers="false" style="align:fill-center;layout:inlinelayout(false,fill);gap:0 5">
+	<scrollPane style="align:fill-center;layout:inlinelayout(false,fill);gap:0 5">
 		<container style="align:right;gap:2 0">
 			<radioGroup style="layout:inlinelayout(true,fill)">
 				<radiobutton class="flags" onAction="setLang(fr)">

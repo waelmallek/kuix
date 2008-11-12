@@ -68,7 +68,7 @@
 		</tabitem>
 		<tabitem label="List" style="layout:borderlayout;">
 			<_enabled>@{bList}</_enabled>
-			<scrollPane usemarkers="false">
+			<scrollPane>
 				<list>
 					<listitem>
 						<text>Stone</text>

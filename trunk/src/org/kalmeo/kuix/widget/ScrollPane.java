@@ -54,12 +54,12 @@ public class ScrollPane extends Widget {
 	private final ScrollBar scrollBar;
 	
 	// Markers
-	private final FocusableWidget firstMarker = new FocusableWidget();
-	private final FocusableWidget lastMarker = new FocusableWidget();
+	private boolean useMarkers = false;
+	private FocusableWidget firstMarker = null;
+	private FocusableWidget lastMarker = null;
 
 	// Attributes
 	private boolean horizontal;
-	private boolean useMarkers = true;
 	private boolean showScrollBar;
 	
 	// offsets
@@ -90,6 +90,16 @@ public class ScrollPane extends Widget {
 	 * @param tag
 	 */
 	public ScrollPane(String tag) {
+		this(tag, true);
+	}
+	
+	/**
+	 * Construct a {@link ScrollPane}
+	 *
+	 * @param tag
+	 * @param useMarkers
+	 */
+	public ScrollPane(String tag, boolean useMarkers) {
 		super(tag);
 		container = new Widget(KuixConstants.SCROLL_PANE_CONTAINER_WIDGET_TAG) {
 			
@@ -134,14 +144,10 @@ public class ScrollPane extends Widget {
 			 * @see org.kalmeo.kuix.widget.Widget#removeAll()
 			 */
 			public void removeAll() {
-				if (isUseMarkers()) {
-					if (getChild() != null) {
-						for (Widget widget = getChild().next; widget != null && widget != getLastChild(); widget = widget.next) {
-							widget.parent = null;
-						}
+				if (getChild() != null) {
+					for (Widget widget = getChild().next; widget != null && widget != getLastChild(); widget = widget.next) {
+						widget.parent = null;
 					}
-				} else {
-					super.removeAll();
 				}
 			}
 
@@ -189,6 +195,16 @@ public class ScrollPane extends Widget {
 
 		};
 		super.add(container);
+		
+		// Add markers
+		this.useMarkers = useMarkers;
+		if (useMarkers) {
+			firstMarker = new FocusableWidget();
+			lastMarker = new FocusableWidget();
+			container.add(firstMarker);
+			container.add(lastMarker);
+		}
+		
 		scrollBar = new ScrollBar(KuixConstants.SCROLL_PANE_SCROLL_BAR_WIDGET_TAG) {
 
 			/* (non-Javadoc)
@@ -234,10 +250,6 @@ public class ScrollPane extends Widget {
 	public boolean setAttribute(String name, String value) {
 		if (KuixConstants.HORIZONTAL_ATTRIBUTE.equals(name)) {
 			setHorizontal(BooleanUtil.parseBoolean(value));
-			return true;
-		}
-		if (KuixConstants.USE_MARKERS_ATTRIBUTE.equals(name)) {
-			setUseMarkers(BooleanUtil.parseBoolean(value));
 			return true;
 		}
 		if (KuixConstants.SHOW_SCROLL_BAR_ATTRIBUTE.equals(name)) {
@@ -287,35 +299,21 @@ public class ScrollPane extends Widget {
 	}
 
 	/**
-	 * @return <code>true</code> if the top and bottom markers are used
-	 */
-	public boolean isUseMarkers() {
-		return useMarkers;
-	}
-	
-	/**
-	 * @param useMarkers the useMarkers to set
-	 */
-	public void setUseMarkers(boolean useMarkers) {
-		this.useMarkers = useMarkers;
-		if (useMarkers) {
-			if (firstMarker.parent != container) {
-				container.add(firstMarker);
-			}
-			if (lastMarker.parent != container) {
-				container.add(lastMarker);
-			}
-		} else {
-			firstMarker.remove();
-			lastMarker.remove();
-		}
-	}
-
-	/**
 	 * @return the autoHideScrollBar
 	 */
 	public boolean isShowScrollBar() {
 		return showScrollBar;
+	}
+	
+	/**
+	 * Check if <code>widget</code> is one of the ScrollPane markers.
+	 * 
+	 * @param widget
+	 * @return <code>true</code> if the given widget is one of the ScrollPane
+	 *         markers.
+	 */
+	public boolean isMarkerWidget(Widget widget) {
+		return widget != null && (widget == firstMarker || widget == lastMarker);
 	}
 
 	/**
@@ -444,9 +442,6 @@ public class ScrollPane extends Widget {
 	 * @see org.kalmeo.kuix.widget.Widget#add(org.kalmeo.kuix.widget.Widget)
 	 */
 	public Widget add(Widget widget) {
-		if (container.getChild() == null && useMarkers) {
-			setUseMarkers(useMarkers);
-		}
 		container.add(widget, container.getLastChild(), !useMarkers);
 		return this;
 	}

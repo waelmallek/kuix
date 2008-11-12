@@ -680,15 +680,18 @@ public final class Kuix {
 	private static Widget parseXml(final Widget rootWidget, InputStream inputStream, final DataProvider dataProvider, final boolean mergeRootWidget) {
 		if (inputStream != null) {
 			
+			// Init the root holder (used if no root widget is defined)
 			final Widget[] rootWidgetHolder = (rootWidget == null) ? new Widget[1] : null;
 			
 			try {
 				LightXmlParser.parse(inputStream, KuixConstants.DEFAULT_CHARSET_NAME, new LightXmlParserHandler() {
 
 					private final Stack path = new Stack();
-					private Widget widget = rootWidget;
-					private String attribute = null;
-
+					private final Stack internalWidgets = new Stack();
+					
+					private Widget currentWidget = rootWidget;
+					private String currentAttribute = null;
+					
 					/* (non-Javadoc)
 					 * @see com.kalmeo.util.xml.DefaultHandler#startDocument()
 					 */
@@ -701,33 +704,33 @@ public final class Kuix {
 					public void startElement(String name, Hashtable attributes) {
 
 						// Currently reading inline attribute value, startElement is not allowed
-						if (attribute != null) {
-							throw new IllegalArgumentException("Attribute tag (" + attribute + ") can't enclose an other tag");
+						if (currentAttribute != null) {
+							throw new IllegalArgumentException("Attribute tag (" + currentAttribute + ") can't enclose an other tag");
 						}
 						
 						String tag = name.toLowerCase();
 						if (tag.startsWith("_")) {
 							// Use tag as current widget's attribute
-							attribute = tag.substring(1);
+							currentAttribute = tag.substring(1);
 						} else {
 							// Use tag as new widget
 							
 							// Create widget
 							Widget newWidget = null;
-							boolean internal = false;
 							if (path.isEmpty() && mergeRootWidget && rootWidget != null && tag.equals(rootWidget.getTag())) {
 								newWidget = rootWidget;
 								rootWidget.clearCachedStyle(true);
 							} else {
-								if (widget != null) {
+								if (currentWidget != null) {
 									// Try to retrieve an internal instance
-									newWidget = widget.getInternalChildInstance(tag);
+									newWidget = currentWidget.getInternalChildInstance(tag);
 								}
 								if (newWidget == null) {
 									// Try to create a new widget instance
 									newWidget = converter.convertWidgetTag(tag);
 								} else {
-									internal = true;
+									// The widget is internal, push it in the internalWidget stack
+									internalWidgets.push(newWidget);
 								}
 								if (newWidget == null && attributes != null && attributes.containsKey(KuixConstants.PACKAGE_ATTRIBUTE)) {
 
@@ -778,12 +781,10 @@ public final class Kuix {
 								}
 							}
 
-							if (widget == null && rootWidgetHolder != null) {
+							if (currentWidget == null && rootWidgetHolder != null) {
 								rootWidgetHolder[0] = newWidget;
-							} else if (newWidget != widget && !internal) {
-								widget.add(newWidget);
 							}
-							widget = newWidget;
+							currentWidget = newWidget;
 							
 						}
 						
@@ -793,10 +794,10 @@ public final class Kuix {
 					 * @see org.kalmeo.util.xml.LightXmlParserHandler#characters(java.lang.String, boolean)
 					 */
 					public void characters(String characters, boolean isCDATA) {
-						if (characters.trim().length() > 0 && widget != null) {
+						if (characters.trim().length() > 0 && currentWidget != null) {
 							
-							String usedAttribute = attribute;
-							Widget usedWidget = widget;
+							String usedAttribute = currentAttribute;
+							Widget usedWidget = currentWidget;
 							
 							// Check #inc statment
 							if (characters.startsWith(KuixConstants.INCLUDE_KEYWORD_PATTERN)) {
@@ -808,57 +809,64 @@ public final class Kuix {
 									StringTokenizer st = new StringTokenizer(rawParams, ",");
 									if (st.hasMoreElements()) {
 										
-										// Extract parameters (File name accept parse properties)
+										// Extract parameters (File name accept parse properties) / empty file name are ignored
 										fileName = convertParsePropertyStringValues(st.nextToken().trim());
-										if (st.countTokens() >= 1) {
-											dataProviderProperty = st.nextToken().trim();
-											if (dataProviderProperty.equals("null")) {
-												dataProviderProperty = null;
-											}
-										}
-										if (st.countTokens() >= 1) {
-											mergeRootWidgetParameter = BooleanUtil.parseBoolean(st.nextToken().trim());
-										}
-										
-										// Retrieve pointed resource
-										InputStream inputStream = getXmlResourceInputStream(fileName);
-										if (inputStream != null) {
-											try {
-												if (usedAttribute != null) {
-													
-													// Attribute value, then the file content is returned as a String
-													byte[] rawData = new byte[inputStream.available()];
-													inputStream.read(rawData);
-													characters = new String(rawData);
-													
-												} else {
-													
-													// Parse property variable to define a new dataProvider ?
-													DataProvider includeDataProvider = dataProvider;
-													if (dataProviderProperty != null && dataProvider != null) {
-														if (dataProviderProperty.startsWith(KuixConstants.PARSE_PROPERTY_START_PATTERN)) {
-															String property = dataProviderProperty.substring(KuixConstants.PARSE_PROPERTY_START_PATTERN.length(), dataProviderProperty.length() - KuixConstants.PROPERTY_END_PATTERN.length());
-															Object value = dataProvider.getValue(property);
-															if (value instanceof DataProvider) {
-																includeDataProvider = (DataProvider) value;
-															} else {
-																throw new IllegalArgumentException("#inc accept only DataProvider property value");
-															}
-														} else {
-															throw new IllegalArgumentException("#inc accept only parse property");
-														}
-													}
-													
-													// Default include: file content is parsed and added to current widget
-													parseXml(widget, inputStream, includeDataProvider, mergeRootWidgetParameter);
-													return;
-													
+										if (fileName.length() != 0) {
+											
+											// DataProvider ?
+											if (st.countTokens() >= 1) {
+												dataProviderProperty = st.nextToken().trim();
+												if (KuixConstants.NULL_KEYWORD.equals(dataProviderProperty)) {
+													dataProviderProperty = null;
 												}
-											} catch (IOException e) {
-												throw new IllegalArgumentException("Invalid include file : " + fileName);
 											}
-										} else {
-											throw new IllegalArgumentException("Include file not found : " + fileName);
+											
+											// Merge root widget ?
+											if (st.countTokens() >= 1) {
+												mergeRootWidgetParameter = BooleanUtil.parseBoolean(st.nextToken().trim());
+											}
+											
+											// Retrieve pointed resource
+											InputStream inputStream = getXmlResourceInputStream(fileName);
+											if (inputStream != null) {
+												try {
+													if (usedAttribute != null) {
+														
+														// Attribute value, then the file content is returned as a String
+														byte[] rawData = new byte[inputStream.available()];
+														inputStream.read(rawData);
+														characters = new String(rawData);
+														
+													} else {
+														
+														// Parse property variable to define a new dataProvider ?
+														DataProvider includeDataProvider = dataProvider;
+														if (dataProviderProperty != null && dataProvider != null) {
+															if (dataProviderProperty.startsWith(KuixConstants.PARSE_PROPERTY_START_PATTERN)) {
+																String property = dataProviderProperty.substring(KuixConstants.PARSE_PROPERTY_START_PATTERN.length(), dataProviderProperty.length() - KuixConstants.PROPERTY_END_PATTERN.length());
+																Object value = dataProvider.getValue(property);
+																if (value instanceof DataProvider) {
+																	includeDataProvider = (DataProvider) value;
+																} else {
+																	throw new IllegalArgumentException("#inc accept only DataProvider property value");
+																}
+															} else {
+																throw new IllegalArgumentException("#inc accept only parse property");
+															}
+														}
+														
+														// Default include: file content is parsed and added to current widget
+														parseXml(currentWidget, inputStream, includeDataProvider, mergeRootWidgetParameter);
+														return;
+														
+													}
+												} catch (IOException e) {
+													throw new IllegalArgumentException("Invalid include file : " + fileName);
+												}
+											} else {
+												throw new IllegalArgumentException("Include file not found : " + fileName);
+											}
+											
 										}
 									}
 								}
@@ -867,14 +875,14 @@ public final class Kuix {
 							// If no attribute is defined
 							boolean defaultTextWidget = false;
 							if (usedAttribute == null) {
-								if (widget instanceof TextWidget) {
+								if (currentWidget instanceof TextWidget) {
 									usedAttribute = KuixConstants.TEXT_ATTRIBUTE;
-								} else if (widget instanceof Picture) {
+								} else if (currentWidget instanceof Picture) {
 									usedAttribute = KuixConstants.SRC_ATTRIBUTE;
 								} else {
 									usedAttribute = KuixConstants.TEXT_ATTRIBUTE;
 									usedWidget = new Text();
-									widget.add(usedWidget);
+									currentWidget.add(usedWidget);
 									defaultTextWidget = true;
 								}
 							}
@@ -942,19 +950,30 @@ public final class Kuix {
 					public void endElement(String name) {
 						if (name.startsWith("_")) {
 							// Use name as current widget's attribute tag
-							attribute = null;
+							currentAttribute = null;
 						} else {
 							
 							// Check widget binds
-							if (widget != null && dataProvider != null && widget.hasBindInstruction()) {
-								dataProvider.bind(widget);
+							if (currentWidget != null && dataProvider != null && currentWidget.hasBindInstruction()) {
+								dataProvider.bind(currentWidget);
 							}
 							
-							// Use name as widget tag
-							if (path.size() > 1) {
-								path.pop();
-								widget = (Widget) path.lastElement();
+							// Go backward in the path
+							path.pop();
+							
+							// Add current widget to its parent. (The widget is added after all attribute definitions to be sure to be complete.)
+							Widget parentWidget = path.isEmpty() ? (mergeRootWidget ? null : rootWidget) : (Widget) path.lastElement();
+							boolean internal = !internalWidgets.isEmpty() && internalWidgets.lastElement() == currentWidget;
+							if (internal) {
+								internalWidgets.pop();
 							}
+							if (parentWidget != null && currentWidget != null && !internal) {
+								parentWidget.add(currentWidget);
+							}
+							
+							// Set current widget to its "parent"
+							currentWidget = parentWidget;
+							
 						}
 					}
 
@@ -963,7 +982,9 @@ public final class Kuix {
 					 */
 					public void endDocument() {
 						path.removeAllElements();
-						widget = null;
+						internalWidgets.removeAllElements();
+						currentWidget = null;
+						currentAttribute = null;
 					}
 					
 					/**
@@ -1431,9 +1452,9 @@ public final class Kuix {
 	}
 	
 	/**
-	 * Explicit initialization of the internationalization support. This method is
-	 * usually called when a particular locale used in the application. E.g. the
-	 * application contains only french messages (no default messages, only
+	 * Explicit initialization of the internationalization support. This method
+	 * is usually called when a particular locale used in the application. E.g.
+	 * the application contains only french messages (no default messages, only
 	 * <CODE>messages_fr.properties</CODE> files is available), you should
 	 * initialize the i18n support (by calling
 	 * <CODE>initI18nSupport("fr");</CODE>) before using
@@ -1442,25 +1463,49 @@ public final class Kuix {
 	 * @param messageBundle full custom messages bundle path
 	 * @param locale locale which will be used to determine which message file
 	 *            from bundle will be used
-	 * @return true if the intialization was succesfull, false if there was any
-	 *         problem.
+	 * @return <code>true</code> if the intialization was succesfull,
+	 *         <code>false</code> if there was any problem.
 	 */
 	public static boolean initI18nSupport(String messageBundle, String locale) {
+		
+		// Init the message table
+		messageTable = new Hashtable();
+
+		// Save the locale
+		Kuix.locale = locale;
+		
+		// Load Kuix default message bundle
+		loadI18nBundle(KuixConstants.KUIX_DEFAULT_I18N_MESSAGES_BUNDLE);
+		
+		// Load user message bundle
+		loadI18nBundle(messageBundle);
+		
+		return messageTable != null;
+	}
+	
+	/**
+	 * Load a new bundle and append messages to the messages table.
+	 * 
+	 * @param messageBundle
+	 * @return <code>true</code> if the intialization was succesfull,
+	 *         <code>false</code> if there was any problem.
+	 */
+	public static boolean loadI18nBundle(String messageBundle) {
+		
+		// Init i18n sopport first
+		if (messageTable == null) {
+			initI18nSupport();
+		}
+		
+		// Relative path ?
+		if (messageBundle != null && !messageBundle.startsWith("/")) {
+			messageBundle = new StringBuffer(KuixConstants.DEFAULT_I18N_RES_FOLDER).append(messageBundle).toString();
+		}
+		
 		InputStream inputStream = null;
 		// Use frameHandler.getClass() because of a Object.class bug
 		Class clazz = frameHandler.getClass();
 		try {
-			
-			// First, load Kuix default bundle
-			inputStream = clazz.getResourceAsStream(KuixConstants.KUIX_DEFAULT_I18N_MESSAGES_BUNDLE);
-			if (inputStream != null) {
-				// load messages to messageTable hashtable
-				messageTable = new Hashtable();
-				loadMessages(inputStream);
-			} else {
-				return false;
-			}
-			inputStream = null;
 			
 			// Construct messageBundle
 			// try to find localized resource first (in format ${name}_locale.${suffix})
@@ -1492,9 +1537,6 @@ public final class Kuix {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		// Save the locale
-		Kuix.locale = locale;
 		
 		return messageTable != null;
 	}
