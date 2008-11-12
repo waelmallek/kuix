@@ -21,8 +21,8 @@
 
 package org.kalmeo.kuix.widget;
 
+import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.kuix.core.KuixConstants;
-import org.kalmeo.kuix.core.KuixConverter;
 import org.kalmeo.kuix.core.focus.FocusManager;
 import org.kalmeo.kuix.layout.BorderLayout;
 import org.kalmeo.kuix.layout.BorderLayoutData;
@@ -60,7 +60,7 @@ public class TabFolder extends List {
 	public TabFolder() {
 		super(KuixConstants.TAB_FOLDER_WIDGET_TAG);
 		
-		buttonsContainer = new ScrollPane(KuixConstants.TAB_FOLDER_BUTTONS_CONTAINER_WIDGET_TAG) {
+		buttonsContainer = new ScrollPane(KuixConstants.TAB_FOLDER_BUTTONS_CONTAINER_WIDGET_TAG, false) {
 
 			/* (non-Javadoc)
 			 * @see org.kalmeo.kuix.widget.Widget#getDefaultStylePropertyValue(java.lang.String)
@@ -75,7 +75,6 @@ public class TabFolder extends List {
 		};
 		buttonsContainer.setHorizontal(true);
 		buttonsContainer.setShowScrollBar(false);
-		buttonsContainer.setUseMarkers(false);
 		super.add(buttonsContainer);
 		
 		container = new Widget(KuixConstants.TAB_FOLDER_CONTAINER_WIDGET_TAG) {
@@ -113,11 +112,11 @@ public class TabFolder extends List {
 	 */
 	public boolean setAttribute(String name, String value) {
 		if (KuixConstants.BACKWARD_TAB_KEY_ATTRIBUTE.equals(name)) {
-			setBackwardTabKey(KuixConverter.convertKuixKeyCode(value));
+			setBackwardTabKey(Kuix.getConverter().convertKuixKeyCode(value));
 			return true;
 		}
 		if (KuixConstants.FORWARD_TAB_KEY_ATTRIBUTE.equals(name)) {
-			setForwardTabKey(KuixConverter.convertKuixKeyCode(value));
+			setForwardTabKey(Kuix.getConverter().convertKuixKeyCode(value));
 			return true;
 		}
 		return super.setAttribute(name, value);
@@ -327,19 +326,19 @@ public class TabFolder extends List {
 	 * @param unselectIfNoOther
 	 */
 	protected void selectOtherTab(boolean forward, boolean unselectIfNoOther) {
-		Widget currentTab = currentTabItem != null ? currentTabItem.getButton() : (forward ? buttonsContainer.getContainer().getChild() : buttonsContainer.getContainer().getLastChild());
-		Widget tab = currentTab;
-		while (tab != null) {
-			tab = forward ? tab.next : tab.previous;
-			if (tab == null) {
-				tab = (forward ? buttonsContainer.getContainer().getChild() : buttonsContainer.getContainer().getLastChild());
+		Widget currentTabButton = currentTabItem != null ? currentTabItem.getButton() : (forward ? buttonsContainer.getContainer().getChild() : buttonsContainer.getContainer().getLastChild());
+		Widget tabButton = currentTabButton;
+		while (tabButton != null) {
+			tabButton = forward ? tabButton.next : tabButton.previous;
+			if (tabButton == null) {
+				tabButton = (forward ? buttonsContainer.getContainer().getChild() : buttonsContainer.getContainer().getLastChild());
 			}
-			if (tab != null) {
-				if (tab == currentTab) {
+			if (tabButton != null) {
+				if (tabButton == currentTabButton) {
 					break;
 				}
-				if (((CheckBox) tab).isEnabled()) {
-					tab.processActionEvent();
+				if (((CheckBox) tabButton).isEnabled()) {
+					tabButton.processActionEvent();
 					return;
 				}
 			}

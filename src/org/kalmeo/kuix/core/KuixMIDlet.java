@@ -89,6 +89,15 @@ public abstract class KuixMIDlet extends MIDlet implements KuixInitializer, Work
 	}
 	
 	/**
+	 * Returns the MIDlet version extracted from jad properties.
+	 * 
+	 * @return the MIDlet version.
+	 */
+	public String getAppVersion() {
+		return getAppProperty("MIDlet-Version");
+	}
+	
+	/**
 	 * @return the default instance
 	 */
 	public static KuixMIDlet getDefault() {

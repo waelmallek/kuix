@@ -40,6 +40,7 @@ public interface KuixConstants {
 	public static final String DEFAULT_I18N_MESSAGES_BUNDLE					= DEFAULT_I18N_RES_FOLDER + "messages.properties";
 	
 	public static final String INCLUDE_KEYWORD_PATTERN						= "#inc";
+	public static final String NULL_KEYWORD									= "null";
 	
 	public static final String PARSE_PROPERTY_START_PATTERN					= "${";
 	public static final String BIND_PROPERTY_START_PATTERN					= "@{";
@@ -141,7 +142,6 @@ public interface KuixConstants {
 	public static final String REPEATED_SHORTCUTS_ATTRIBUTE 				= "repeatedshortcuts";
 	public static final String RELEASED_SHORTCUTS_ATTRIBUTE 				= "releasedshortcuts";
 	public static final String HORIZONTAL_ATTRIBUTE 						= "horizontal";
-	public static final String USE_MARKERS_ATTRIBUTE 						= "usemarkers";
 	public static final String SHOW_SCROLL_BAR_ATTRIBUTE 					= "showscrollbar";
 	public static final String RENDERER_ATTRIBUTE 							= "renderer";
 	public static final String ITEMS_ATTRIBUTE 								= "items";

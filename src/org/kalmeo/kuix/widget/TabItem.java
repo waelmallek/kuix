@@ -157,6 +157,14 @@ public class TabItem extends Widget {
 			setSelected(BooleanUtil.parseBoolean(value));
 			return true;
 		}
+		if (KuixConstants.ON_SELECT_ATTRIBUTE.equals(name)) {
+			setOnSelect(value);
+			return true;
+		}
+		if (KuixConstants.ON_UNSELECT_ATTRIBUTE.equals(name)) {
+			setOnUnselect(value);
+			return true;
+		}
 		return super.setAttribute(name, value);
 	}
 	
@@ -272,7 +280,9 @@ public class TabItem extends Widget {
 	 * @param selected the selected to set
 	 */
 	public void setSelected(boolean selected) {
-		internalSetSelected(selected, true);
+		if (selected != isSelected()) {
+			internalSetSelected(selected, true);
+		}
 	}
 
 	/**
@@ -288,6 +298,22 @@ public class TabItem extends Widget {
 				tabFolder.selectOtherTab(true, true);
 			}
 		}
+	}
+	
+	/**
+	 * The onSelect to set
+	 */
+	public void setOnSelect(String onSelect) {
+		// Shortucut to define the onSelect attribrute on tabItemButton
+		getButton().setOnSelect(onSelect);
+	}
+
+	/**
+	 * The onUnselect to set
+	 */
+	public void setOnUnselect(String onUnselect) {
+		// Shortucut to define the onUnselect attribrute on tabItemButton
+		getButton().setOnUnselect(onUnselect);
 	}
 	
 	/* (non-Javadoc)
@@ -307,6 +333,19 @@ public class TabItem extends Widget {
 			button.remove();
 		}
 		tabFolder = null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#onChildAdded(org.kalmeo.kuix.widget.Widget)
+	 */
+	protected void onChildAdded(Widget widget) {
+		FocusManager focusManager = widget.getFocusManager();
+		if (focusManager != null) {
+			// Select the first selectable if there is no focused widget
+			if (focusManager.getFocusedWidget() == null) {
+				focusManager.requestFirstFocus();
+			}
+		}
 	}
 
 }

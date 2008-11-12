@@ -4,7 +4,7 @@
 		<tabitem style="layout:borderlayout">
 			<_label>%LIBRARY%</_label>
 			<!-- The library xml code -->
-			<scrollPane usemarkers="false">
+			<scrollPane>
 				<list>
 					<_renderer><![CDATA[
 						<listitem>

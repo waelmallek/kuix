@@ -155,6 +155,16 @@ public class FocusableWidget extends Widget {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#setVisible(boolean)
+	 */
+	public void setVisible(boolean visible) {
+		if (!visible) {
+			giveFocusToNearestWidget();
+		}
+		super.setVisible(visible);
+	}
+
 	/**
 	 * @return the onFocus
 	 */
@@ -204,7 +214,7 @@ public class FocusableWidget extends Widget {
 	}
 	
 	/**
-	 * Give the focus to the nearest {@link FocusableWidget}.
+	 * Give the focus to the nearest focusable widget.
 	 */
 	private void giveFocusToNearestWidget() {
 		if (isFocused()) {
@@ -236,7 +246,7 @@ public class FocusableWidget extends Widget {
 		if (isFocusable()) {
 			FocusManager focusManager = getFocusManager();
 			if (focusManager != null) {
-				ScrollPane scrollContainer = focusManager.findFirstScrollContainerParent(this);
+				ScrollPane scrollContainer = focusManager.findFirstScrollPaneParent(this);
 				if (scrollContainer != null) {
 					scrollContainer.bestScrollToChild(this, false);
 				}

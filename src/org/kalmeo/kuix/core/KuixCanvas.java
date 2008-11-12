@@ -124,7 +124,7 @@ public final class KuixCanvas extends GameCanvas {
 		if (initializer.getMIDlet() != null) {
 			String debugInfosKey = initializer.getMIDlet().getAppProperty(KuixConstants.KUIX_DEBUG_INFOS_KEY_APP_PROPERTY);
 			if (debugInfosKey != null) {
-				byte[] shortcuts = KuixConverter.convertShortcuts(debugInfosKey);
+				byte[] shortcuts = Kuix.getConverter().convertShortcuts(debugInfosKey);
 				if (shortcuts != null) {
 					setDebugInfosKuixKeyCode(NumberUtil.toInt(shortcuts, 0));
 				}

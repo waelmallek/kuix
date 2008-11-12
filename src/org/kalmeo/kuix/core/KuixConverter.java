@@ -668,7 +668,12 @@ public class KuixConverter {
 	}
 	
 	/**
-	 * Syntax : <code>url(src:x:y:width:height:transform)</code>.
+	 * Syntax :
+	 * <ul>
+	 * <li><code>url(src)</code>.</li>
+	 * <li><code>url(src,x,y,width,height)</code>.</li>
+	 * <li><code>url(src,x,y,width,height,transform)</code>.</li>
+	 * </ul>
 	 * 
 	 * @param rawData
 	 * @return The converted {@link Image}
@@ -680,42 +685,61 @@ public class KuixConverter {
 		String rawParams = null;
 		String imgSrc = null;
 		if ((rawParams = StringUtil.extractRawParams("url", rawData.trim())) != null) {
-			StringTokenizer st = new StringTokenizer(rawParams, ",");
-			int numTokens = st.countTokens();
-			if (numTokens >= 1) {
-				Image fullImage = null;
-				imgSrc = st.nextToken();
-				if (!imgSrc.startsWith("/")) {
-					// By default the relative path point to /img
-					imgSrc = new StringBuffer(KuixConstants.DEFAULT_IMG_RES_FOLDER).append(imgSrc).toString();
-				}
-				fullImage = ImageManager.instance.getImage(imgSrc);
-				if (fullImage != null) {
-					if (numTokens >= 5) {
-						
-						int x = Integer.parseInt(st.nextToken());
-						int y = Integer.parseInt(st.nextToken());
-						int width = Integer.parseInt(st.nextToken());
-						int height = Integer.parseInt(st.nextToken());
-						int transform = Sprite.TRANS_NONE;
-						
-						if (numTokens == 6) {
-							transform = convertTransform(st.nextToken());
-						}
-						
-						try {
-							return Image.createImage(fullImage, x, y, width, height, transform);
-						} catch (Exception e) {
-							System.err.println("Error loading custom : " + imgSrc);
-						}
-						
-					} else {
-						return fullImage;
-					}
-				}
+			Image image = convertImageDefinition(rawParams);
+			if (image != null) {
+				return image;
 			}
 		}
 		throw new IllegalArgumentException("Bad image value : " + (imgSrc != null ? imgSrc : ""));
+	}
+	
+	/**
+	 * Syntax :
+	 * <ul>
+	 * <li><code>src</code>.</li>
+	 * <li><code>src,x,y,width,height</code>.</li>
+	 * <li><code>src,x,y,width,height,transform</code>.</li>
+	 * </ul>
+	 * 
+	 * @param rawData
+	 * @return The converted {@link Image}
+	 */
+	public Image convertImageDefinition(String rawData) {
+		StringTokenizer st = new StringTokenizer(rawData, ",");
+		int numTokens = st.countTokens();
+		if (numTokens >= 1) {
+			Image fullImage = null;
+			String imgSrc = st.nextToken();
+			if (!imgSrc.startsWith("/")) {
+				// By default the relative path point to /img
+				imgSrc = new StringBuffer(KuixConstants.DEFAULT_IMG_RES_FOLDER).append(imgSrc).toString();
+			}
+			fullImage = ImageManager.instance.getImage(imgSrc);
+			if (fullImage != null) {
+				if (numTokens >= 5) {
+					
+					int x = Integer.parseInt(st.nextToken());
+					int y = Integer.parseInt(st.nextToken());
+					int width = Integer.parseInt(st.nextToken());
+					int height = Integer.parseInt(st.nextToken());
+					int transform = Sprite.TRANS_NONE;
+					
+					if (numTokens == 6) {
+						transform = convertTransform(st.nextToken());
+					}
+					
+					try {
+						return Image.createImage(fullImage, x, y, width, height, transform);
+					} catch (Exception e) {
+						System.err.println("Error loading custom : " + imgSrc);
+					}
+					
+				} else {
+					return fullImage;
+				}
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -942,7 +966,7 @@ public class KuixConverter {
 	 * @param rawData
 	 * @return The converted image transform
 	 */
-	public static int convertTransform(String rawData) {
+	public int convertTransform(String rawData) {
 		if (rawData != null) {
 			if (rawData.equals("mirror")) {
 				return Sprite.TRANS_MIRROR;
@@ -967,7 +991,7 @@ public class KuixConverter {
 	 * @param rawData
 	 * @return The converted style classes
 	 */
-	public static String[] convertStyleClasses(String rawData) {
+	public String[] convertStyleClasses(String rawData) {
 		if (isNone(rawData)) {
 			return null;
 		}
@@ -991,7 +1015,7 @@ public class KuixConverter {
 	 * @param rawData
 	 * @return the converted kuixKeyCode
 	 */
-	public static int convertKuixKeyCode(String rawData) {
+	public int convertKuixKeyCode(String rawData) {
 		String value = rawData.trim();
 		int kuixKeyCode = KuixConstants.NOT_DEFINED_KEY;
 		if ("0".equals(value)) {
@@ -1051,7 +1075,7 @@ public class KuixConverter {
 	 * @param rawData
 	 * @return The shortcut kuix key code converted byte array.
 	 */
-	public static byte[] convertShortcuts(String rawData) {
+	public byte[] convertShortcuts(String rawData) {
 		
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		DataOutputStream outputStream = new DataOutputStream(byteArrayOutputStream);
@@ -1105,7 +1129,7 @@ public class KuixConverter {
 	 * @param delim
 	 * @return The converted int[]
 	 */
-	public static int[] convertIntArray(String rawData, int wantedMinSize, String delim) {
+	public int[] convertIntArray(String rawData, int wantedMinSize, String delim) {
 		StringTokenizer values = new StringTokenizer(rawData, delim);
 		if (values.countTokens() >= wantedMinSize) {
 			int[] intValues = new int[values.countTokens()];
@@ -1151,7 +1175,7 @@ public class KuixConverter {
 	 * @param rawData
 	 * @return <code>true</code> if rawData equals "none"
 	 */
-	protected static boolean isNone(String rawData) {
+	protected boolean isNone(String rawData) {
 		return ("none".equals(rawData));
 	}
 	

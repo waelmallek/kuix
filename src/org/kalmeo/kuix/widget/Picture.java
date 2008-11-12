@@ -25,13 +25,12 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
 
+import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.kuix.core.KuixConstants;
-import org.kalmeo.kuix.core.KuixConverter;
 import org.kalmeo.kuix.layout.Layout;
 import org.kalmeo.kuix.util.Alignment;
 import org.kalmeo.kuix.util.Insets;
 import org.kalmeo.kuix.util.Metrics;
-import org.kalmeo.util.resource.ImageManager;
 import org.kalmeo.util.worker.Worker;
 import org.kalmeo.util.worker.WorkerTask;
 
@@ -98,7 +97,7 @@ public class Picture extends Widget {
 			return true;
 		}
 		if (KuixConstants.TRANSFORM_ATTRIBUTE.equals(name)) {
-			setTransform(KuixConverter.convertTransform(value));
+			setTransform(Kuix.getConverter().convertTransform(value));
 			return true;
 		}
 		if (KuixConstants.FRAME_WIDTH_ATTRIBUTE.equals(name)) {
@@ -110,7 +109,7 @@ public class Picture extends Widget {
 			return true;
 		}
 		if (KuixConstants.FRAME_SEQUENCE_ATTRIBUTE.equals(name)) {
-			setFrameSequence(KuixConverter.convertIntArray(value, 1, ","));
+			setFrameSequence(Kuix.getConverter().convertIntArray(value, 1, ","));
 			return true;
 		}
 		if (KuixConstants.FRAME_DURATION_ATTRIBUTE.equals(name)) {
@@ -168,10 +167,7 @@ public class Picture extends Widget {
 		if ((source == null) || (source.length() == 0)) {
 			return this;
 		}
-		if (!source.startsWith("/")) {
-			source = new StringBuffer(KuixConstants.DEFAULT_IMG_RES_FOLDER).append(source).toString();
-		}
-		setImage(ImageManager.instance.getImage(source));
+		setImage(Kuix.getConverter().convertImageDefinition(source));
 		return this;
 	}
 	
@@ -354,6 +350,11 @@ public class Picture extends Widget {
 			// Push the animation worker task if needed
 			if (sprite.getFrameSequenceLength() > 1) {
 				if (animationWorkerTask == null) {
+					
+					// Init animation on first frame
+					lastFrameTime = 0;
+					sprite.setFrame(0);
+					
 					animationWorkerTask = new WorkerTask() {
 	
 						/* (non-Javadoc)
@@ -372,12 +373,16 @@ public class Picture extends Widget {
 							}
 							
 							// Remove the WorkerTask if the widget is not in the widget tree
-							return !isInWidgetTree();
+							if (!isInWidgetTree()) {
+								animationWorkerTask = null;
+								return true;
+							}
+							return false;
 						}
 						
 					};
+					Worker.instance.pushTask(animationWorkerTask);
 				}
-				Worker.instance.pushTask(animationWorkerTask);
 			}
 			
 			sprite.paint(g);

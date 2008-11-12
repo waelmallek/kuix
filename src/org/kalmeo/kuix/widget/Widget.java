@@ -28,7 +28,6 @@ import javax.microedition.lcdui.Image;
 
 import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.kuix.core.KuixConstants;
-import org.kalmeo.kuix.core.KuixConverter;
 import org.kalmeo.kuix.core.focus.FocusManager;
 import org.kalmeo.kuix.core.model.DataProvider;
 import org.kalmeo.kuix.core.style.Style;
@@ -361,7 +360,7 @@ public class Widget {
 			return true;
 		}
 		if (KuixConstants.CLASS_ATTRIBUTE.equals(name)) {
-			setStyleClasses(KuixConverter.convertStyleClasses(value));
+			setStyleClasses(Kuix.getConverter().convertStyleClasses(value));
 			return true;
 		}
 		if (KuixConstants.STYLE_ATTRIBUTE.equals(name)) {
@@ -786,7 +785,7 @@ public class Widget {
 	 *            KuixConstants.KEY_RELEASED_EVENT_TYPE</code>
 	 */
 	public void setShortcuts(String rawShortcuts, byte eventType) {
-		byte[] shortcuts = KuixConverter.convertShortcuts(rawShortcuts);
+		byte[] shortcuts = Kuix.getConverter().convertShortcuts(rawShortcuts);
 		internalSetShortcuts(shortcuts, eventType);
 	}
 	

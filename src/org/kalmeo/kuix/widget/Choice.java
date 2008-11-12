@@ -138,7 +138,6 @@ public class Choice extends ActionWidget {
 		
 		// Create the inner scroll container
 		ScrollPane scrollContainer = new ScrollPane();
-		scrollContainer.setUseMarkers(false);
 		screen.add(scrollContainer);
 
 		// Create the inner radio group
