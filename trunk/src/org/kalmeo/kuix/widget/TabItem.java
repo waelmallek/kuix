@@ -21,6 +21,7 @@
 
 package org.kalmeo.kuix.widget;
 
+import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.kuix.core.KuixConstants;
 import org.kalmeo.kuix.core.focus.FocusManager;
 import org.kalmeo.kuix.layout.GridLayout;
@@ -124,6 +125,10 @@ public class TabItem extends Widget {
 	// FocusManager
 	private final FocusManager focusManager;
 	
+	// Selection actions
+	private String onSelect;
+	private String onUnselect;
+
 	/**
 	 * Construct a {@link TabItem}
 	 */
@@ -290,12 +295,19 @@ public class TabItem extends Widget {
 	 * @param propagateToTabFolder
 	 */
 	protected void internalSetSelected(boolean selected, boolean propagateToTabFolder) {
-		button.setSelected(selected);
 		if (propagateToTabFolder && tabFolder != null) {
 			if (selected) {
 				tabFolder.setCurrentTabItem(this);
 			} else {
 				tabFolder.selectOtherTab(true, true);
+			}
+		}
+		if (selected != isSelected()) {
+			button.setSelected(selected);
+			if (selected && onSelect != null) {
+				Kuix.callActionMethod(Kuix.parseMethod(onSelect, this));
+			} else if (!selected && onUnselect != null) {
+				Kuix.callActionMethod(Kuix.parseMethod(onUnselect, this));
 			}
 		}
 	}
@@ -304,16 +316,14 @@ public class TabItem extends Widget {
 	 * The onSelect to set
 	 */
 	public void setOnSelect(String onSelect) {
-		// Shortucut to define the onSelect attribrute on tabItemButton
-		getButton().setOnSelect(onSelect);
+		this.onSelect = onSelect;
 	}
 
 	/**
 	 * The onUnselect to set
 	 */
 	public void setOnUnselect(String onUnselect) {
-		// Shortucut to define the onUnselect attribrute on tabItemButton
-		getButton().setOnUnselect(onUnselect);
+		this.onUnselect = onUnselect;
 	}
 	
 	/* (non-Javadoc)

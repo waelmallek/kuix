@@ -82,7 +82,10 @@ public class RadioGroup extends List {
 		if (KuixConstants.VALUE_ATTRIBUTE.equals(name)) {
 			return getValue();
 		}
-		return null;
+		if (KuixConstants.SELECTED_RADIOBUTTON_ATTRIBUTE.equals(name)) {
+			return getSelectedRadioButton();
+		}
+		return super.getAttribute(name);
 	}
 
 	/**

@@ -43,7 +43,7 @@ public class CheckBox extends ActionWidget {
 	// The selection state
 	private boolean selected = false;
 	
-	// Section methods
+	// Selection actions
 	private String onSelect;
 	private String onUnselect;
 

@@ -34,7 +34,6 @@ import java.util.Vector;
 
 import javax.microedition.lcdui.Display;
 
-import org.kalmeo.kuix.core.focus.FocusManager;
 import org.kalmeo.kuix.core.model.DataProvider;
 import org.kalmeo.kuix.core.style.Style;
 import org.kalmeo.kuix.core.style.StyleProperty;
@@ -717,10 +716,16 @@ public final class Kuix {
 							
 							// Create widget
 							Widget newWidget = null;
-							if (path.isEmpty() && mergeRootWidget && rootWidget != null && tag.equals(rootWidget.getTag())) {
-								newWidget = rootWidget;
-								rootWidget.clearCachedStyle(true);
-							} else {
+							if (path.isEmpty() && mergeRootWidget && rootWidget != null) {
+								if (tag.equals(rootWidget.getTag())) {
+									newWidget = rootWidget;
+									rootWidget.clearCachedStyle(true);
+								} else {
+									// Case when mergeRootWidget is true and the real rootWidget != xml root widget
+									path.push(rootWidget);
+								}
+							} 
+							if (newWidget == null) {
 								if (currentWidget != null) {
 									// Try to retrieve an internal instance
 									newWidget = currentWidget.getInternalChildInstance(tag);
@@ -1206,39 +1211,59 @@ public final class Kuix {
 			int i = 0;
 			while (st.hasMoreTokens()) {
 
+				// Extract RAW argument
 				String argumentRawValue = st.nextToken();
 
-				// Convert argument
-				Object argumentValue = argumentRawValue;
-				
-				String widgetId = null;
-				int dotPos = argumentRawValue.indexOf(".");
-				if (dotPos != -1) {
-					widgetId = argumentRawValue.substring(0, dotPos);
-				} else {
-					widgetId = argumentRawValue;
-				}
-				
+				// Try to convert a widget path argument (ex: #widget_one_id.#widget_two_id.attribute)
+				Object argumentValue = null;
+				boolean isString = true;
 				Widget widget = null;
-				if ("this".equals(widgetId)) {
-					widget = owner;
-				} else if ("focusedwidget".equals(widgetId)) {
-					FocusManager focusManager = owner.getFocusManager();
-					if (focusManager != null) {
-						widget = focusManager.getVirtualFocusedWidget();
+				String token = null;
+				StringTokenizer widgetPath = new StringTokenizer(argumentRawValue, ".");
+				while (widgetPath.hasMoreTokens()) {
+					argumentValue = null;
+					token = widgetPath.nextToken();
+					if (widget == null && "this".equals(token)) {
+						isString = false;
+						widget = owner;
+						continue;
+					} else if (token != null && token.startsWith("#")) {
+						isString = false;
+						Widget foundWidget = null;
+						if (widget == null) {
+							foundWidget = canvas != null ? canvas.getDesktop().getWidget(token.substring(1)) : null;
+						} else {
+							foundWidget = widget.getWidget(token.substring(1));
+						}
+						if (foundWidget != null) {
+							widget = foundWidget;
+							continue;
+						}
 					}
-				} else if (widgetId != null && widgetId.startsWith("#")) {
-					widget = canvas != null ? canvas.getDesktop().getWidget(widgetId.substring(1)) : null;
-				}
-
-				if (widget != null) {
-					if (dotPos != -1) {
-						argumentValue = widget.getAttribute(argumentRawValue.substring(dotPos + 1));
+					if (widget != null) {
+						Object attributeValue = widget.getAttribute(token.toLowerCase());
+						if (attributeValue instanceof Widget) {
+							widget = (Widget) attributeValue;
+						} else {
+							widget = null;
+							argumentValue = attributeValue;
+						}
 					} else {
+						break;
+					}
+				}
+				
+				if (argumentValue == null) {
+					if (isString) {
+						// The parameter is consider as a string
+						argumentValue = argumentRawValue;
+					} else if (widget != null) {
+						// The parameter is consider as a widget
 						argumentValue = widget;
 					}
+					// Else the parameter couldn't be converted : the value is null (undefined)
 				}
-
+				
 				// Store converted value
 				arguments[i++] = argumentValue;
 
