@@ -9,7 +9,9 @@
 
 - Remove all static method in KuixConverter. Use Kuix.getConverter() instead.
 - Remove the ScrollPane **useMarkers** attribute. This notion is now manged automaticaly
+- Replace *focusedwidget* keyword detection in Kuix.parseMethod() function by a default *focusedwidget* read only attribute on all widget. Example : onAction="doMyAction(#myRootWidgetId.focusedwidget)
 
+- Add *widget path* capabilities in Kuix.parseMethod(..) function. It's now possible to do : 
 - Add KuixCanvas.addUnpaintableWidget(Widget widget), KuixCanvas.removeUnpaintableWidget(Widget widget)and KuixCanvas.clearUnpaintableWidgets() methods to mask region of display from Kuix repaint process.
 
 - Add a new **transform** attribute to the Picture widget to be able to apply rot and mirror transform on the source image

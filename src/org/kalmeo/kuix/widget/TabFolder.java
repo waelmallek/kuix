@@ -121,6 +121,16 @@ public class TabFolder extends List {
 		}
 		return super.setAttribute(name, value);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#getAttribute(java.lang.String)
+	 */
+	public Object getAttribute(String name) {
+		if (KuixConstants.CURRENT_TABITEM_ATTRIBUTE.equals(name)) {
+			return getCurrentTabItem();
+		}
+		return super.getAttribute(name);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#getInternalChildInstance(java.lang.String)
@@ -286,7 +296,7 @@ public class TabFolder extends List {
 	public void addTabItem(final TabItem tabItem) {
 		if (tabItem != null && tabItem.parent != container) {
 			
-			// Add the tabButtn to the buttonsContainer
+			// Add the tabButton to the buttonsContainer
 			buttonsContainer.add(tabItem.getButton());
 			
 			// Add tabItem

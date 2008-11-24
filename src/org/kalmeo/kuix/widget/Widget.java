@@ -422,6 +422,12 @@ public class Widget {
 		if (KuixConstants.DATAPROVIDER_ATTRIBUTE.equals(name)) {
 			return getDataProvider();
 		}
+		if (KuixConstants.FOCUSED_WIDGET_ATTRIBUTE.equals(name)) {
+			FocusManager focusManager = getFocusManager();
+			if (focusManager != null) {
+				return focusManager.getFocusedWidget();
+			}
+		}
 		return null;
 	}
 

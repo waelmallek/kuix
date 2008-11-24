@@ -62,7 +62,7 @@ public class RadioButton extends CheckBox {
 		if (KuixConstants.VALUE_ATTRIBUTE.equals(name)) {
 			return getValue();
 		}
-		return null;
+		return super.getAttribute(name);
 	}
 
 	/* (non-Javadoc)
