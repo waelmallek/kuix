@@ -586,9 +586,9 @@ public class KuixConverter {
 		if (isNone(rawData)) {
 			return null;
 		}
-		int[] intValues = convertIntArray(rawData, 2, StringTokenizer.DEFAULT_DELIM);
-		if (intValues != null) {
-			return new Weight(intValues[0], intValues[1]);
+		int[] fpValues = convertFPArray(rawData, 2, StringTokenizer.DEFAULT_DELIM);
+		if (fpValues != null) {
+			return new Weight(fpValues[0], fpValues[1]);
 		}
 		throw new IllegalArgumentException("Bad weight value");
 	}
