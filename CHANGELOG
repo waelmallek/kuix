@@ -6,6 +6,7 @@
 - Bug fix : avoid a NullPointerException when define null border multi color
 - Bug fix : avoid lack of clean up in Menu widget when calling the removeAll() method
 - Bug fix : avoid TextField tooltip style inheritance problem 
+- Bug fix : '/' character are no more ignored while CSS parse
 
 - The Tablelayout was rewrited to use correctly the weight values
 	- weight style property not need fixed-point integer values (ie. 0.5 for 50%)

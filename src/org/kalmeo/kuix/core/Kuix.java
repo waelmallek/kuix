@@ -1100,7 +1100,7 @@ public final class Kuix {
 	
 				boolean selectorsCapture = true;
 				boolean commentCapture = false;
-	
+				
 				StringBuffer rawSelectors = new StringBuffer();
 				StringBuffer rawDefinitions = new StringBuffer();
 	
@@ -1120,11 +1120,17 @@ public final class Kuix {
 							throw new IllegalArgumentException("Invalid css comment block");
 						}
 	
-						if (c == '/') {	// Caution that all '/' character are ignored
+						if (c == '/') {
 							if ((c = reader.read()) == '*') {
 								commentCapture = true;
 								c = reader.read();
 								continue;
+							} else {
+								if (selectorsCapture) {
+									rawSelectors.append('/');
+								} else {
+									rawDefinitions.append('/');
+								}
 							}
 						}
 	
@@ -1450,12 +1456,7 @@ public final class Kuix {
 	 *         problem.
 	 */
 	public static boolean initI18nSupport() {
-		String deviceLocale = null;
-		try {
-			deviceLocale = System.getProperty("microedition.locale");
-		} catch (Exception e) {
-		}
-		return initI18nSupport(KuixConstants.DEFAULT_I18N_MESSAGES_BUNDLE, deviceLocale);
+		return initI18nSupport(KuixConstants.DEFAULT_I18N_MESSAGES_BUNDLE, getLocale());
 	}
 
 	/**
@@ -1583,6 +1584,12 @@ public final class Kuix {
 	 * @return the locale
 	 */
 	public static String getLocale() {
+		if (locale == null) {
+			try {
+				locale = System.getProperty("microedition.locale");
+			} catch (Exception e) {
+			}
+		}
 		return locale;
 	}
 
