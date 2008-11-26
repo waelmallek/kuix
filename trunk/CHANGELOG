@@ -7,6 +7,9 @@
 - Bug fix : avoid lack of clean up in Menu widget when calling the removeAll() method
 - Bug fix : avoid TextField tooltip style inheritance problem 
 
+- The Tablelayout was rewrited to use correctly the weight values
+	- weight style property not need fixed-point integer values (ie. 0.5 for 50%)
+
 - Remove all static method in KuixConverter. Use Kuix.getConverter() instead.
 - Remove the ScrollPane **useMarkers** attribute. This notion is now manged automaticaly
 - Replace *focusedwidget* keyword detection in Kuix.parseMethod() function by a default *focusedwidget* read only attribute on all widget. Example : onAction="doMyAction(#myRootWidgetId.focusedwidget)
