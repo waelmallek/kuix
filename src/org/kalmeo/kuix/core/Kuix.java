@@ -82,6 +82,12 @@ public final class Kuix {
 	
 	// Used in Screen an PopupBox widgets to determine if firstXX is on the left and then the secondXX on the right
 	public static boolean firstIsLeft = true;
+	
+	// Alert labels customization
+	private static Widget alertOkLabel;
+	private static Widget alertCancelLabel;
+	private static Widget alertYesLabel;
+	private static Widget alertNoLabel;
 
 	/**
 	 * Construct a {@link Kuix}
@@ -171,6 +177,33 @@ public final class Kuix {
 		converter = null;
 	}
 	
+	// Customization ////////////////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * Cutomize Kuix alert labels.
+	 * 
+	 * @param okLabel the widget used as ok label
+	 * @param cancelLabel the widget used as cancel label
+	 * @param yesLabel the widget used as yes label
+	 * @param noLabel the widget used as no label
+	 */
+	public static void customizeAlertLabels(Widget okLabel, Widget cancelLabel, Widget yesLabel, Widget noLabel) {
+		alertOkLabel = okLabel;
+		alertCancelLabel = cancelLabel;
+		alertYesLabel = yesLabel;
+		alertNoLabel = noLabel;
+	}
+	
+	/**
+	 * Cutomize Kuix screen menu labels.
+	 * 
+	 * @param selectLabel the widget used as select label
+	 * @param cancelLabel the widget used as cancel label
+	 */
+	public static void customizeScreenMenuLabels(Widget selectLabel, Widget cancelLabel) {
+		Screen.customizeScreenMenuLabels(selectLabel, cancelLabel);
+	}
+	
 	// PopupBox ////////////////////////////////////////////////////////////////////////////////////
 	
 	/**
@@ -213,14 +246,14 @@ public final class Kuix {
  	 * @param styleClass The {@link PopupBox} style class
 	 * @param duration the duration of the {@link PopupBox}
 	 * @param content the content could be a {@link Widget} or a {@link String}
-	 * @param firstLabel the label of the first button
+	 * @param firstLabel the label or widget of the first button
 	 * @param firstAction action of the first button
-	 * @param secondLabel the second of the first button
+	 * @param secondLabel the label or widget of the second button
 	 * @param secondAction action of the second button
 	 * @param buttonOnActions The ordred buttons onAction
 	 * @return The {@link PopupBox} instance
 	 */
-	public static PopupBox showPopupBox(String styleClass, int duration, Object content, String firstLabel, String firstAction, String secondLabel, String secondAction, String onCloseAction) {
+	public static PopupBox showPopupBox(String styleClass, int duration, Object content, Object firstLabel, String firstAction, Object secondLabel, String secondAction, String onCloseAction) {
 		if (Kuix.getCanvas() != null) {
 			
 			// Construct the PopupBox
@@ -232,13 +265,21 @@ public final class Kuix {
 			
 			if (firstLabel != null) {
 				MenuItem firstMenuItem = popupBox.getFirstMenuItem();
-				firstMenuItem.add(new Text().setText(firstLabel));
+				if (firstLabel instanceof Widget) {
+					firstMenuItem.add((Widget) firstLabel);
+				} else if (firstLabel instanceof String) {
+					firstMenuItem.add(new Text().setText((String) firstLabel));
+				}
 				firstMenuItem.setOnAction(firstAction);
 			}
 			
 			if (secondLabel != null) {
 				MenuItem secondMenuItem = popupBox.getSecondMenuItem();
-				secondMenuItem.add(new Text().setText(secondLabel));
+				if (secondLabel instanceof Widget) {
+					secondMenuItem.add((Widget) secondLabel);
+				} else if (secondLabel instanceof String) {
+					secondMenuItem.add(new Text().setText((String) secondLabel));
+				}
 				secondMenuItem.setOnAction(secondAction);
 			}
 			
@@ -312,27 +353,38 @@ public final class Kuix {
 		}
 		
 		// Extract first and second buttons labels
-		String firstLabel = null;
-		String secondLabel = null;
+		Object firstLabel = null;
+		Object secondLabel = null;
 		if ((options & KuixConstants.ALERT_NO_BUTTON) != KuixConstants.ALERT_NO_BUTTON) {
 			
 			// First menuItem : OK or Yes
-			if ((options & KuixConstants.ALERT_OK) == KuixConstants.ALERT_OK) {
-				firstLabel = Kuix.getMessage(KuixConstants.OK_I18N_KEY);
+			if ((options & KuixConstants.ALERT_OK) == KuixConstants.ALERT_OK || options == KuixConstants.ALERT_DEFAULT) {
+				if (alertOkLabel != null) {
+					firstLabel = alertOkLabel;
+				} else {
+					firstLabel = Kuix.getMessage(KuixConstants.OK_I18N_KEY);
+				}
 			} else if ((options & KuixConstants.ALERT_YES) == KuixConstants.ALERT_YES) {
-				firstLabel = Kuix.getMessage(KuixConstants.YES_I18N_KEY);
+				if (alertYesLabel != null) {
+					firstLabel = alertYesLabel;
+				} else {
+					firstLabel = Kuix.getMessage(KuixConstants.YES_I18N_KEY);
+				}
 			}
 			
 			// Second menuItem : Cancel or No
 			if ((options & KuixConstants.ALERT_CANCEL) == KuixConstants.ALERT_CANCEL) {
-				secondLabel = Kuix.getMessage(KuixConstants.CANCEL_I18N_KEY);
+				if (alertCancelLabel != null) {
+					secondLabel = alertCancelLabel;
+				} else {
+					secondLabel = Kuix.getMessage(KuixConstants.CANCEL_I18N_KEY);
+				}
 			} else if ((options & KuixConstants.ALERT_NO) == KuixConstants.ALERT_NO) {
-				secondLabel = Kuix.getMessage(KuixConstants.NO_I18N_KEY);
-			}
-			
-			// Create a default Ok label
-			if (firstLabel == null && secondLabel == null) {
-				firstLabel = Kuix.getMessage(KuixConstants.OK_I18N_KEY);
+				if (alertNoLabel != null) {
+					secondLabel = alertNoLabel;
+				} else {
+					secondLabel = Kuix.getMessage(KuixConstants.NO_I18N_KEY);
+				}
 			}
 			
 		}

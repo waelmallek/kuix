@@ -35,6 +35,8 @@
 &lt;/popupBox&gt;
 </code>
 	- new Kuix.showPopupBox(InputStream, Dataprovider) and Kuix.showPopupBox(String, Dataprovider)
+	- new Kuix.customizeAlertLabels(Widget, Widget, Widget, Widget) to customize alert labels with special widget (Ok, cancel, yes, no).
+	- new Kuix.customizeScreenMenuLabels(Widget, Widget) to customize screen menu labels with special widget (select and cancel).
 
 ##Version 1.0.1 (2008-10-01)
 

@@ -204,6 +204,10 @@ public class Screen extends Widget {
 		
 	}
 	
+	// Screen menu labels customization
+	private static Widget screenMenuSelectLabel;
+	private static Widget screenMenuCancelLabel;
+	
 	// FocusManager
 	private final FocusManager focusManager;
 
@@ -315,6 +319,17 @@ public class Screen extends Widget {
 
 		};
 		
+	}
+	
+	/**
+	 * Cutomize Kuix screen menu labels.
+	 * 
+	 * @param selectLabel the widget used as select label
+	 * @param cancelLabel the widget used as cancel label
+	 */
+	public static void customizeScreenMenuLabels(Widget selectLabel, Widget cancelLabel) {
+		screenMenuSelectLabel = selectLabel;
+		screenMenuCancelLabel = cancelLabel;
 	}
 	
 	/* (non-Javadoc)
@@ -570,7 +585,11 @@ public class Screen extends Widget {
 	protected ScreenMenu getFirstInternalMenu() {
 		if (firstInternalMenu == null) {
 			firstInternalMenu = new ScreenMenu(KuixConstants.SCREEN_FIRST_MENU_WIDGET_TAG, true, true);
-			firstInternalMenu.add(new Text().setText(Kuix.getMessage(KuixConstants.SELECT_I18N_KEY)));
+			if (screenMenuSelectLabel != null) {
+				firstInternalMenu.add(screenMenuSelectLabel);
+			} else {
+				firstInternalMenu.add(new Text().setText(Kuix.getMessage(KuixConstants.SELECT_I18N_KEY)));
+			}
 			getBottomBar().add(firstInternalMenu);
 		}
 		return firstInternalMenu;
@@ -584,7 +603,11 @@ public class Screen extends Widget {
 	protected ScreenMenu getSecondInternalMenu() {
 		if (secondInternalMenu == null) {
 			secondInternalMenu = new ScreenMenu(KuixConstants.SCREEN_SECOND_MENU_WIDGET_TAG, false, true);
-			secondInternalMenu.add(new Text().setText(Kuix.getMessage(KuixConstants.CANCEL_I18N_KEY)));
+			if (screenMenuCancelLabel != null) {
+				secondInternalMenu.add(screenMenuCancelLabel);
+			} else {
+				secondInternalMenu.add(new Text().setText(Kuix.getMessage(KuixConstants.CANCEL_I18N_KEY)));
+			}
 			getBottomBar().add(secondInternalMenu);
 		}
 		return secondInternalMenu;

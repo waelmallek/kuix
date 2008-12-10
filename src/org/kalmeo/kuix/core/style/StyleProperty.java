@@ -108,12 +108,12 @@ public class StyleProperty implements LinkedListItem {
 	 * @return the value
 	 */
 	public Object getValue() {
-		if (value == null && rawValue != null) {
+		if (rawValue != null) {
 			
 			// Convert the property value
 			value = Kuix.getConverter().convertStyleProperty(name, rawValue);
 			
-			// Reset the rawValue
+			// Reset the rawValue to tag it as converted
 			rawValue = null;
 			
 		}
