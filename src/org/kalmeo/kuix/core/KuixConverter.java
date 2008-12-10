@@ -63,6 +63,7 @@ import org.kalmeo.kuix.widget.ListItem;
 import org.kalmeo.kuix.widget.Menu;
 import org.kalmeo.kuix.widget.MenuItem;
 import org.kalmeo.kuix.widget.Picture;
+import org.kalmeo.kuix.widget.PopupBox;
 import org.kalmeo.kuix.widget.RadioButton;
 import org.kalmeo.kuix.widget.RadioGroup;
 import org.kalmeo.kuix.widget.ScrollBar;
@@ -163,6 +164,9 @@ public class KuixConverter {
 		if (KuixConstants.CHOICE_WIDGET_TAG.equals(tag)) {
 			return new Choice();
 		}
+		if (KuixConstants.POPUP_BOX_WIDGET_TAG.equals(tag)) {
+			return new PopupBox();
+		}
 		return null;
 	}
 
@@ -209,12 +213,9 @@ public class KuixConverter {
 					String name = property.nextToken().trim();
 					String rawValue = property.nextToken().trim();
 
-					// Convert the property value
-					Object value = convertStyleProperty(name, rawValue);
-					
 					// Add property to all styles (Because of linked list, new instance is needed for each style)
 					for (int i = 0; i < styles.length; ++i) {
-						styles[i].add(new StyleProperty(name, value));
+						styles[i].add(new StyleProperty(name, rawValue));
 					}
 
 				}

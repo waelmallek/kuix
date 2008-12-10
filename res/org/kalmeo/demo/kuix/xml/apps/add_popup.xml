@@ -1,4 +1,4 @@
-<container class="library" style="align:fill-center;layout:borderlayout">
+<popupBox class="library" style="align:fill-center;layout:borderlayout">
 	<radioGroup id="type" style="layout-data:bld(north);layout:inlinelayout(true,fill)" value="2">
 		<radiobutton value="1">DVD</radiobutton>
 		<radiobutton value="2">CD</radiobutton>
@@ -12,4 +12,6 @@
 			<radiobutton value="3">After selection</radiobutton>
 		</radioGroup>
 	</container>
-</container>
+	<popupBoxFirstMenuItem onAction="add(#type.value,#name.text,#side.value)">%ADD%</popupBoxFirstMenuItem>
+	<popupBoxSecondMenuItem>%CANCEL%</popupBoxSecondMenuItem>
+</popupBox>

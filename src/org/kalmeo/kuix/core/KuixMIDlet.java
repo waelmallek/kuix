@@ -31,8 +31,6 @@ import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
 import org.kalmeo.kuix.widget.Desktop;
-import org.kalmeo.kuix.widget.PopupBox;
-import org.kalmeo.kuix.widget.Widget;
 import org.kalmeo.util.worker.Worker;
 import org.kalmeo.util.worker.WorkerErrorListener;
 import org.kalmeo.util.worker.WorkerTask;
@@ -67,16 +65,6 @@ public abstract class KuixMIDlet extends MIDlet implements KuixInitializer, Work
 	 */
 	public MIDlet getMIDlet() {
 		return this;
-	}
-
-	/**
-	 * Returns the {@link KuixCanvas} object instance.
-	 * 
-	 * @return the canvas
-	 * @deprecated use <code>Kuix.getCanvas()</code>
-	 */
-	public KuixCanvas getCanvas() {
-		return Kuix.getCanvas();
 	}
 
 	/**
@@ -229,119 +217,6 @@ public abstract class KuixMIDlet extends MIDlet implements KuixInitializer, Work
 			throwable.printStackTrace();
 		}
 		
-	}
-	
-	// PopupBox ////////////////////////////////////////////////////////////////////////////////////
-	
-	/**
- 	 * Create and display a {@link PopupBox}.
- 	 * This method is a full feature of all {@link PopupBox} helpers like alert, splash.
- 	 * 
- 	 * @param styleClass The {@link PopupBox} style class
-	 * @param duration the duration of the {@link PopupBox}
-	 * @param content the content could be a {@link Widget} or a {@link String}
-	 * @param progress a fixed-point integer representing progress value
-	 * @param buttonTexts The ordered buttons text
-	 * @param buttonShortcutKeyCodes The ordred buttons shortcut kuixKeyCode
-	 * @param buttonOnActions The ordred buttons onAction
-	 * @return The {@link PopupBox} instance
-	 * @deprecated use <code>Kuix.showPopupBox(styleClass, duration, content, progress, buttonTexts, buttonShortcutKeyCodes, buttonOnActions, onCloseAction)</code>
-	 */
-	public static PopupBox showPopupBox(String styleClass, int duration, Object content, int progress, String[] buttonTexts, int[] buttonShortcutKeyCodes, String[] buttonOnActions, String onCloseAction) {
-		return Kuix.showPopupBox(styleClass, duration, content, progress, buttonTexts, buttonShortcutKeyCodes, buttonOnActions, onCloseAction);
-	}
-
-	// Splash ////////////////////////////////////////////////////////////////////////////////////
-	
-	/**
-	 * Display a splash {@link PopupBox}
-	 * 
-	 * @param duration the duration of the splash (in ms)
-	 * @param content the splash widget content
-	 * @return The {@link PopupBox} instance
-	 * @deprecated use <code>Kuix.splash(duration, content, onCloseAction)</code>
-	 */
-	public static PopupBox splash(int duration, Widget content, String onCloseAction) {
-		return Kuix.splash(duration, content, onCloseAction);
-	}
-	
-	// Alert ////////////////////////////////////////////////////////////////////////////////////
-	
-	/**
-	 * Create an open an alert box. An alert can only display text content. It
-	 * is usful to display simple text message, error, ask question, etc...<br>
-	 * The associated buttons are construct from the <code>options</code>
-	 * parameter.
-	 * <p>
-	 * Example:
-	 * </p>
-	 * 
-	 * <pre>
-	 * alert(&quot;Hello world&quot;, KuixConstants.ALERT_OK | KuixConstants.ALERT_INFO, &quot;doOk&quot;, null, null, null);
-	 * alert(&quot;Is it rainning ?&quot;, KuixConstants.ALERT_YES | KuixConstants.ALERT_NO | KuixConstants.ALERT_QUESTION, null, null, &quot;doYes&quot;, &quot;doNo&quot;);
-	 * </pre>
-	 * 
-	 * @param message the text message to display
-	 * @param options the options {@see KuixConstants}
-	 * @param okAction the ok onAction name
-	 * @param yesAction the yes onAction name
-	 * @param noAction the no onAction name
-	 * @param cancelAction the cancel onAction name
-	 * @return The {@link PopupBox} instance
-	 * @deprecated use <code>Kuix.alert(message, options, okAction, yesAction, noAction, cancelAction)</code>
-	 */
-	public static PopupBox alert(String message, int options, String okAction, String yesAction, String noAction, String cancelAction) {
-		return Kuix.alert(message, options, okAction, yesAction, noAction, cancelAction);
-	}
-	
-	/**
-	 * Open an alert box with options. This alert is a {@link PopupBox} with a
-	 * single text message an single OK button (mapped to FIRE key). If you try
-	 * to use other buttons with <code>options</code>, they will be ignored.
-	 * 
-	 * @param message the message to display
-	 * @param options {@see KuixConstants}
-	 * @return The {@link PopupBox} instance
-	 * @deprecated use <code>Kuix.alert(message, options)</code>
-	 */
-	public PopupBox alert(String message, int options) {
-		return Kuix.alert(message, options);
-	}
-	
-	/**
-	 * Open an alert box with the message text and default style class.
-	 * 
-	 * @param message the message to display
-	 * @return The {@link PopupBox} instance
-	 * @deprecated use <code>Kuix.alert(message)</code>
-	 */
-	public static PopupBox alert(String message) {
-		return Kuix.alert(message);
-	}
-	
-	/**
-	 * Open an alert box with the {@link Throwable} object message and 'alerterror'
-	 * style class.
-	 * 
-	 * @param message the message to display
-	 * @param throwable the {@link Throwable} to get message or class name
-	 * @return The {@link PopupBox} instance
-	 * @deprecated use <code>Kuix.alert(message, throwable)</code>
-	 */
-	public PopupBox alert(String message, Throwable throwable) {
-		return Kuix.alert(message, throwable);
-	}
-	
-	/**
-	 * Open an alert box with the {@link Throwable} object message and
-	 * 'alerterror' style class.
-	 * 
-	 * @param throwable the {@link Throwable} to get message or class name
-	 * @return The {@link PopupBox} instance
-	 * @deprecated use <code>Kuix.alert(throwable)</code>
-	 */
-	public PopupBox alert(Throwable throwable) {
-		return Kuix.alert(throwable);
 	}
 	
 	/* (non-Javadoc)

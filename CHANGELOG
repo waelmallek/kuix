@@ -11,6 +11,7 @@
 - The Tablelayout was rewrited to use correctly the weight values
 	- weight style property not need fixed-point integer values (ie. 0.5 for 50%)
 
+- Remove all deprecated methods/functions
 - Remove all static method in KuixConverter. Use Kuix.getConverter() instead.
 - Remove the ScrollPane **useMarkers** attribute. This notion is now manged automaticaly
 - Replace *focusedwidget* keyword detection in Kuix.parseMethod() function by a default *focusedwidget* read only attribute on all widget. Example : onAction="doMyAction(#myRootWidgetId.focusedwidget)
@@ -19,7 +20,21 @@
 - Add KuixCanvas.addUnpaintableWidget(Widget widget), KuixCanvas.removeUnpaintableWidget(Widget widget)and KuixCanvas.clearUnpaintableWidgets() methods to mask region of display from Kuix repaint process.
 
 - Add a new **transform** attribute to the Picture widget to be able to apply rot and mirror transform on the source image
+- Add a new **autoscroll** attribute to the ScrollPane widget. The autoScroll attribute force the scroll position to the max value each time the {@link ScrollPane} content change or is invalidated.
+- Add a new **editonallkeys** attribute to the TextField widget. The editOnAllKeys attribute define if the J2ME native edit dialog is opened when any valid key is hit when the widget has the focus.
 - Picture src attribute accept now clipped image like url(x,y,width,height,transform) in css file
+
+- StyleProperty now convert its value (Color, Margin, Layout, ...) only on first use to same some memory
+
+- The PopupBox widget has been completly rewrited. It works now more than a Screen widget with a BottomBar were buttons are placed.
+	- A popupBox can now be defined from an XML definition like 
+<code>
+&lt;popupBox&gt;
+	My content here
+	&lt;popupBoxFirstMenuItem&gt;Ok&lt;/popupBoxFirstMenuItem&gt;
+&lt;/popupBox&gt;
+</code>
+	- new Kuix.showPopupBox(InputStream, Dataprovider) and Kuix.showPopupBox(String, Dataprovider)
 
 ##Version 1.0.1 (2008-10-01)
 

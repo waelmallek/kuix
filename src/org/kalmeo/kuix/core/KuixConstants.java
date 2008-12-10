@@ -50,18 +50,18 @@ public interface KuixConstants {
 	public static final String DEFAULT_CHARSET_NAME							= "UTF-8";
 	public static final int SCROLL_BOOSTER_FACTOR							= 2;
 	
-	public static final short ALERT_DEFAULT									= 0;
-	public static final short ALERT_DEBUG									= 1 << 0;
-	public static final short ALERT_INFO									= 1 << 1;
-	public static final short ALERT_WARNING									= 1 << 2;
-	public static final short ALERT_ERROR									= 1 << 3;
-	public static final short ALERT_QUESTION								= 1 << 4;
+	public static final int ALERT_DEFAULT									= 0;
+	public static final int ALERT_DEBUG										= 1 << 0;
+	public static final int ALERT_INFO										= 1 << 1;
+	public static final int ALERT_WARNING									= 1 << 2;
+	public static final int ALERT_ERROR										= 1 << 3;
+	public static final int ALERT_QUESTION									= 1 << 4;
 	
-	public static final short ALERT_NO_BUTTON								= 1 << 5;
-	public static final short ALERT_OK										= 1 << 6;
-	public static final short ALERT_YES										= 1 << 7;
-	public static final short ALERT_NO										= 1 << 8;
-	public static final short ALERT_CANCEL									= 1 << 9;
+	public static final int ALERT_NO_BUTTON									= 1 << 5;
+	public static final int ALERT_OK										= 1 << 6;
+	public static final int ALERT_CANCEL									= 1 << 7;
+	public static final int ALERT_YES										= 1 << 8;
+	public static final int ALERT_NO										= 1 << 9;
 	
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Default i18n keys
@@ -125,6 +125,7 @@ public interface KuixConstants {
 	public static final String INCREMENT_ATTRIBUTE 							= "increment";
 	public static final String SELECTION_ATTRIBUTE 							= "selection";
 	public static final String TEXT_ATTRIBUTE 								= "text";
+	public static final String EDIT_ON_ALL_KEYS_ATTRIBUTE 					= "editonallkeys";
 	public static final String TOOLTIP_ATTRIBUTE 							= "tooltip";
 	public static final String STYLED_ATTRIBUTE 							= "styled";
 	public static final String CONSTRAINTS_ATTRIBUTE 						= "constraints";
@@ -142,12 +143,12 @@ public interface KuixConstants {
 	public static final String REPEATED_SHORTCUTS_ATTRIBUTE 				= "repeatedshortcuts";
 	public static final String RELEASED_SHORTCUTS_ATTRIBUTE 				= "releasedshortcuts";
 	public static final String HORIZONTAL_ATTRIBUTE 						= "horizontal";
+	public static final String AUTO_SCROLL_ATTRIBUTE 						= "autoscroll";
 	public static final String SHOW_SCROLL_BAR_ATTRIBUTE 					= "showscrollbar";
 	public static final String RENDERER_ATTRIBUTE 							= "renderer";
 	public static final String ITEMS_ATTRIBUTE 								= "items";
 	public static final String DATAPROVIDER_ATTRIBUTE 						= "dataprovider";
 	public static final String FOCUS_LOOP_ATTRIBUTE 						= "focusloop";
-	public static final String FIRST_IS_LEFT_ATTRIBUTE 						= "firstisleft";
 	public static final String CLEAN_UP_WHEN_REMOVED_ATTRIBUTE 				= "cleanupwhenremoved";
 	public static final String BARS_ON_TOP_ATTRIBUTE						= "barsontop";
 	public static final String BACKWARD_TAB_KEY_ATTRIBUTE					= "backwardtabkey";
@@ -278,6 +279,9 @@ public interface KuixConstants {
 	public static final String POPUP_BOX_WIDGET_TAG 						= "popupbox";
 	public static final String POPUP_BOX_CONTAINER_WIDGET_TAG 				= "popupboxcontainer";
 	public static final String POPUP_BOX_BUTTONS_CONTAINER_WIDGET_TAG 		= "popupboxbuttonscontainer";
+	public static final String POPUP_BOX_BOTTOM_BAR_WIDGET_TAG 				= "popupboxbottombar";
+	public static final String POPUP_BOX_FIRST_MENU_ITEM_WIDGET_TAG 		= "popupboxfirstmenuitem";
+	public static final String POPUP_BOX_SECOND_MENU_ITEM_WIDGET_TAG 		= "popupboxsecondmenuitem";
 
 	public static final String CHOICE_WIDGET_TAG 							= "choice";
 	public static final String CHOICE_CONTAINER_WIDGET_TAG 					= "choicecontainer";

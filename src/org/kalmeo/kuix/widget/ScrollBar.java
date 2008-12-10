@@ -146,16 +146,19 @@ public class ScrollBar extends Widget {
 	 * @param selection a fixed-point integer representing the selection
 	 */
 	public void setSelection(int selection) {
+		int lastSelection = this.selection;
 		this.selection = Math.min(MathFP.ONE, Math.max(0, selection));
-		if (horizontal) {
-			barLayoutData.width = this.selection;
-			barLayoutData.height = -1;
-		} else {
-			barLayoutData.width = -1;
-			barLayoutData.height = this.selection;
+		if (this.selection != lastSelection) {
+			if (horizontal) {
+				barLayoutData.width = this.selection;
+				barLayoutData.height = -1;
+			} else {
+				barLayoutData.width = -1;
+				barLayoutData.height = this.selection;
+			}
+			barHidden = this.selection == MathFP.ONE || this.selection == 0;
+			bar.invalidate();
 		}
-		barHidden = this.selection == MathFP.ONE || this.selection == 0;
-		bar.invalidate();
 	}
 
 	/**

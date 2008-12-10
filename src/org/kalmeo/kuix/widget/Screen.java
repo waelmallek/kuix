@@ -67,7 +67,7 @@ public class Screen extends Widget {
 			super(tag);
 			this.isTop = isTop;
 		}
-
+		
 		/* (non-Javadoc)
 		 * @see org.kalmeo.kuix.widget.Widget#getLayout()
 		 */
@@ -122,7 +122,7 @@ public class Screen extends Widget {
 		 */
 		public LayoutData getLayoutData() {
 			if (layoutData == null) {
-				Alignment alignment = firstIsLeft && first || !firstIsLeft && !first ? Alignment.LEFT : Alignment.RIGHT;
+				Alignment alignment = Kuix.firstIsLeft && first || !Kuix.firstIsLeft && !first ? Alignment.LEFT : Alignment.RIGHT;
 				LayoutData superLayoutData = super.getLayoutData();
 				if (superLayoutData instanceof StaticLayoutData) {
 					StaticLayoutData staticLayoutData = (StaticLayoutData) superLayoutData;
@@ -217,9 +217,6 @@ public class Screen extends Widget {
 	
 	// Used to determine if this screen call its cleanUp method when removed from its parent
 	public boolean cleanUpWhenRemoved = false;
-	
-	// Used to determine if firstMenu is on the left and then the secondMenu onthe right
-	public boolean firstIsLeft = true;
 	
 	// Used to determine if topBar and bottomBar are displayed on top of the screen content
 	public boolean barsOnTop = false;
@@ -351,10 +348,6 @@ public class Screen extends Widget {
 			focusManager.setLoop(BooleanUtil.parseBoolean(value));
 			return true;
 		}
-		if (KuixConstants.FIRST_IS_LEFT_ATTRIBUTE.equals(name)) {
-			setFirstIsLeft(BooleanUtil.parseBoolean(value));
-			return true;
-		}
 		if (KuixConstants.CLEAN_UP_WHEN_REMOVED_ATTRIBUTE.equals(name)) {
 			setCleanUpWhenRemoved(BooleanUtil.parseBoolean(value));
 			return true;
@@ -405,21 +398,6 @@ public class Screen extends Widget {
 	 */
 	public void setCleanUpWhenRemoved(boolean cleanUpWhenRemoved) {
 		this.cleanUpWhenRemoved = cleanUpWhenRemoved;
-	}
-
-	/**
-	 * @return the firstIsLeft
-	 */
-	public boolean isFirstIsLeft() {
-		return firstIsLeft;
-	}
-
-	/**
-	 * @param firstIsLeft the firstIsLeft to set
-	 */
-	public void setFirstIsLeft(boolean firstIsLeft) {
-		this.firstIsLeft = firstIsLeft;
-		invalidate();
 	}
 
 	/**
@@ -545,7 +523,7 @@ public class Screen extends Widget {
 	 *         <code>kuixKeyCode</code>
 	 */
 	public Menu getScreenMenu(int kuixKeyCode) {
-		if (firstIsLeft && kuixKeyCode == KuixConstants.KUIX_KEY_SOFT_LEFT || !firstIsLeft && kuixKeyCode == KuixConstants.KUIX_KEY_SOFT_RIGHT) {
+		if (Kuix.firstIsLeft && kuixKeyCode == KuixConstants.KUIX_KEY_SOFT_LEFT || !Kuix.firstIsLeft && kuixKeyCode == KuixConstants.KUIX_KEY_SOFT_RIGHT) {
 			if (firstMenu != null && firstMenu.isVisible()) {
 				return firstMenu;
 			}
@@ -654,6 +632,20 @@ public class Screen extends Widget {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#doLayout()
+	 */
+	protected void doLayout() {
+		super.doLayout();
+		
+		// Check if current focused widget is visible
+		Widget focusedWidget = focusManager.getFocusedWidget();
+		if (focusedWidget == null || focusedWidget != null && !focusedWidget.isVisible()) {
+			focusManager.requestFirstFocus();
+		}
+		
+	}
+
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#add(org.kalmeo.kuix.widget.Widget)
 	 */

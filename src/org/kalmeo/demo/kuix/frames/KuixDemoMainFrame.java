@@ -24,12 +24,12 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
-import javax.microedition.lcdui.Gauge;
 import javax.microedition.lcdui.TextField;
 
 import org.kalmeo.demo.kuix.KuixDemo;
 import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.kuix.core.KuixConstants;
+import org.kalmeo.kuix.widget.Gauge;
 import org.kalmeo.kuix.widget.PopupBox;
 import org.kalmeo.kuix.widget.Screen;
 import org.kalmeo.kuix.widget.Widget;
@@ -74,7 +74,8 @@ public class KuixDemoMainFrame implements Frame {
 			return false;
 		}
 		if ("progress".equals(identifier)) {
-			final PopupBox progressBox = Kuix.showPopupBox(null, -1, "Progress Demo", 0, new String[] { Kuix.getMessage(KuixConstants.OK_I18N_KEY)}, null, null, null);
+			final Gauge gauge = new Gauge();
+			final PopupBox progressBox = Kuix.showPopupBox(null, -1, gauge, Kuix.getMessage(KuixConstants.OK_I18N_KEY), null, null, null, null);
 			Worker.instance.pushTask(new WorkerTask() {
 				
 				private final int PROGRESS_INCREMENT = 1;
@@ -82,7 +83,7 @@ public class KuixDemoMainFrame implements Frame {
 				private int progress = 0;
 
 				public boolean run() {
-					progressBox.setProgress(MathFP.div(progress, MAX_PROGRESS));
+					gauge.setValue(MathFP.div(progress, MAX_PROGRESS));
 					progress += PROGRESS_INCREMENT;
 					if (progress > MAX_PROGRESS) {
 						progressBox.remove();
@@ -94,7 +95,8 @@ public class KuixDemoMainFrame implements Frame {
 			});
 		}
 		if ("threadProgress".equals(identifier)) {
-			final PopupBox progressBox = Kuix.showPopupBox(null, -1, "Thread progress Demo", 0, new String[] { Kuix.getMessage(KuixConstants.OK_I18N_KEY)}, null, null, null);
+			final Gauge gauge = new Gauge();
+			final PopupBox progressBox = Kuix.showPopupBox(null, -1, gauge, Kuix.getMessage(KuixConstants.OK_I18N_KEY), null, null, null, null);
 			new Thread() {
 
 				private final int PROGRESS_INCREMENT = 1;
@@ -106,7 +108,7 @@ public class KuixDemoMainFrame implements Frame {
 				 */
 				public void run() {
 					while (true) {
-						progressBox.setProgress(MathFP.div(progress, MAX_PROGRESS));
+						gauge.setValue(MathFP.div(progress, MAX_PROGRESS));
 						progress += PROGRESS_INCREMENT;
 						if (progress > MAX_PROGRESS) {
 							progressBox.remove();
@@ -129,7 +131,7 @@ public class KuixDemoMainFrame implements Frame {
 		if ("goMidpForm".equals(identifier)) {
 			Form form = new Form("MIDP Form");
 			form.append(new TextField("Label", "", 10, 0));
-			form.append(new Gauge("Gauge", true, 100, 50));
+			form.append(new javax.microedition.lcdui.Gauge("Gauge", true, 100, 50));
 			final Command backToKuixCommand = new Command("Back", Command.BACK, 0);
 			form.addCommand(backToKuixCommand);
 			form.setCommandListener(new CommandListener() {

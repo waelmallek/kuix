@@ -21,6 +21,7 @@
 
 package org.kalmeo.kuix.core.style;
 
+import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.util.LinkedListItem;
 
 /**
@@ -35,7 +36,8 @@ public class StyleProperty implements LinkedListItem {
 	private final String name;
 
 	// Style property value
-	private final Object value;
+	private String rawValue;
+	private Object value;
 
 	// The parent and next StyleProperty in the style linked list
 	private StyleProperty parent;
@@ -45,10 +47,21 @@ public class StyleProperty implements LinkedListItem {
 	 * Construct a {@link StyleAttribute}
 	 * 
 	 * @param name
+	 * @param rawValue
+	 */
+	public StyleProperty(String name, String rawValue) {
+		this.name = name.toLowerCase();
+		this.rawValue = rawValue;
+	}
+	
+	/**
+	 * Construct a {@link StyleAttribute}
+	 * 
+	 * @param name
 	 * @param value
 	 */
 	public StyleProperty(String name, Object value) {
-		this.name = name.toLowerCase();
+		this(name, null);
 		this.value = value;
 	}
 
@@ -95,6 +108,15 @@ public class StyleProperty implements LinkedListItem {
 	 * @return the value
 	 */
 	public Object getValue() {
+		if (value == null && rawValue != null) {
+			
+			// Convert the property value
+			value = Kuix.getConverter().convertStyleProperty(name, rawValue);
+			
+			// Reset the rawValue
+			rawValue = null;
+			
+		}
 		return value;
 	}
 
@@ -105,7 +127,9 @@ public class StyleProperty implements LinkedListItem {
 	 * @return A copy of this {@link StyleProperty}
 	 */
 	public StyleProperty copy() {
-		return new StyleProperty(name, value);
+		StyleProperty styleProperty = new StyleProperty(name, rawValue);
+		styleProperty.value = value;
+		return styleProperty;
 	}
 
 	/* (non-Javadoc)

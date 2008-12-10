@@ -216,7 +216,7 @@ public class FocusableWidget extends Widget {
 	/**
 	 * Give the focus to the nearest focusable widget.
 	 */
-	private void giveFocusToNearestWidget() {
+	public void giveFocusToNearestWidget() {
 		if (isFocused()) {
 			FocusManager focusManager = getFocusManager();
 			if (focusManager != null) {

@@ -27,7 +27,7 @@ screenbottombar {
 	color: white;
 }
 
-screenfirstmenu {
+screenfirstmenu,popupboxfirstmenuitem {
 	border: 10 14 10 10;
 	border-image: url(m.png) 10 14 10 10;
 	bg-color: #e95711;
@@ -36,13 +36,17 @@ screenfirstmenu {
 	align: left;
 }
 
-screensecondmenu {
+screensecondmenu,popupboxsecondmenuitem {
 	border: 10 10 10 14;
 	border-image: url(m.png,0,0,59,46,mirror) 10 10 10 14;
 	bg-color: #e95711;
 	min-size: 30 0;
 	padding: -6 -6 -8 -6;
 	align: right;
+}
+
+popupboxbottombar {
+	bg-image: url(bg.png);
 }
 
 button {

@@ -40,6 +40,7 @@ import org.kalmeo.kuix.core.style.StyleProperty;
 import org.kalmeo.kuix.core.style.StyleSelector;
 import org.kalmeo.kuix.util.Method;
 import org.kalmeo.kuix.widget.Menu;
+import org.kalmeo.kuix.widget.MenuItem;
 import org.kalmeo.kuix.widget.Picture;
 import org.kalmeo.kuix.widget.PopupBox;
 import org.kalmeo.kuix.widget.Screen;
@@ -76,6 +77,11 @@ public final class Kuix {
 	
 	// The KuixCanvas instance. Caution that this variable is null until initialize(KuixCanvas) invokation
 	private static KuixCanvas canvas;
+	
+	// Parameters
+	
+	// Used in Screen an PopupBox widgets to determine if firstXX is on the left and then the secondXX on the right
+	public static boolean firstIsLeft = true;
 
 	/**
 	 * Construct a {@link Kuix}
@@ -98,18 +104,6 @@ public final class Kuix {
 		return converter;
 	}
 
-	/**
-	 * @param converter the converter to set
-	 * @deprecated override the
-	 *             <code>KuixMIDlet.createNewConverterInstance()</code> method
-	 *             or invoke
-	 *             <code>Kuix.initialize(KuixCanvas, KuixConverter)</code>
-	 *             instead.
-	 */
-	public static void setConverter(KuixConverter converter) {
-		throw new IllegalArgumentException("Deprecated");
-	}
-	
 	/**
 	 * Returns the {@link KuixCanvas} unique instance.
 	 * 
@@ -171,13 +165,46 @@ public final class Kuix {
 	 * Clean all instances
 	 */
 	public static void cleanUp() {
-		canvas = null;
-		converter = null;
 		frameHandler.removeAllFrames();
 		removeAllStyles();
+		canvas = null;
+		converter = null;
 	}
 	
 	// PopupBox ////////////////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * Create and display a {@link PopupBox} from its XML definition.
+	 * 
+	 * @param xmlFilePath
+	 * @param dataProvider
+	 * @return The {@link PopupBox} instance
+	 */
+	public static PopupBox showPopupBox(String xmlFilePath, DataProvider dataProvider) {
+		return showPopupBox(getXmlResourceInputStream(xmlFilePath), dataProvider);
+	}
+
+	/**
+	 * Create and display a {@link PopupBox} from its XML definition.
+	 * 
+	 * @param inputStream
+	 * @param dataProvider
+	 * @return The {@link PopupBox} instance
+	 */
+	public static PopupBox showPopupBox(InputStream inputStream, DataProvider dataProvider) {
+		if (Kuix.getCanvas() != null) {
+		
+			// Create popupBox and load its xml definition
+			PopupBox popupBox = new PopupBox();
+			parseXml(popupBox, inputStream, dataProvider, true);
+			
+			// Add popupBox to desktop
+			Kuix.getCanvas().getDesktop().addPopup(popupBox);
+			
+			return popupBox;
+		}
+		return null;
+	}
 	
 	/**
  	 * Create and display a {@link PopupBox}.
@@ -186,13 +213,14 @@ public final class Kuix {
  	 * @param styleClass The {@link PopupBox} style class
 	 * @param duration the duration of the {@link PopupBox}
 	 * @param content the content could be a {@link Widget} or a {@link String}
-	 * @param progress a fixed-point integer representing progress value
-	 * @param buttonTexts The ordered buttons text
-	 * @param buttonShortcutKeyCodes The ordred buttons shortcut kuixKeyCode
+	 * @param firstLabel the label of the first button
+	 * @param firstAction action of the first button
+	 * @param secondLabel the second of the first button
+	 * @param secondAction action of the second button
 	 * @param buttonOnActions The ordred buttons onAction
 	 * @return The {@link PopupBox} instance
 	 */
-	public static PopupBox showPopupBox(String styleClass, int duration, Object content, int progress, String[] buttonTexts, int[] buttonShortcutKeyCodes, String[] buttonOnActions, String onCloseAction) {
+	public static PopupBox showPopupBox(String styleClass, int duration, Object content, String firstLabel, String firstAction, String secondLabel, String secondAction, String onCloseAction) {
 		if (Kuix.getCanvas() != null) {
 			
 			// Construct the PopupBox
@@ -200,9 +228,19 @@ public final class Kuix {
 			popupBox.setStyleClass(styleClass);
 			popupBox.setDuration(duration);
 			popupBox.setContent(content);
-			popupBox.setProgress(progress);
-			popupBox.setButtons(buttonTexts, buttonShortcutKeyCodes, buttonOnActions);
 			popupBox.setOnAction(onCloseAction);
+			
+			if (firstLabel != null) {
+				MenuItem firstMenuItem = popupBox.getFirstMenuItem();
+				firstMenuItem.add(new Text().setText(firstLabel));
+				firstMenuItem.setOnAction(firstAction);
+			}
+			
+			if (secondLabel != null) {
+				MenuItem secondMenuItem = popupBox.getSecondMenuItem();
+				secondMenuItem.add(new Text().setText(secondLabel));
+				secondMenuItem.setOnAction(secondAction);
+			}
 			
 			// Add popupBox to desktop
 			Kuix.getCanvas().getDesktop().addPopup(popupBox);
@@ -222,7 +260,7 @@ public final class Kuix {
 	 * @return The {@link PopupBox} instance
 	 */
 	public static PopupBox splash(int duration, Widget content, String onCloseAction) {
-		return showPopupBox(KuixConstants.SPLASH_STYLE_CLASS, duration, content, -1, null, null, null, onCloseAction);
+		return showPopupBox(KuixConstants.SPLASH_STYLE_CLASS, duration, content, null, null, null, null, onCloseAction);
 	}
 	
 	// Alert ////////////////////////////////////////////////////////////////////////////////////
@@ -241,6 +279,10 @@ public final class Kuix {
 	 * alert(&quot;Is it rainning ?&quot;, KuixConstants.ALERT_YES | KuixConstants.ALERT_NO | KuixConstants.ALERT_QUESTION, null, null, &quot;doYes&quot;, &quot;doNo&quot;);
 	 * </pre>
 	 * 
+	 * <b>Caution :</b><br>
+	 * - <code>KuixConstants.ALERT_OK</code> and <code>KuixConstants.ALERT_YES</code> are always placed on the first menuItem and then couldn't be displaye together.<br>
+	 * - <code>KuixConstants.ALERT_CANCEL</code> and <code>KuixConstants.ALERT_NO</code> are always placed on the second menuItem and then couldn't be displaye together.<br>
+	 * 
 	 * @param message the text message to display
 	 * @param options the options {@see KuixConstants}
 	 * @param okAction the ok onAction name
@@ -249,7 +291,7 @@ public final class Kuix {
 	 * @param cancelAction the cancel onAction name
 	 * @return The {@link PopupBox} instance
 	 */
-	public static PopupBox alert(String message, int options, String okAction, String yesAction, String noAction, String cancelAction) {
+	public static PopupBox alert(String message, int options, String firstAction, String secondAction) {
 		
 		// Determine alert style class
 		String styleClass = KuixConstants.ALERT_DEFAULT_STYLE_CLASS;
@@ -269,54 +311,34 @@ public final class Kuix {
 			styleClass = KuixConstants.ALERT_QUESTION_STYLE_CLASS;
 		}
 		
-		// Determine alert buttons
-		boolean[] buttons = new boolean[] 	{
-												(options & KuixConstants.ALERT_OK) == KuixConstants.ALERT_OK,
-												(options & KuixConstants.ALERT_YES) == KuixConstants.ALERT_YES,
-												(options & KuixConstants.ALERT_NO) == KuixConstants.ALERT_NO,
-												(options & KuixConstants.ALERT_CANCEL) == KuixConstants.ALERT_CANCEL
-											};
-		
-		// If no button : add default OK button
-		if (!buttons[0] && !buttons[1] && !buttons[2] && !buttons[3] && (options & KuixConstants.ALERT_NO_BUTTON) != KuixConstants.ALERT_NO_BUTTON) {
-			buttons[0] = true;
-		}
-		
-		int numButtons = 0;
-		int i = 0;
-		for (; i < 4; ++i) {
-			if (buttons[i]) {
-				numButtons++;
+		// Extract first and second buttons labels
+		String firstLabel = null;
+		String secondLabel = null;
+		if ((options & KuixConstants.ALERT_NO_BUTTON) != KuixConstants.ALERT_NO_BUTTON) {
+			
+			// First menuItem : OK or Yes
+			if ((options & KuixConstants.ALERT_OK) == KuixConstants.ALERT_OK) {
+				firstLabel = Kuix.getMessage(KuixConstants.OK_I18N_KEY);
+			} else if ((options & KuixConstants.ALERT_YES) == KuixConstants.ALERT_YES) {
+				firstLabel = Kuix.getMessage(KuixConstants.YES_I18N_KEY);
 			}
-		}
-		
-		String[] buttonTexts = new String[numButtons];
-		int[] buttonShortcutKeyCodes = new int[numButtons];
-		String[] buttonsOnActions = new String[numButtons];
-		i = 0;
-		if (buttons[0]) {
-			buttonTexts[i] = Kuix.getMessage(KuixConstants.OK_I18N_KEY);
-			buttonShortcutKeyCodes[i] = KuixConstants.KUIX_KEY_FIRE;
-			buttonsOnActions[i++] = okAction;
-		}
-		if (buttons[1]) {
-			buttonTexts[i] = Kuix.getMessage(KuixConstants.YES_I18N_KEY);
-			buttonShortcutKeyCodes[i] = KuixConstants.KUIX_KEY_SOFT_LEFT | KuixConstants.KUIX_KEY_FIRE;
-			buttonsOnActions[i++] = yesAction;
-		}
-		if (buttons[2]) {
-			buttonTexts[i] = Kuix.getMessage(KuixConstants.NO_I18N_KEY);
-			buttonShortcutKeyCodes[i] = KuixConstants.KUIX_KEY_SOFT_RIGHT | KuixConstants.KUIX_KEY_BACK;
-			buttonsOnActions[i++] = noAction;
-		}
-		if (buttons[3]) {
-			buttonTexts[i] = Kuix.getMessage(KuixConstants.CANCEL_I18N_KEY);
-			buttonShortcutKeyCodes[i] = KuixConstants.KUIX_KEY_SOFT_RIGHT | KuixConstants.KUIX_KEY_BACK;
-			buttonsOnActions[i] = cancelAction;
+			
+			// Second menuItem : Cancel or No
+			if ((options & KuixConstants.ALERT_CANCEL) == KuixConstants.ALERT_CANCEL) {
+				secondLabel = Kuix.getMessage(KuixConstants.CANCEL_I18N_KEY);
+			} else if ((options & KuixConstants.ALERT_NO) == KuixConstants.ALERT_NO) {
+				secondLabel = Kuix.getMessage(KuixConstants.NO_I18N_KEY);
+			}
+			
+			// Create a default Ok label
+			if (firstLabel == null && secondLabel == null) {
+				firstLabel = Kuix.getMessage(KuixConstants.OK_I18N_KEY);
+			}
+			
 		}
 		
 		// Prepare the alert box
-		PopupBox popupBox = showPopupBox(styleClass, -1, message, -1, buttonTexts, buttonShortcutKeyCodes, buttonsOnActions, null);
+		PopupBox popupBox = showPopupBox(styleClass, -1, message, firstLabel, firstAction, secondLabel, secondAction, null);
 		if (popupBox == null) {
 			System.out.println(message);
 		}
@@ -326,8 +348,8 @@ public final class Kuix {
 	
 	/**
 	 * Open an alert box with options. This alert is a {@link PopupBox} with a
-	 * single text message an single OK button (mapped to FIRE key). If you try
-	 * to use other buttons with <code>options</code>, they will be ignored.
+	 * single text message an single OK button. If you try to use other buttons
+	 * with <code>options</code>, they will be ignored.
 	 * 
 	 * @param message the message to display
 	 * @param options {@see KuixConstants}
@@ -336,8 +358,6 @@ public final class Kuix {
 	public static PopupBox alert(String message, int options) {
 		return alert(	message, 
 						options, 
-						null,
-						null,
 						null,
 						null);
 	}
@@ -367,7 +387,7 @@ public final class Kuix {
 			throwable.printStackTrace();
 		}
 		
-		return alert(composeAltertMessage(message, throwable), KuixConstants.ALERT_ERROR | KuixConstants.ALERT_OK);
+		return alert(composeAltertMessage(message, throwable), KuixConstants.ALERT_ERROR);
 	}
 	
 	/**

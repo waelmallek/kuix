@@ -26,7 +26,6 @@ import java.util.Stack;
 import javax.microedition.lcdui.Graphics;
 
 import org.kalmeo.kuix.core.Kuix;
-import org.kalmeo.kuix.core.KuixCanvas;
 import org.kalmeo.kuix.core.KuixConstants;
 import org.kalmeo.kuix.core.focus.FocusManager;
 import org.kalmeo.kuix.layout.GridLayout;
@@ -211,14 +210,6 @@ public class Desktop extends Widget {
 		popupContainer.setBounds(x, y, width, height);
 	}
 
-	/**
-	 * @return the canvas
-	 * @deprecated use <code>Kuix.getCanvas()</code>
-	 */
-	public KuixCanvas getCanvas() {
-		return Kuix.getCanvas();
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#isInWidgetTree()
 	 */
@@ -439,10 +430,10 @@ public class Desktop extends Widget {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.Widget#invalidate()
+	 * @see org.kalmeo.kuix.widget.Widget#invalidate(org.kalmeo.kuix.widget.Widget)
 	 */
-	public void invalidate() {
-		super.invalidate();
+	public void invalidate(Widget fromWidget) {
+		super.invalidate(fromWidget);
 		Kuix.getCanvas().revalidateNextFrame();
 	}
 
@@ -494,10 +485,6 @@ public class Desktop extends Widget {
 		FocusManager focusManager = widget.getFocusManager();
 		if (focusManager != null) {
 			screenFocusManager = focusManager;
-			// Select the first selectable if there is no focused widget
-			if (focusManager.getFocusedWidget() == null) {
-				focusManager.requestFirstFocus();
-			}
 		}
 	}
 
