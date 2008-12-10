@@ -1694,11 +1694,11 @@ public class Widget {
 	 * Layout the widget if its layout is defined.
 	 */
 	protected void doLayout() {
+		markAsValidate();	// Tag as validate first, because doLayout process could reinvalidate the widget
 		Layout layout = getLayout();
 		if (layout != null) {
 			layout.doLayout(this);
 		}
-		markAsValidate();
 	}
 	
 	/**

@@ -498,8 +498,11 @@ public final class KuixCanvas extends GameCanvas {
 	 * Force desktop to be revalidated
 	 */
 	private void forceRevalidate() {
+		needToRevalidate = false; // Tag as needToRevalidate = false first, because the revalidate process could cause invalidation
 		desktop.revalidate();
-		needToRevalidate = false;
+		if (needToRevalidate) {
+			forceRevalidate();
+		}
 	}
 	
 	/**
