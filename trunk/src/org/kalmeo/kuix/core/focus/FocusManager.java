@@ -190,7 +190,7 @@ public class FocusManager {
 		if (loopCount > 1) {
 			return;
 		}
-		Widget otherFocus = ((startWidget == null) ? rootWidget : startWidget).getOtherFocus(rootWidget, startWidget, null, forward, direction, true, true);
+		Widget otherFocus = ((startWidget == null) ? rootWidget : startWidget).getOtherFocus(rootWidget, startWidget, null, forward, direction, true, true, true);
 		if (otherFocus != null) {
 			ScrollPane scrollPane = findFirstScrollPaneParent(otherFocus);
 			if (scrollPane != null) {
@@ -198,19 +198,19 @@ public class FocusManager {
 					return;
 				}
 				if (scrollPane.isMarkerWidget(otherFocus)) {
-					// Special case if there is no focussedWidget. The focus need to be give to the marker first.
-					if (focusedWidget == null) {
-						requestFocus(otherFocus);
+					Widget nextOtherFocus = otherFocus.getOtherFocus(rootWidget, otherFocus, null, forward, direction, false, true, true);
+					if (nextOtherFocus == null) {
+						return;
 					}
-					// Markers couldn't request focus, try to request an other focus.
-					requestOtherFocus(otherFocus, forward, direction, ++loopCount);
-					return;
+					if (findFirstScrollPaneParent(nextOtherFocus) != scrollPane || scrollPane.isChildInsideClippedArea(nextOtherFocus) && !scrollPane.isMarkerWidget(nextOtherFocus)) {
+						otherFocus = nextOtherFocus;
+					}
 				}
 			}
 			requestFocus(otherFocus);
 		} else if (!loop && focusedWidget != null) {
 			ScrollPane scrollPane = findFirstScrollPaneParent(focusedWidget);
-			if (scrollPane != null && !scrollPane.isMarkerWidget(startWidget)) {
+			if (scrollPane != null) {
 				scrollPane.bestScrollToChild(focusedWidget, true);
 			}
 		} else if (loop) {

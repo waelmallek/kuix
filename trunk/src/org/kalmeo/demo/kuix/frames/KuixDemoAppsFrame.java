@@ -24,7 +24,6 @@ import org.kalmeo.demo.kuix.model.Calculator;
 import org.kalmeo.demo.kuix.model.Media;
 import org.kalmeo.demo.kuix.model.MediaList;
 import org.kalmeo.kuix.core.Kuix;
-import org.kalmeo.kuix.core.KuixConstants;
 import org.kalmeo.kuix.core.model.DataProvider;
 import org.kalmeo.kuix.widget.Desktop;
 import org.kalmeo.kuix.widget.ListItem;
@@ -138,13 +137,7 @@ public class KuixDemoAppsFrame implements Frame {
 		// library.xml methods
 		MediaList mediaList = (MediaList) providers[2];
 		if ("askAdd".equals(identifier)) {
-			String[] buttonOnActions = { "add(#type.value,#name.text,#side.value)", null };
-			String[] buttonTexts = { Kuix.getMessage("ADD"), Kuix.getMessage("CANCEL") };
-			int[] buttonShortcutKeyCodes = { KuixConstants.KUIX_KEY_SOFT_LEFT, KuixConstants.KUIX_KEY_SOFT_RIGHT };
-
-			Widget container = new Widget(KuixConstants.CONTAINER_WIDGET_TAG);
-			Kuix.loadXml(container, getClass().getResourceAsStream("/xml/apps/add_popup.xml"), null);
-			Kuix.showPopupBox("askbox", -1, container, -1, buttonTexts, buttonShortcutKeyCodes, buttonOnActions, null);
+			Kuix.showPopupBox("/xml/apps/add_popup.xml", null);
 			return false;
 		}
 		if ("add".equals(identifier)) {

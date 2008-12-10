@@ -61,6 +61,8 @@ public class ScrollPane extends Widget {
 	// Attributes
 	private boolean horizontal;
 	private boolean showScrollBar;
+	private boolean autoScroll = false;
+	private boolean needToAutoScroll = false;
 	
 	// offsets
 	private int xOffset = 0;
@@ -162,7 +164,10 @@ public class ScrollPane extends Widget {
 					contentWidth = container.getPreferredSize(getWidth()).width - insets.left - insets.right;
 					contentHeight = container.getInnerHeight();
 					maxIncrement = innerWidth / MAX_INCREMENT_DIVIDER;
-					if (xOffset > contentWidth - innerWidth) {
+					if (autoScroll && needToAutoScroll) {
+						setXOffset(contentWidth);
+						needToAutoScroll = false;
+					} else if (xOffset > contentWidth - innerWidth) {
 						setXOffset(contentWidth - innerWidth); // Adjust xOffset if contentWidth has changed
 					}
 				} else {
@@ -170,7 +175,10 @@ public class ScrollPane extends Widget {
 					contentWidth = container.getInnerWidth();
 					contentHeight = container.getPreferredSize(getWidth()).height - insets.top - insets.bottom;
 					maxIncrement = innerHeight / MAX_INCREMENT_DIVIDER;
-					if (yOffset > contentHeight - innerHeight) {
+					if (autoScroll && needToAutoScroll) {
+						setYOffset(contentHeight);
+						needToAutoScroll = false;
+					} else if (yOffset > contentHeight - innerHeight) {
 						setYOffset(contentHeight - innerHeight); // Adjust yOffset if contentHeight has changed
 					}
 				}
@@ -227,7 +235,7 @@ public class ScrollPane extends Widget {
 				}
 				return super.getDefaultStylePropertyValue(name);
 			}
-
+			
 			/* (non-Javadoc)
 			 * @see org.kalmeo.kuix.widget.ScrollBar#processChangeEvent()
 			 */
@@ -254,6 +262,10 @@ public class ScrollPane extends Widget {
 		}
 		if (KuixConstants.SHOW_SCROLL_BAR_ATTRIBUTE.equals(name)) {
 			setShowScrollBar(BooleanUtil.parseBoolean(value));
+			return true;
+		}
+		if (KuixConstants.AUTO_SCROLL_ATTRIBUTE.equals(name)) {
+			setAutoScroll(BooleanUtil.parseBoolean(value));
 			return true;
 		}
 		return super.setAttribute(name, value);
@@ -299,12 +311,37 @@ public class ScrollPane extends Widget {
 	}
 
 	/**
-	 * @return the autoHideScrollBar
+	 * @return the showScrollBar
 	 */
 	public boolean isShowScrollBar() {
 		return showScrollBar;
 	}
 	
+	/**
+	 * @param showScrollBar the showScrollBar to set
+	 */
+	public void setShowScrollBar(boolean showScrollBar) {
+		this.showScrollBar = showScrollBar;
+		updateScrollBarVisibility();
+	}
+	
+	/**
+	 * @return the autoScroll
+	 */
+	public boolean isAutoScroll() {
+		return autoScroll;
+	}
+
+	/**
+	 * The autoScroll attribute force the scroll position to the max value each
+	 * time the {@link ScrollPane} content change or is invalidated.
+	 * 
+	 * @param autoScroll the autoScroll to set
+	 */
+	public void setAutoScroll(boolean autoScroll) {
+		this.autoScroll = autoScroll;
+	}
+
 	/**
 	 * Check if <code>widget</code> is one of the ScrollPane markers.
 	 * 
@@ -314,14 +351,6 @@ public class ScrollPane extends Widget {
 	 */
 	public boolean isMarkerWidget(Widget widget) {
 		return widget != null && (widget == firstMarker || widget == lastMarker);
-	}
-
-	/**
-	 * @param showScrollBar the showScrollBar to set
-	 */
-	public void setShowScrollBar(boolean showScrollBar) {
-		this.showScrollBar = showScrollBar;
-		updateScrollBarVisibility();
 	}
 	
 	/**
@@ -368,14 +397,73 @@ public class ScrollPane extends Widget {
 		return lastYOffset != this.yOffset;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#invalidate(org.kalmeo.kuix.widget.Widget)
+	 */
+	public void invalidate(Widget fromWidget) {
+		super.invalidate(fromWidget);
+		if (fromWidget != this && fromWidget != scrollBar) {
+			needToAutoScroll = true;
+		}
+	}
+	
+	/**
+	 * Check if the given <code>child</code> widget has a part of its area in
+	 * the {@link ScrollPane} clipped area.
+	 * 
+	 * @param child
+	 * @return <code>true</code> if the <code>child</code> widget has a part of
+	 *         its area in the {@link ScrollPane} clipped area.
+	 */
+	public boolean isChildInsideClippedArea(Widget child) {
+		if (child == null) {
+			return false;
+		}
+		Widget container;
+		if (horizontal) {
+			int childX = child.getX() - this.container.getInsets().left;
+			for (container = child.parent; container != null && container != this.container; container = container.parent) {
+				childX += container.getX();
+			}
+			if (container == null) {
+				// This is not a child of this ScrollContainer
+				return false;
+			}
+			if (childX < xOffset) {
+				return childX + child.getWidth() > xOffset;
+			} else if (childX > xOffset + contentWidth) {
+				return false;
+			}
+			return true;
+		} else {
+			int childY = child.getY() - this.container.getInsets().top;
+			for (container = child.parent; container != null && container != this.container; container = container.parent) {
+				childY += container.getY();
+			}
+			if (container == null) {
+				// This is not a child of this ScrollContainer
+				return false;
+			}
+			if (childY < yOffset) {
+				return childY + child.getHeight() > yOffset;
+			} else if (childY > yOffset + contentHeight) {
+				return false;
+			}
+			return true;
+		}
+	}
+
 	/**
 	 * Arrange the scroll offset according to the child position
 	 * 
 	 * @param child
 	 * @param useIncrementLimit
-	 * @return <code>true</code> the child is visible after scroll, else <code>false</code>
+	 * @return <code>true</code> the child is displayable after scroll, else <code>false</code>
 	 */
 	public boolean bestScrollToChild(Widget child, boolean useIncrementLimit) {
+		if (child == null) {
+			return false;
+		}
 		boolean widgetIsVisible = true;
 		if (horizontal) {
 			useIncrementLimit &= innerWidth > 0;
@@ -386,7 +474,7 @@ public class ScrollPane extends Widget {
 			}
 			if (container == null) {
 				// This is not a child of this ScrollContainer
-				return true;
+				return false;
 			}
 			if (childX < xOffset) {
 				int increment = xOffset - childX;
@@ -396,7 +484,7 @@ public class ScrollPane extends Widget {
 				} else {
 					setXOffset(childX);
 				}
-			} else if (yOffset + innerWidth < childX + child.getWidth()) {
+			} else if (xOffset + innerWidth < childX + child.getWidth()) {
 				int increment = childX + child.getWidth() - (xOffset + innerWidth);
 				if (useIncrementLimit && increment > maxIncrement) {
 					setXOffset(xOffset + maxIncrement);
@@ -461,7 +549,6 @@ public class ScrollPane extends Widget {
 			if (contentWidth != 0) {
 				scrollBar.setValue(MathFP.div(xOffset, contentWidth - innerWidth));
 				scrollBar.setSelection(MathFP.div(innerWidth, contentWidth));
-				
 			}
 		} else {
 			if (contentHeight != 0) {

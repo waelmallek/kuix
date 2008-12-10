@@ -1665,9 +1665,21 @@ public class Widget {
 	 * invalidated widgets.
 	 */
 	public void invalidate() {
+		invalidate(this);
+	}
+	
+	/**
+	 * Invalidate the widget's size and position and propagate the information
+	 * to its parent. Calling this method will generate a call to the
+	 * <code>doLayout()</code> and </code>paint()</code> method on all
+	 * invalidated widgets.
+	 * 
+	 * @param fromWidget the Widget responsible of the invalidation.
+	 */
+	protected void invalidate(Widget fromWidget) {
 		invalidated = true;
 		if (parent != null && !parent.invalidated) {
-			parent.invalidate();
+			parent.invalidate(fromWidget);
 		}
 	}
 	
@@ -2338,9 +2350,9 @@ public class Widget {
 	 * 
 	 * @return The previous or next focusable {@link Widget}
 	 */
-	public Widget getOtherFocus(Widget root, Widget focusedWidget, Widget nearestFocusableWidget, boolean forward, Alignment direction, boolean checkChild, boolean checkParent) {
+	public Widget getOtherFocus(Widget root, Widget focusedWidget, Widget nearestFocusableWidget, boolean forward, Alignment direction, boolean checkItself, boolean checkChild, boolean checkParent) {
 		boolean isVisible = isVisible();
-		if (root != this && !isFocused() && isFocusable() && isVisible) {
+		if (checkItself && root != this && !isFocused() && isFocusable() && isVisible) {
 			if (focusedWidget == null || direction == null) {
 				return this;
 			}
@@ -2351,7 +2363,7 @@ public class Widget {
 			// Children scan
 			Widget childWidget = forward ? child : lastChild;
 			if (childWidget != null) {
-				nearestFocusableWidget = childWidget.getOtherFocus(root, focusedWidget, nearestFocusableWidget, forward, direction, true, false);
+				nearestFocusableWidget = childWidget.getOtherFocus(root, focusedWidget, nearestFocusableWidget, forward, direction, true, true, false);
 				if ((focusedWidget == null || direction == null) && nearestFocusableWidget != null) {
 					return nearestFocusableWidget;
 				}
@@ -2361,14 +2373,14 @@ public class Widget {
 			// Brother scan
 			Widget otherWidget = forward ? next : previous;
 			if (otherWidget != null) {
-				nearestFocusableWidget = otherWidget.getOtherFocus(root, focusedWidget, nearestFocusableWidget, forward, direction, true, false);
+				nearestFocusableWidget = otherWidget.getOtherFocus(root, focusedWidget, nearestFocusableWidget, forward, direction, true, true, false);
 				if ((focusedWidget == null || direction == null) && nearestFocusableWidget != null) {
 					return nearestFocusableWidget;
 				}
 			}
 			// Parent scan
 			if (checkParent && parent != null && isVisible) {
-				nearestFocusableWidget = parent.getOtherFocus(root, focusedWidget, nearestFocusableWidget, forward, direction, false, true);
+				nearestFocusableWidget = parent.getOtherFocus(root, focusedWidget, nearestFocusableWidget, forward, direction, true, false, true);
 				if ((focusedWidget == null || direction == null) && nearestFocusableWidget != null) {
 					return nearestFocusableWidget;
 				}

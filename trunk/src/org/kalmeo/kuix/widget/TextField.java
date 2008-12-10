@@ -33,6 +33,7 @@ import org.kalmeo.kuix.core.KuixConstants;
 import org.kalmeo.kuix.util.Alignment;
 import org.kalmeo.kuix.util.Color;
 import org.kalmeo.kuix.util.Metrics;
+import org.kalmeo.util.BooleanUtil;
 import org.kalmeo.util.StringTokenizer;
 import org.kalmeo.util.worker.Worker;
 import org.kalmeo.util.worker.WorkerTask;
@@ -48,10 +49,6 @@ import org.kalmeo.util.worker.WorkerTask;
  */
 public class TextField extends Text implements CommandListener {
 
-	// TextBox command
-	private static final Command validateCommand = new Command(Kuix.getMessage(KuixConstants.VALIDATE_I18N_KEY), Command.OK, 1);
-	private static final Command cancelCommand = new Command(Kuix.getMessage(KuixConstants.CANCEL_I18N_KEY), Command.BACK, 0);
-	
 	// Allowed constraints
 	public static final String ANY = "any";
 	public static final String EMAILADDR = "emailaddr";
@@ -67,6 +64,10 @@ public class TextField extends Text implements CommandListener {
 	public static final String INITIAL_CAPS_WORD = "initial_caps_word";
 	public static final String INITIAL_CAPS_SENTENCE = "initial_caps_sentence";
 	
+	// TextBox command
+	private final Command validateCommand;
+	private final Command cancelCommand;
+	
 	// The associated textBox
 	private TextBox textBox;
 	
@@ -78,6 +79,9 @@ public class TextField extends Text implements CommandListener {
 
 	// TextBox's constraints
 	private int constraints = javax.microedition.lcdui.TextField.ANY;
+	
+	// Define if the edit dialog is opened when a key is hit
+	private boolean editOnAllKeys = true;
 
 	// Tooltip
 	private long tooltipTimer;
@@ -96,6 +100,10 @@ public class TextField extends Text implements CommandListener {
 	 */
 	public TextField() {
 		super(KuixConstants.TEXT_FIELD_WIDGET_TAG);
+		
+		// Create command to be sure that labels have the correct value
+		validateCommand = new Command(Kuix.getMessage(KuixConstants.VALIDATE_I18N_KEY), Command.OK, 1);
+		cancelCommand = new Command(Kuix.getMessage(KuixConstants.CANCEL_I18N_KEY), Command.BACK, 0);
 	}
 
 	/* (non-Javadoc)
@@ -137,6 +145,10 @@ public class TextField extends Text implements CommandListener {
 					constraints |= javax.microedition.lcdui.TextField.INITIAL_CAPS_SENTENCE;
 				}
 			}
+			return true;
+		}
+		if (KuixConstants.EDIT_ON_ALL_KEYS_ATTRIBUTE.equals(name)) {
+			setEditOnAllKeys(BooleanUtil.parseBoolean(value));
 			return true;
 		}
 		if (KuixConstants.TOOLTIP_ATTRIBUTE.equals(name)) {
@@ -195,6 +207,20 @@ public class TextField extends Text implements CommandListener {
 		this.constraints = constraints;
 	}
 	
+	/**
+	 * @return the editOnAllKeys
+	 */
+	public boolean isEditOnAllKeys() {
+		return editOnAllKeys;
+	}
+
+	/**
+	 * @param editOnAllKeys the editOnAllKeys to set
+	 */
+	public void setEditOnAllKeys(boolean editOnAllKeys) {
+		this.editOnAllKeys = editOnAllKeys;
+	}
+
 	/**
 	 * @return th tooltip
 	 */
@@ -343,20 +369,21 @@ public class TextField extends Text implements CommandListener {
 	 * @see org.kalmeo.kuix.widget.Widget#processKeyEvent(byte, int)
 	 */
 	public boolean processKeyEvent(byte type, int kuixKeyCode) {
-		if (isEnabled() && type == KuixConstants.KEY_PRESSED_EVENT_TYPE && (
-				kuixKeyCode == KuixConstants.KUIX_KEY_FIRE ||
-				kuixKeyCode == KuixConstants.KUIX_KEY_1 ||
-				kuixKeyCode == KuixConstants.KUIX_KEY_2 ||
-				kuixKeyCode == KuixConstants.KUIX_KEY_3 ||
-				kuixKeyCode == KuixConstants.KUIX_KEY_4 ||
-				kuixKeyCode == KuixConstants.KUIX_KEY_5 ||
-				kuixKeyCode == KuixConstants.KUIX_KEY_6 ||
-				kuixKeyCode == KuixConstants.KUIX_KEY_7 ||
-				kuixKeyCode == KuixConstants.KUIX_KEY_8 ||
-				kuixKeyCode == KuixConstants.KUIX_KEY_9 ||
-				kuixKeyCode == KuixConstants.KUIX_KEY_STAR ||
-				kuixKeyCode == KuixConstants.KUIX_KEY_POUND ||
-				kuixKeyCode == KuixConstants.KUIX_KEY_PENCIL
+		if (isEnabled() && type == KuixConstants.KEY_PRESSED_EVENT_TYPE
+				 && (kuixKeyCode == KuixConstants.KUIX_KEY_FIRE
+						 || (editOnAllKeys
+								 && ( 	   kuixKeyCode == KuixConstants.KUIX_KEY_1
+										|| kuixKeyCode == KuixConstants.KUIX_KEY_2
+										|| kuixKeyCode == KuixConstants.KUIX_KEY_3
+										|| kuixKeyCode == KuixConstants.KUIX_KEY_4
+										|| kuixKeyCode == KuixConstants.KUIX_KEY_5
+										|| kuixKeyCode == KuixConstants.KUIX_KEY_6
+										|| kuixKeyCode == KuixConstants.KUIX_KEY_7
+										|| kuixKeyCode == KuixConstants.KUIX_KEY_8
+										|| kuixKeyCode == KuixConstants.KUIX_KEY_9
+										|| kuixKeyCode == KuixConstants.KUIX_KEY_STAR
+										|| kuixKeyCode == KuixConstants.KUIX_KEY_POUND
+										|| kuixKeyCode == KuixConstants.KUIX_KEY_PENCIL))
 				)) {
 			return processActionEvent();
 		}

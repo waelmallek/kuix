@@ -264,6 +264,7 @@ public class TabFolder extends List {
 		}
 		if (defaultTabItem != null) {
 			defaultTabItem.setVisible(currentTabItem == null);
+			buttonsContainer.setVisible(currentTabItem != null);
 		}
 	}
 	
@@ -274,6 +275,7 @@ public class TabFolder extends List {
 		if (defaultTabItem != null) {
 			container.add(defaultTabItem);
 			defaultTabItem.setVisible(currentTabItem == null);
+			buttonsContainer.setVisible(currentTabItem != null);
 		}
 	}
 	

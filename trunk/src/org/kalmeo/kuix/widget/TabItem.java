@@ -327,6 +327,20 @@ public class TabItem extends Widget {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#doLayout()
+	 */
+	protected void doLayout() {
+		super.doLayout();
+		
+		// Check if current focused widget is visible (special for tabitem because it has its own focusManager)
+		Widget focusedWidget = focusManager.getFocusedWidget();
+		if (focusedWidget == null || focusedWidget != null && !focusedWidget.isVisible()) {
+			focusManager.requestFirstFocus();
+		}
+		
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#onAdded(org.kalmeo.kuix.widget.Widget)
 	 */
 	protected void onAdded(Widget parent) {
@@ -343,19 +357,6 @@ public class TabItem extends Widget {
 			button.remove();
 		}
 		tabFolder = null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.kalmeo.kuix.widget.Widget#onChildAdded(org.kalmeo.kuix.widget.Widget)
-	 */
-	protected void onChildAdded(Widget widget) {
-		FocusManager focusManager = widget.getFocusManager();
-		if (focusManager != null) {
-			// Select the first selectable if there is no focused widget
-			if (focusManager.getFocusedWidget() == null) {
-				focusManager.requestFirstFocus();
-			}
-		}
 	}
 
 }
