@@ -83,11 +83,11 @@ public final class Kuix {
 	// Used in Screen an PopupBox widgets to determine if firstXX is on the left and then the secondXX on the right
 	public static boolean firstIsLeft = true;
 	
-	// Alert labels customization
-	private static Widget alertOkLabel;
-	private static Widget alertCancelLabel;
-	private static Widget alertYesLabel;
-	private static Widget alertNoLabel;
+	// Alert label renderers customization
+	private static ByteArrayInputStream alertOkLabelRenderer;
+	private static ByteArrayInputStream alertCancelLabelRenderer;
+	private static ByteArrayInputStream alertYesLabelRenderer;
+	private static ByteArrayInputStream alertNoLabelRenderer;
 
 	/**
 	 * Construct a {@link Kuix}
@@ -182,26 +182,26 @@ public final class Kuix {
 	/**
 	 * Cutomize Kuix alert labels.
 	 * 
-	 * @param okLabel the widget used as ok label
-	 * @param cancelLabel the widget used as cancel label
-	 * @param yesLabel the widget used as yes label
-	 * @param noLabel the widget used as no label
+	 * @param okLabelRenderer the renderer (xml input stream) used as ok label
+	 * @param cancelLabelRenderer the renderer (xml input stream)  used as cancel label
+	 * @param yesLabelRenderer the renderer (xml input stream)  used as yes label
+	 * @param noLabelRenderer the renderer (xml input stream)  used as no label
 	 */
-	public static void customizeAlertLabels(Widget okLabel, Widget cancelLabel, Widget yesLabel, Widget noLabel) {
-		alertOkLabel = okLabel;
-		alertCancelLabel = cancelLabel;
-		alertYesLabel = yesLabel;
-		alertNoLabel = noLabel;
+	public static void customizeAlertLabels(ByteArrayInputStream okLabelRenderer, ByteArrayInputStream cancelLabelRenderer, ByteArrayInputStream yesLabelRenderer, ByteArrayInputStream noLabelRenderer) {
+		alertOkLabelRenderer = okLabelRenderer;
+		alertCancelLabelRenderer = cancelLabelRenderer;
+		alertYesLabelRenderer = yesLabelRenderer;
+		alertNoLabelRenderer = noLabelRenderer;
 	}
 	
 	/**
 	 * Cutomize Kuix screen menu labels.
 	 * 
-	 * @param selectLabel the widget used as select label
-	 * @param cancelLabel the widget used as cancel label
+	 * @param selectLabelRenderer the renderer (xml input stream) used as select label
+	 * @param cancelLabelRenderer the renderer (xml input stream) used as cancel label
 	 */
-	public static void customizeScreenMenuLabels(Widget selectLabel, Widget cancelLabel) {
-		Screen.customizeScreenMenuLabels(selectLabel, cancelLabel);
+	public static void customizeScreenMenuLabels(ByteArrayInputStream selectLabelRenderer, ByteArrayInputStream cancelLabelRenderer) {
+		Screen.customizeScreenMenuLabels(selectLabelRenderer, cancelLabelRenderer);
 	}
 	
 	// PopupBox ////////////////////////////////////////////////////////////////////////////////////
@@ -265,7 +265,10 @@ public final class Kuix {
 			
 			if (firstLabel != null) {
 				MenuItem firstMenuItem = popupBox.getFirstMenuItem();
-				if (firstLabel instanceof Widget) {
+				if (firstLabel instanceof ByteArrayInputStream) {
+					((ByteArrayInputStream) firstLabel).reset();
+					firstMenuItem.add(Kuix.loadWidget((ByteArrayInputStream) firstLabel, null));
+				} else if (firstLabel instanceof Widget) {
 					firstMenuItem.add((Widget) firstLabel);
 				} else if (firstLabel instanceof String) {
 					firstMenuItem.add(new Text().setText((String) firstLabel));
@@ -275,7 +278,10 @@ public final class Kuix {
 			
 			if (secondLabel != null) {
 				MenuItem secondMenuItem = popupBox.getSecondMenuItem();
-				if (secondLabel instanceof Widget) {
+				if (firstLabel instanceof ByteArrayInputStream) {
+					((ByteArrayInputStream) secondLabel).reset();
+					secondMenuItem.add(Kuix.loadWidget((ByteArrayInputStream) secondLabel, null));
+				} else if (secondLabel instanceof Widget) {
 					secondMenuItem.add((Widget) secondLabel);
 				} else if (secondLabel instanceof String) {
 					secondMenuItem.add(new Text().setText((String) secondLabel));
@@ -358,15 +364,15 @@ public final class Kuix {
 		if ((options & KuixConstants.ALERT_NO_BUTTON) != KuixConstants.ALERT_NO_BUTTON) {
 			
 			// First menuItem : OK or Yes
-			if ((options & KuixConstants.ALERT_OK) == KuixConstants.ALERT_OK || options == KuixConstants.ALERT_DEFAULT) {
-				if (alertOkLabel != null) {
-					firstLabel = alertOkLabel;
+			if ((options & KuixConstants.ALERT_OK) == KuixConstants.ALERT_OK || (options & KuixConstants.ALERT_YES) != KuixConstants.ALERT_YES) {
+				if (alertOkLabelRenderer != null) {
+					firstLabel = alertOkLabelRenderer;
 				} else {
 					firstLabel = Kuix.getMessage(KuixConstants.OK_I18N_KEY);
 				}
 			} else if ((options & KuixConstants.ALERT_YES) == KuixConstants.ALERT_YES) {
-				if (alertYesLabel != null) {
-					firstLabel = alertYesLabel;
+				if (alertYesLabelRenderer != null) {
+					firstLabel = alertYesLabelRenderer;
 				} else {
 					firstLabel = Kuix.getMessage(KuixConstants.YES_I18N_KEY);
 				}
@@ -374,14 +380,14 @@ public final class Kuix {
 			
 			// Second menuItem : Cancel or No
 			if ((options & KuixConstants.ALERT_CANCEL) == KuixConstants.ALERT_CANCEL) {
-				if (alertCancelLabel != null) {
-					secondLabel = alertCancelLabel;
+				if (alertCancelLabelRenderer != null) {
+					secondLabel = alertCancelLabelRenderer;
 				} else {
 					secondLabel = Kuix.getMessage(KuixConstants.CANCEL_I18N_KEY);
 				}
 			} else if ((options & KuixConstants.ALERT_NO) == KuixConstants.ALERT_NO) {
-				if (alertNoLabel != null) {
-					secondLabel = alertNoLabel;
+				if (alertNoLabelRenderer != null) {
+					secondLabel = alertNoLabelRenderer;
 				} else {
 					secondLabel = Kuix.getMessage(KuixConstants.NO_I18N_KEY);
 				}
@@ -1277,8 +1283,8 @@ public final class Kuix {
 		if (data.length() == 0) {
 			return null;
 		}
-		StringTokenizer st = new StringTokenizer(data, "(, \t\r\n)");
-		String methodName = st.nextToken();
+		StringTokenizer st = new StringTokenizer(data, "(,)");
+		String methodName = st.nextToken().trim();
 		if (methodName != null) {
 
 			// Create the method instance
@@ -1290,7 +1296,7 @@ public final class Kuix {
 			while (st.hasMoreTokens()) {
 
 				// Extract RAW argument
-				String argumentRawValue = st.nextToken();
+				String argumentRawValue = st.nextToken().trim();
 
 				// Try to convert a widget path argument (ex: #widget_one_id.#widget_two_id.attribute)
 				Object argumentValue = null;

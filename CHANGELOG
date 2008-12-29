@@ -7,6 +7,7 @@
 - Bug fix : avoid lack of clean up in Menu widget when calling the removeAll() method
 - Bug fix : avoid TextField tooltip style inheritance problem 
 - Bug fix : '/' character are no more ignored while CSS parse
+- Bug fix : action parameters can now contains space characters
 
 - The Tablelayout was rewrited to use correctly the weight values
 	- weight style property not need fixed-point integer values (ie. 0.5 for 50%)
@@ -22,6 +23,7 @@
 - Add a new **transform** attribute to the Picture widget to be able to apply rot and mirror transform on the source image
 - Add a new **autoscroll** attribute to the ScrollPane widget. The autoScroll attribute force the scroll position to the max value each time the {@link ScrollPane} content change or is invalidated.
 - Add a new **editonallkeys** attribute to the TextField widget. The editOnAllKeys attribute define if the J2ME native edit dialog is opened when any valid key is hit when the widget has the focus.
+- Add a new **title** attribute to the Choice widget. The title is used as title of the choice screen.
 - Picture src attribute accept now clipped image like url(x,y,width,height,transform) in css file
 
 - StyleProperty now convert its value (Color, Margin, Layout, ...) only on first use to same some memory
@@ -35,8 +37,8 @@
 &lt;/popupBox&gt;
 </code>
 	- new Kuix.showPopupBox(InputStream, Dataprovider) and Kuix.showPopupBox(String, Dataprovider)
-	- new Kuix.customizeAlertLabels(Widget, Widget, Widget, Widget) to customize alert labels with special widget (Ok, cancel, yes, no).
-	- new Kuix.customizeScreenMenuLabels(Widget, Widget) to customize screen menu labels with special widget (select and cancel).
+	- new Kuix.customizeAlertLabels(ByteArrayInputStream, ByteArrayInputStream, ByteArrayInputStream, ByteArrayInputStream) to customize alert labels with special rendrers (XML input streams) (Ok, cancel, yes, no).
+	- new Kuix.customizeScreenMenuLabels(Widget, Widget) to customize screen menu labels with special rendrers (XML input streams) (select and cancel).
 
 ##Version 1.0.1 (2008-10-01)
 
