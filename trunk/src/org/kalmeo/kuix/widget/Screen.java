@@ -21,6 +21,8 @@
 
 package org.kalmeo.kuix.widget;
 
+import java.io.ByteArrayInputStream;
+
 import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.kuix.core.KuixConstants;
 import org.kalmeo.kuix.core.focus.FocusManager;
@@ -204,9 +206,9 @@ public class Screen extends Widget {
 		
 	}
 	
-	// Screen menu labels customization
-	private static Widget screenMenuSelectLabel;
-	private static Widget screenMenuCancelLabel;
+	// Screen menu label renderers customization
+	private static ByteArrayInputStream screenMenuSelectLabelRenderer;
+	private static ByteArrayInputStream screenMenuCancelLabelRenderer;
 	
 	// FocusManager
 	private final FocusManager focusManager;
@@ -324,12 +326,12 @@ public class Screen extends Widget {
 	/**
 	 * Cutomize Kuix screen menu labels.
 	 * 
-	 * @param selectLabel the widget used as select label
-	 * @param cancelLabel the widget used as cancel label
+	 * @param selectLabelRenderer the renderer (xml input stream) used as select label
+	 * @param cancelLabelRenderer the renderer (xml input scream) used as cancel label
 	 */
-	public static void customizeScreenMenuLabels(Widget selectLabel, Widget cancelLabel) {
-		screenMenuSelectLabel = selectLabel;
-		screenMenuCancelLabel = cancelLabel;
+	public static void customizeScreenMenuLabels(ByteArrayInputStream selectLabelRenderer, ByteArrayInputStream cancelLabelRenderer) {
+		screenMenuSelectLabelRenderer = selectLabelRenderer;
+		screenMenuCancelLabelRenderer = cancelLabelRenderer;
 	}
 	
 	/* (non-Javadoc)
@@ -585,8 +587,9 @@ public class Screen extends Widget {
 	protected ScreenMenu getFirstInternalMenu() {
 		if (firstInternalMenu == null) {
 			firstInternalMenu = new ScreenMenu(KuixConstants.SCREEN_FIRST_MENU_WIDGET_TAG, true, true);
-			if (screenMenuSelectLabel != null) {
-				firstInternalMenu.add(screenMenuSelectLabel);
+			if (screenMenuSelectLabelRenderer != null) {
+				screenMenuSelectLabelRenderer.reset();
+				firstInternalMenu.add(Kuix.loadWidget(screenMenuSelectLabelRenderer, null));
 			} else {
 				firstInternalMenu.add(new Text().setText(Kuix.getMessage(KuixConstants.SELECT_I18N_KEY)));
 			}
@@ -603,8 +606,9 @@ public class Screen extends Widget {
 	protected ScreenMenu getSecondInternalMenu() {
 		if (secondInternalMenu == null) {
 			secondInternalMenu = new ScreenMenu(KuixConstants.SCREEN_SECOND_MENU_WIDGET_TAG, false, true);
-			if (screenMenuCancelLabel != null) {
-				secondInternalMenu.add(screenMenuCancelLabel);
+			if (screenMenuCancelLabelRenderer != null) {
+				screenMenuCancelLabelRenderer.reset();
+				secondInternalMenu.add(Kuix.loadWidget(screenMenuCancelLabelRenderer, null));
 			} else {
 				secondInternalMenu.add(new Text().setText(Kuix.getMessage(KuixConstants.CANCEL_I18N_KEY)));
 			}

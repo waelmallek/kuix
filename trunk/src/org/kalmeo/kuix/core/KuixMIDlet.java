@@ -82,7 +82,11 @@ public abstract class KuixMIDlet extends MIDlet implements KuixInitializer, Work
 	 * @return the MIDlet version.
 	 */
 	public String getAppVersion() {
-		return getAppProperty("MIDlet-Version");
+		String appVersion = getAppProperty("MIDlet-Version");
+		if (appVersion == null) {
+			return "";
+		}
+		return appVersion;
 	}
 	
 	/**

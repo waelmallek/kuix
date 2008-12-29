@@ -178,6 +178,17 @@ public class Choice extends ActionWidget {
 		scrollContainer.add(radioGroup);
 		
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.ActionWidget#setAttribute(java.lang.String, java.lang.String)
+	 */
+	public boolean setAttribute(String name, String value) {
+		if (KuixConstants.TITLE_ATTRIBUTE.equals(name)) {
+			setTitle(value);
+			return true;
+		}
+		return super.setAttribute(name, value);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#getInternalChildInstance(java.lang.String)
@@ -193,6 +204,15 @@ public class Choice extends ActionWidget {
 			return getRadioGroup();
 		}
 		return super.getInternalChildInstance(tag);
+	}
+	
+	/**
+	 * Define the sub screen title.
+	 * 
+	 * @param title
+	 */
+	public void setTitle(String title) {
+		screen.setTitle(title);
 	}
 	
 	/**
