@@ -80,6 +80,7 @@ public interface KuixConstants {
 	// JAD app properties
 	
 	public static final String KUIX_LOCALE_APP_PROPERTY						= "KUIX-Locale";
+	public static final String KUIX_DESKTOP_BOUNDS_APP_PROPERTY				= "KUIX-Desktop-Bounds";
 	public static final String KUIX_FRAME_DURATION_APP_PROPERTY				= "KUIX-Frame-Duration";
 	public static final String KUIX_DEBUG_INFOS_KEY_APP_PROPERTY			= "KUIX-Debug-Infos-Key";
 	
@@ -198,6 +199,8 @@ public interface KuixConstants {
 	public static final String ALIGN_STYLE_PROPERTY 						= "align";
 	
 	public static final String TRANSITION_STYLE_PROPERTY					= "transition";
+	
+	public static final String GREYED_COLOR_STYLE_PROPERTY					= "greyed-color";
 	
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Internal style classes

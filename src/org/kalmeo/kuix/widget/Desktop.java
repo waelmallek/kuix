@@ -34,6 +34,7 @@ import org.kalmeo.kuix.layout.LayoutData;
 import org.kalmeo.kuix.layout.StaticLayout;
 import org.kalmeo.kuix.layout.StaticLayoutData;
 import org.kalmeo.kuix.transition.Transition;
+import org.kalmeo.kuix.util.Color;
 import org.kalmeo.kuix.util.Insets;
 
 /**
@@ -468,6 +469,30 @@ public class Desktop extends Widget {
 			g.fillRect(0, 0, getWidth(), getHeight());
 		}
 		super.paintImpl(g);
+		
+		// Greyed layer if defined on the las popup child
+		if (popupContainer.getLastChild() != null) {
+			
+			// Retrieve the last child grey color
+			Color greyedColor = popupContainer.getLastChild().getGreyedColor();
+			if (greyedColor != null) {
+			
+				// Draw the greyed layer
+				int maxSize = Math.max(getWidth(), getHeight());
+				int minSize = Math.min(getWidth(), getHeight());
+				g.setColor(greyedColor.getRGB());
+				int i, j;
+				for (i = 0; i < maxSize; i = i + 2) {
+					g.drawLine(i, 0, 0, i);
+				}
+				for (j = 0; j < minSize; j = j + 2) {
+					g.drawLine(i, j, j, i);
+				}
+
+			}
+			
+		}
+		
 		popupContainer.paintImpl(g);
 	}
 

@@ -195,6 +195,13 @@ public final class KuixCanvas extends GameCanvas {
 	 */
 	protected void initialize() {
 		
+		// Init keyCode adapter
+		platformName = getPlatform();
+		softKeyLeft = getLeftSoftkeyCode();
+		softKeyRight = getRightSoftkeyCode();
+		softKeyDelete = getDeleteKeyCode();
+		softKeyBack = getBackKeyCode();
+		
 		// Try to init statup locale
 		if (initializer.getMIDlet() != null) {
 			String locale = initializer.getMIDlet().getAppProperty(KuixConstants.KUIX_LOCALE_APP_PROPERTY);
@@ -206,16 +213,25 @@ public final class KuixCanvas extends GameCanvas {
 		// Init the desktop styles
 		initializer.initDesktopStyles();
 		
+		// Retrieve the custom or autodetect display size and position
+		int displayX = 0;
+		int displayY = 0;
+		int displayWidth = getWidth();
+		int displayHeight = getHeight();
+		String customDisplayBounds = initializer.getMIDlet().getAppProperty(KuixConstants.KUIX_DESKTOP_BOUNDS_APP_PROPERTY);
+		if (customDisplayBounds != null) {
+			StringTokenizer st = new StringTokenizer(customDisplayBounds, ",");
+			if (st.countTokens() == 4) {
+				displayX = Integer.parseInt(st.nextToken().trim());
+				displayY = Integer.parseInt(st.nextToken().trim());
+				displayWidth = Integer.parseInt(st.nextToken().trim());
+				displayHeight = Integer.parseInt(st.nextToken().trim());
+			}
+		}
+		
 		// Create the desktop
 		desktop = new Desktop();
-		desktop.setBounds(0, 0, getWidth(), getHeight());
-		
-		// Init keyCode adapter
-		platformName = getPlatform();
-		softKeyLeft = getLeftSoftkeyCode();
-		softKeyRight = getRightSoftkeyCode();
-		softKeyDelete = getDeleteKeyCode();
-		softKeyBack = getBackKeyCode();
+		desktop.setBounds(displayX, displayY, displayWidth, displayHeight);
 		
 		// Add blackberry soft keys emulation commands
 		if (platformName == KuixConstants.PLATFORM_BLACKBERRY) {
