@@ -27,7 +27,7 @@
 - Add a new **title** attribute to the Choice widget. The title is used as title of the choice screen.
 - Picture src attribute accept now clipped image like url(x,y,width,height,transform) in css file
 
-- Add a new **greyed-color** style property on all widget used when the is displayed as popup.
+- Add a new **grayed-color** style property on all widget used when the is displayed as popup.
 
 - StyleProperty now convert its value (Color, Margin, Layout, ...) only on first use to save some memory
 

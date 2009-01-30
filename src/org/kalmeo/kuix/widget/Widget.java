@@ -290,7 +290,7 @@ public class Widget {
 	private boolean validCachedBackgroundImage;
 	private boolean validCachedBackgroundRepeat;
 	private boolean validCachedBackgroundAlign;
-	private boolean validGreyedColor;
+	private boolean validGrayedColor;
 
 	private boolean validCachedGap;
 	private boolean validCachedSpan;
@@ -314,7 +314,7 @@ public class Widget {
 	private Image[] cachedBackgroundImage;
 	private Repeat[] cachedBackgroundRepeat;
 	private Alignment[] cachedBackgroundAlign;
-	private Color cachedGreyedColor;
+	private Color cachedGrayedColor;
 	
 	private Gap cachedGap;
 	private Span cachedSpan;
@@ -1132,21 +1132,21 @@ public class Widget {
 	}
 	
 	/**
-	 * Returns the greyedColor.
+	 * Returns the grayedColor.
 	 * 
-	 * @return the greyed color
+	 * @return the grayed color
 	 */
-	public Color getGreyedColor() {
-		if (!validGreyedColor) {
-			Object greyedColorValue = getStylePropertyValue(KuixConstants.GREYED_COLOR_STYLE_PROPERTY, true);
-			if (greyedColorValue != null) {
-				cachedGreyedColor = (Color) greyedColorValue;
+	public Color getGrayedColor() {
+		if (!validGrayedColor) {
+			Object grayedColorValue = getStylePropertyValue(KuixConstants.GRAYED_COLOR_STYLE_PROPERTY, true);
+			if (grayedColorValue != null) {
+				cachedGrayedColor = (Color) grayedColorValue;
 			} else {
-				cachedGreyedColor = null;
+				cachedGrayedColor = null;
 			}
-			validGreyedColor = true;
+			validGrayedColor = true;
 		}
-		return cachedGreyedColor;
+		return cachedGrayedColor;
 	}
 	
 	/**
