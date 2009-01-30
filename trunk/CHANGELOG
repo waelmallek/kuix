@@ -17,6 +17,7 @@
 - Remove the ScrollPane **useMarkers** attribute. This notion is now manged automaticaly
 - Replace *focusedwidget* keyword detection in Kuix.parseMethod() function by a default *focusedwidget* read only attribute on all widget. Example : onAction="doMyAction(#myRootWidgetId.focusedwidget)
 
+- Add a new Jad attribute : **KUIX-Deskop-Bounds** to customize the desktop size and position (the value is something like : *x,y,w,h*)
 - Add *widget path* capabilities in Kuix.parseMethod(..) function. It's now possible to do : 
 - Add KuixCanvas.addUnpaintableWidget(Widget widget), KuixCanvas.removeUnpaintableWidget(Widget widget)and KuixCanvas.clearUnpaintableWidgets() methods to mask region of display from Kuix repaint process.
 
@@ -26,7 +27,9 @@
 - Add a new **title** attribute to the Choice widget. The title is used as title of the choice screen.
 - Picture src attribute accept now clipped image like url(x,y,width,height,transform) in css file
 
-- StyleProperty now convert its value (Color, Margin, Layout, ...) only on first use to same some memory
+- Add a new **greyed-color** style property on all widget used when the is displayed as popup.
+
+- StyleProperty now convert its value (Color, Margin, Layout, ...) only on first use to save some memory
 
 - The PopupBox widget has been completly rewrited. It works now more than a Screen widget with a BottomBar were buttons are placed.
 	- A popupBox can now be defined from an XML definition like 
