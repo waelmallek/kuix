@@ -470,17 +470,17 @@ public class Desktop extends Widget {
 		}
 		super.paintImpl(g);
 		
-		// Greyed layer if defined on the las popup child
+		// Grayed layer if defined on the las popup child
 		if (popupContainer.getLastChild() != null) {
 			
-			// Retrieve the last child grey color
-			Color greyedColor = popupContainer.getLastChild().getGreyedColor();
-			if (greyedColor != null) {
+			// Retrieve the last child gray color
+			Color grayedColor = popupContainer.getLastChild().getGrayedColor();
+			if (grayedColor != null) {
 			
-				// Draw the greyed layer
+				// Draw the grayed layer
 				int maxSize = Math.max(getWidth(), getHeight());
 				int minSize = Math.min(getWidth(), getHeight());
-				g.setColor(greyedColor.getRGB());
+				g.setColor(grayedColor.getRGB());
 				int i, j;
 				for (i = 0; i < maxSize; i = i + 2) {
 					g.drawLine(i, 0, 0, i);

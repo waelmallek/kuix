@@ -237,7 +237,7 @@ public class KuixConverter {
 		// Color
 		if (KuixConstants.COLOR_STYLE_PROPERTY.equals(name) 
 				|| KuixConstants.BACKGROUND_COLOR_STYLE_PROPERTY.equals(name)
-				|| KuixConstants.GREYED_COLOR_STYLE_PROPERTY.equals(name)) {
+				|| KuixConstants.GRAYED_COLOR_STYLE_PROPERTY.equals(name)) {
 			return convertColor(rawData);
 		}
 		if (KuixConstants.BORDER_COLOR_STYLE_PROPERTY.equals(name)) {

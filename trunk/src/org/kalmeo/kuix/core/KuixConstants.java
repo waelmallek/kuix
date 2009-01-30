@@ -200,7 +200,7 @@ public interface KuixConstants {
 	
 	public static final String TRANSITION_STYLE_PROPERTY					= "transition";
 	
-	public static final String GREYED_COLOR_STYLE_PROPERTY					= "greyed-color";
+	public static final String GRAYED_COLOR_STYLE_PROPERTY					= "grayed-color";
 	
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Internal style classes
