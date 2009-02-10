@@ -273,29 +273,32 @@ public class Widget {
 	private Metrics cachedMetrics = null;
 	
 	// Style proprperties cache
-	private boolean validCachedLayout;
-	private boolean validCachedLayoutData;
-	private boolean validCachedMargin;
-	private boolean validCachedBorder;
-	private boolean validCachedPadding;
-	private boolean validCachedInsets;
-	private boolean validCachedMinSize;
+	
+	private long VALID_CACHED_FLAG_LAYOUT 				= 1 << 0;
+	private long VALID_CACHED_FLAG_LAYOUT_DATA 			= 1 << 1;
+	private long VALID_CACHED_FLAG_MARGIN 				= 1 << 2;
+	private long VALID_CACHED_FLAG_BORDER 				= 1 << 3;
+	private long VALID_CACHED_FLAG_PADDING 				= 1 << 4;
+	private long VALID_CACHED_FLAG_INSETS 				= 1 << 5;
+	private long VALID_CACHED_FLAG_MIN_SIZE 			= 1 << 6;
 
-	private boolean validCachedColor;
-	private boolean validCachedBorderColor;
-	private boolean validCachedBorderStroke;
-	private boolean validCachedBorderImage;
-	private boolean validCachedBorderAlign;
-	private boolean validCachedBackgroundColor;
-	private boolean validCachedBackgroundImage;
-	private boolean validCachedBackgroundRepeat;
-	private boolean validCachedBackgroundAlign;
-	private boolean validGrayedColor;
+	private long VALID_CACHED_FLAG_COLOR 				= 1 << 7;
+	private long VALID_CACHED_FLAG_BORDER_COLOR 		= 1 << 8;
+	private long VALID_CACHED_FLAG_BORDER_STROKE 		= 1 << 9;
+	private long VALID_CACHED_FLAG_BORDER_IMAGE 		= 1 << 10;
+	private long VALID_CACHED_FLAG_BORDER_ALIGN 		= 1 << 11;
+	private long VALID_CACHED_FLAG_BACKGROUND_COLOR 	= 1 << 12;
+	private long VALID_CACHED_FLAG_BACKGROUND_IMAGE 	= 1 << 13;
+	private long VALID_CACHED_FLAG_BACKGROUND_REPEAT 	= 1 << 14;
+	private long VALID_CACHED_FLAG_BACKGROUNG_ALIGN 	= 1 << 15;
+	private long VALID_CACHED_FLAG_GRAYED_COLOR 		= 1 << 16;
 
-	private boolean validCachedGap;
-	private boolean validCachedSpan;
-	private boolean validCachedWeight;
-	private boolean validCachedAlignment;
+	private long VALID_CACHED_FLAG_GAP 					= 1 << 17;
+	private long VALID_CACHED_FLAG_SPAN 				= 1 << 18;
+	private long VALID_CACHED_FLAG_WEIGHT 				= 1 << 19;
+	private long VALID_CACHED_FLAG_ALIGN 				= 1 << 20;
+
+	private long validCachedFlags;
 
 	private Layout cachedLayout;
 	private LayoutData cachedLayoutData;
@@ -319,7 +322,7 @@ public class Widget {
 	private Gap cachedGap;
 	private Span cachedSpan;
 	private Weight cachedWeight;
-	private Alignment cachedAlignment;
+	private Alignment cachedAlign;
 	
 	/**
 	 * Construct a {@link Widget}
@@ -488,7 +491,7 @@ public class Widget {
 	 */
 	public void setStyleClasses(String[] styleClasses) {
 		this.styleClasses = styleClasses;
-		invalidateStylePropertiesCache(true);
+		clearCachedStyle(true);
 	}
 	
 	/**
@@ -500,7 +503,7 @@ public class Widget {
 		} else {
 			styleClasses = new String[] { styleClass };
 		}
-		invalidateStylePropertiesCache(true);
+		clearCachedStyle(true);
 	}
 	
 	/**
@@ -879,9 +882,9 @@ public class Widget {
 	 * @return the layout
 	 */
 	public Layout getLayout() {
-		if (!validCachedLayout) {
+		if ((validCachedFlags & VALID_CACHED_FLAG_LAYOUT) != VALID_CACHED_FLAG_LAYOUT) {
 			cachedLayout = (Layout) getStylePropertyValue(KuixConstants.LAYOUT_STYLE_PROPERTY, false);
-			validCachedLayout = true;
+			validCachedFlags |= VALID_CACHED_FLAG_LAYOUT;
 		}
 		return cachedLayout;
 	}
@@ -890,9 +893,9 @@ public class Widget {
 	 * @return the layoutData
 	 */
 	public LayoutData getLayoutData() {
-		if (!validCachedLayoutData) {
+		if ((validCachedFlags & VALID_CACHED_FLAG_LAYOUT_DATA) != VALID_CACHED_FLAG_LAYOUT_DATA) {
 			cachedLayoutData = (LayoutData) getStylePropertyValue(KuixConstants.LAYOUT_DATA_STYLE_PROPERTY, false);
-			validCachedLayoutData = true;
+			validCachedFlags |= VALID_CACHED_FLAG_LAYOUT_DATA;
 		}
 		return cachedLayoutData;
 	}
@@ -901,9 +904,9 @@ public class Widget {
 	 * @return the margin
 	 */
 	public Insets getMargin() {
-		if (!validCachedMargin) {
+		if ((validCachedFlags & VALID_CACHED_FLAG_MARGIN) != VALID_CACHED_FLAG_MARGIN) {
 			cachedMargin = (Insets) getStylePropertyValue(KuixConstants.MARGIN_STYLE_PROPERTY, false);
-			validCachedMargin = true;
+			validCachedFlags |= VALID_CACHED_FLAG_MARGIN;
 		}
 		return cachedMargin;
 	}
@@ -912,9 +915,9 @@ public class Widget {
 	 * @return the border
 	 */
 	public Insets getBorder() {
-		if (!validCachedBorder) {
+		if ((validCachedFlags & VALID_CACHED_FLAG_BORDER) != VALID_CACHED_FLAG_BORDER) {
 			cachedBorder = (Insets) getStylePropertyValue(KuixConstants.BORDER_STYLE_PROPERTY, false);
-			validCachedBorder = true;
+			validCachedFlags |= VALID_CACHED_FLAG_BORDER;
 		}
 		return cachedBorder;
 	}
@@ -923,9 +926,9 @@ public class Widget {
 	 * @return the padding
 	 */
 	public Insets getPadding() {
-		if (!validCachedPadding) {
+		if ((validCachedFlags & VALID_CACHED_FLAG_PADDING) != VALID_CACHED_FLAG_PADDING) {
 			cachedPadding = (Insets) getStylePropertyValue(KuixConstants.PADDING_STYLE_PROPERTY, false);
-			validCachedPadding = true;
+			validCachedFlags |= VALID_CACHED_FLAG_PADDING;
 		}
 		return cachedPadding;
 	}
@@ -934,9 +937,9 @@ public class Widget {
 	 * @return the minSize
 	 */
 	public Metrics getMinSize() {
-		if (!validCachedMinSize) {
+		if ((validCachedFlags & VALID_CACHED_FLAG_MIN_SIZE) != VALID_CACHED_FLAG_MIN_SIZE) {
 			cachedMinSize = (Metrics) getStylePropertyValue(KuixConstants.MIN_SIZE_STYLE_PROPERTY, false);
-			validCachedMinSize = true;
+			validCachedFlags |= VALID_CACHED_FLAG_MIN_SIZE;
 		}
 		return cachedMinSize;
 	}
@@ -945,7 +948,7 @@ public class Widget {
 	 * @return The insets
 	 */
 	public Insets getInsets() {
-		if (!validCachedInsets) {
+		if ((validCachedFlags & VALID_CACHED_FLAG_INSETS) != VALID_CACHED_FLAG_INSETS) {
 			
 			Insets margin = getMargin();
 			Insets border = getBorder();
@@ -957,7 +960,7 @@ public class Widget {
 			cachedInsets.bottom = margin.bottom + border.bottom + padding.bottom;
 			cachedInsets.right = margin.right + border.right + padding.right;
 			
-			validCachedInsets = true;
+			validCachedFlags |= VALID_CACHED_FLAG_INSETS;
 			
 		}
 		return cachedInsets;
@@ -970,14 +973,14 @@ public class Widget {
 	 * @return the color
 	 */
 	public Color getColor() {
-		if (!validCachedColor) {
+		if ((validCachedFlags & VALID_CACHED_FLAG_COLOR) != VALID_CACHED_FLAG_COLOR) {
 			Object colorValue = getStylePropertyValue(KuixConstants.COLOR_STYLE_PROPERTY, true);
 			if (colorValue != null) {
 				cachedColor = (Color) colorValue;
 			} else {
 				cachedColor = null;
 			}
-			validCachedColor = true;
+			validCachedFlags |= VALID_CACHED_FLAG_COLOR;
 		}
 		return cachedColor;
 	}
@@ -989,14 +992,14 @@ public class Widget {
 	 * @return the borderColor
 	 */
 	public Color[] getBorderColor() {
-		if (!validCachedBorderColor) {
+		if ((validCachedFlags & VALID_CACHED_FLAG_BORDER_COLOR) != VALID_CACHED_FLAG_BORDER_COLOR) {
 			Object borderColorValue = getStylePropertyValue(KuixConstants.BORDER_COLOR_STYLE_PROPERTY, false);
 			if (borderColorValue != null) {
 				cachedBorderColor = (Color[]) borderColorValue;
 			} else {
 				cachedBorderColor = null;
 			}
-			validCachedBorderColor = true;
+			validCachedFlags |= VALID_CACHED_FLAG_BORDER_COLOR;
 		}
 		return cachedBorderColor;
 	}
@@ -1008,14 +1011,14 @@ public class Widget {
 	 * @return the borderStroke
 	 */
 	public int getBorderStroke() {
-		if (!validCachedBorderStroke) {
+		if ((validCachedFlags & VALID_CACHED_FLAG_BORDER_STROKE) != VALID_CACHED_FLAG_BORDER_STROKE) {
 			Object borderStrokeValue = getStylePropertyValue(KuixConstants.BORDER_STROKE_STYLE_PROPERTY, false);
 			if (borderStrokeValue != null) {
 				cachedBorderStroke = ((Integer) borderStrokeValue).intValue();
 			} else {
 				cachedBorderStroke = Graphics.SOLID;
 			}
-			validCachedBorderStroke = true;
+			validCachedFlags |= VALID_CACHED_FLAG_BORDER_STROKE;
 		}
 		return cachedBorderStroke;
 	}
@@ -1027,14 +1030,14 @@ public class Widget {
 	 * @return the borderImages array
 	 */
 	public Image[] getBorderImage() {
-		if (!validCachedBorderImage) {
+		if ((validCachedFlags & VALID_CACHED_FLAG_BORDER_IMAGE) != VALID_CACHED_FLAG_BORDER_IMAGE) {
 			Object borderImageValue = getStylePropertyValue(KuixConstants.BORDER_IMAGE_STYLE_PROPERTY, false);
 			if (borderImageValue != null) {
 				cachedBorderImage = (Image[]) borderImageValue;
 			} else {
 				cachedBorderImage = null;
 			}
-			validCachedBorderImage = true;
+			validCachedFlags |= VALID_CACHED_FLAG_BORDER_IMAGE;
 		}
 		return cachedBorderImage;
 	}
@@ -1046,14 +1049,14 @@ public class Widget {
 	 * @return the borderAlignments array
 	 */
 	public Alignment[] getBorderAlign() {
-		if (!validCachedBorderAlign) {
+		if ((validCachedFlags & VALID_CACHED_FLAG_BORDER_ALIGN) != VALID_CACHED_FLAG_BORDER_ALIGN) {
 			Object borderAlignValue = getStylePropertyValue(KuixConstants.BORDER_ALIGN_STYLE_PROPERTY, false);
 			if (borderAlignValue != null) {
 				cachedBorderAlign = (Alignment[]) borderAlignValue;
 			} else {
 				cachedBorderAlign = null;
 			}
-			validCachedBorderAlign = true;
+			validCachedFlags |= VALID_CACHED_FLAG_BORDER_ALIGN;
 		}
 		return cachedBorderAlign;
 	}
@@ -1065,14 +1068,14 @@ public class Widget {
 	 * @return the backgroundColor
 	 */
 	public Color getBackgroundColor() {
-		if (!validCachedBackgroundColor) {
+		if ((validCachedFlags & VALID_CACHED_FLAG_BACKGROUND_COLOR) != VALID_CACHED_FLAG_BACKGROUND_COLOR) {
 			Object backgroundColorValue = getStylePropertyValue(KuixConstants.BACKGROUND_COLOR_STYLE_PROPERTY, false);
 			if (backgroundColorValue != null) {
 				cachedBackgroundColor = (Color) backgroundColorValue;
 			} else {
 				cachedBackgroundColor = null;
 			}
-			validCachedBackgroundColor = true;
+			validCachedFlags |= VALID_CACHED_FLAG_BACKGROUND_COLOR;
 		}
 		return cachedBackgroundColor;
 	}
@@ -1083,14 +1086,14 @@ public class Widget {
 	 * @return the backroundImage array
 	 */
 	public Image[] getBackgroundImage() {
-		if (!validCachedBackgroundImage) {
+		if ((validCachedFlags & VALID_CACHED_FLAG_BACKGROUND_IMAGE) != VALID_CACHED_FLAG_BACKGROUND_IMAGE) {
 			Object backgroundImageValue = getStylePropertyValue(KuixConstants.BACKGROUND_IMAGE_STYLE_PROPERTY, false);
 			if (backgroundImageValue != null) {
 				cachedBackgroundImage = (Image[]) backgroundImageValue;
 			} else {
 				cachedBackgroundImage = null;
 			}
-			validCachedBackgroundImage = true;
+			validCachedFlags |= VALID_CACHED_FLAG_BACKGROUND_IMAGE;
 		}
 		return cachedBackgroundImage;
 	}
@@ -1101,14 +1104,14 @@ public class Widget {
 	 * @return the backroundAlign array
 	 */
 	public Alignment[] getBackgroundAlign() {
-		if (!validCachedBackgroundAlign) {
+		if ((validCachedFlags & VALID_CACHED_FLAG_BACKGROUNG_ALIGN) != VALID_CACHED_FLAG_BACKGROUNG_ALIGN) {
 			Object backgroundAlignValue = getStylePropertyValue(KuixConstants.BACKGROUND_ALIGN_STYLE_PROPERTY, false);
 			if (backgroundAlignValue != null) {
 				cachedBackgroundAlign = (Alignment[]) backgroundAlignValue;
 			} else {
 				cachedBackgroundAlign = DEFAULT_BACKGROUND_ALIGN;
 			}
-			validCachedBackgroundAlign = true;
+			validCachedFlags |= VALID_CACHED_FLAG_BACKGROUNG_ALIGN;
 		}
 		return cachedBackgroundAlign;
 	}
@@ -1119,14 +1122,14 @@ public class Widget {
 	 * @return the backgroundRepeat array
 	 */
 	public Repeat[] getBackgroundRepeat() {
-		if (!validCachedBackgroundRepeat) {
+		if ((validCachedFlags & VALID_CACHED_FLAG_BACKGROUND_REPEAT) != VALID_CACHED_FLAG_BACKGROUND_REPEAT) {
 			Object backgroundRepeatValue = getStylePropertyValue(KuixConstants.BACKGROUND_REPEAT_STYLE_PROPERTY, false);
 			if (backgroundRepeatValue != null) {
 				cachedBackgroundRepeat = (Repeat[]) backgroundRepeatValue;
 			} else {
 				cachedBackgroundRepeat = DEFAULT_BACKGROUND_REPEAT;
 			}
-			validCachedBackgroundRepeat = true;
+			validCachedFlags |= VALID_CACHED_FLAG_BACKGROUND_REPEAT;
 		}
 		return cachedBackgroundRepeat;
 	}
@@ -1137,14 +1140,14 @@ public class Widget {
 	 * @return the grayed color
 	 */
 	public Color getGrayedColor() {
-		if (!validGrayedColor) {
+		if ((validCachedFlags & VALID_CACHED_FLAG_GRAYED_COLOR) != VALID_CACHED_FLAG_GRAYED_COLOR) {
 			Object grayedColorValue = getStylePropertyValue(KuixConstants.GRAYED_COLOR_STYLE_PROPERTY, true);
 			if (grayedColorValue != null) {
 				cachedGrayedColor = (Color) grayedColorValue;
 			} else {
 				cachedGrayedColor = null;
 			}
-			validGrayedColor = true;
+			validCachedFlags |= VALID_CACHED_FLAG_GRAYED_COLOR;
 		}
 		return cachedGrayedColor;
 	}
@@ -1156,9 +1159,9 @@ public class Widget {
 	 * @return the gap
 	 */
 	public Gap getGap() {
-		if (!validCachedGap) {
+		if ((validCachedFlags & VALID_CACHED_FLAG_GAP) != VALID_CACHED_FLAG_GAP) {
 			cachedGap = (Gap) getStylePropertyValue(KuixConstants.GAP_STYLE_PROPERTY, false);
-			validCachedGap = true;
+			validCachedFlags |= VALID_CACHED_FLAG_GAP;
 		}
 		return cachedGap;
 	}
@@ -1169,9 +1172,9 @@ public class Widget {
 	 * @return the span
 	 */
 	public Span getSpan() {
-		if (!validCachedSpan) {
+		if ((validCachedFlags & VALID_CACHED_FLAG_SPAN) != VALID_CACHED_FLAG_SPAN) {
 			cachedSpan = (Span) getStylePropertyValue(KuixConstants.SPAN_STYLE_PROPERTY, false);
-			validCachedSpan = true;
+			validCachedFlags |= VALID_CACHED_FLAG_SPAN;
 		}
 		return cachedSpan;
 	}
@@ -1183,9 +1186,9 @@ public class Widget {
 	 * @return the weight
 	 */
 	public Weight getWeight() {
-		if (!validCachedWeight) {
+		if ((validCachedFlags & VALID_CACHED_FLAG_WEIGHT) != VALID_CACHED_FLAG_WEIGHT) {
 			cachedWeight = (Weight) getStylePropertyValue(KuixConstants.WEIGHT_STYLE_PROPERTY, false);
-			validCachedWeight = true;
+			validCachedFlags |= VALID_CACHED_FLAG_WEIGHT;
 		}
 		return cachedWeight;
 	}
@@ -1196,11 +1199,11 @@ public class Widget {
 	 * @return the alignment
 	 */
 	public Alignment getAlign() {
-		if (!validCachedAlignment) {
-			cachedAlignment = (Alignment) getStylePropertyValue(KuixConstants.ALIGN_STYLE_PROPERTY, false);
-			validCachedAlignment = true;
+		if ((validCachedFlags & VALID_CACHED_FLAG_ALIGN) != VALID_CACHED_FLAG_ALIGN) {
+			cachedAlign = (Alignment) getStylePropertyValue(KuixConstants.ALIGN_STYLE_PROPERTY, false);
+			validCachedFlags |= VALID_CACHED_FLAG_ALIGN;
 		}
-		return cachedAlignment;
+		return cachedAlign;
 	}
 
 	/**
@@ -2159,28 +2162,8 @@ public class Widget {
 	 */
 	public void invalidateStylePropertiesCache(boolean propagateToChildren) {
 		
-		validCachedLayout = false;
-		validCachedLayoutData = false;
-		validCachedMargin = false;
-		validCachedBorder = false;
-		validCachedPadding = false;
-		validCachedInsets = false;
-		validCachedMinSize = false;
-
-		validCachedColor = false;
-		validCachedBorderColor = false;
-		validCachedBorderStroke = false;
-		validCachedBorderImage = false;
-		validCachedBorderAlign = false;
-		validCachedBackgroundColor = false;
-		validCachedBackgroundImage = false;
-		validCachedBackgroundRepeat = false;
-		validCachedBackgroundAlign = false;
-
-		validCachedGap = false;
-		validCachedSpan = false;
-		validCachedWeight = false;
-		validCachedAlignment = false;
+		// Reset the valid cached flags
+		validCachedFlags = 0;
 		
 		if (propagateToChildren) {
 			for (Widget widget = child; widget != null; widget = widget.next) {
