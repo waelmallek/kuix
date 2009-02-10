@@ -953,7 +953,7 @@ public final class KuixCanvas extends GameCanvas {
 				return KuixConstants.PLATFORM_NOKIA;
 			} else if (currentPlatform.indexOf("SonyEricsson") != -1) {
 				return KuixConstants.PLATFORM_SONY_ERICSSON;
-			} else if (currentPlatform.indexOf("SunMicrosystems") != -1) {
+			} else if (currentPlatform.indexOf("SunMicrosystems") != -1 || currentPlatform.indexOf("j2me") != -1) {	// SunMicrosystems = WTK 2.5.x, j2me = J2ME Platforme SDK 3.0
 				return KuixConstants.PLATFORM_SUN;
 			} else if (currentPlatform.indexOf("intent") != -1) {
 				return KuixConstants.PLATFORM_INTENT;
