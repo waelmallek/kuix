@@ -50,6 +50,32 @@ import org.kalmeo.util.worker.WorkerTask;
  * @author bbeaulant
  */
 public final class KuixCanvas extends GameCanvas {
+	
+	/**
+	 * Implement this interface and set it as <code>interactionListener</code>
+	 * to intercept UI events at low level.
+	 */
+	public interface KuixCanvasInteractionListener {
+		
+		/**
+		 * A key events occure.
+		 * 
+		 * @param type
+		 * @param keyCode
+		 * @param kuixKeyCode
+		 */
+		public void onKeyEvent(byte type, int keyCode, int kuixKeyCode);
+		
+		/**
+		 * A pointer event occure.
+		 * 
+		 * @param type
+		 * @param x
+		 * @param y
+		 */
+		public void onPointerEvent(final byte type, final int x, final int y);
+		
+	}
 
 	// Associated KuixInitializer
 	private final KuixInitializer initializer;
@@ -95,6 +121,9 @@ public final class KuixCanvas extends GameCanvas {
 	private boolean needToRepaint = false;
 	private final Metrics repaintRegion = new Metrics();
 	private WorkerTask workerTask;
+	
+	// Facultative listener object to intercept at low level user interactions 
+	private KuixCanvasInteractionListener interactionListener;
 	
 	// DebugInfos properties
 	private int debugInfosKuixKeyCode = KuixConstants.KUIX_KEY_STAR;
@@ -151,6 +180,17 @@ public final class KuixCanvas extends GameCanvas {
 		return desktop;
 	}
 	
+	/**
+	 * Define the {@link KuixCanvasInteractionListener} that listen UI events at
+	 * low level.<br>
+	 * This listener is invoked after internal Kuix processing.
+	 * 
+	 * @param interactionListener the interactionListener to set
+	 */
+	public void setInteractionListener(KuixCanvasInteractionListener interactionListener) {
+		this.interactionListener = interactionListener;
+	}
+
 	/**
 	 * Define the key that the user need to press 3 consecutive times to display
 	 * on screen debug infos. This value define one or more keys (ex:
@@ -841,6 +881,11 @@ public final class KuixCanvas extends GameCanvas {
 				keyEvents.addElement(new int[] { type, kuixKeyCode });
 			}
 			
+			// Propagate the event to the interactionListener
+			if (interactionListener != null) {
+				interactionListener.onKeyEvent(type, keyCode, kuixKeyCode);
+			}
+			
 		}
 	}
 	
@@ -889,6 +934,12 @@ public final class KuixCanvas extends GameCanvas {
 			synchronized (this) {
 				pointerEvents.addElement(new int[] { type, x, y });
 			}
+			
+			// Propagate the event to the interactionListener
+			if (interactionListener != null) {
+				interactionListener.onPointerEvent(type, x, y);
+			}
+			
 		}
 	}
 
