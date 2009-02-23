@@ -1,6 +1,11 @@
 # Kuix Changelog
 
-##Version 1.1.0 (2008-02-10)
+##Version 1.1.1 (2009-XX-XX)
+
+- Bug fix : avoid the "Ok" that appear in Alert when there's no Yes button
+- Add A KuixCanvasInteractionListener class to be able to intercept UI events at low level. (@see Kuix.getCanvas().setInteractionListener(...))
+
+##Version 1.1.0 (2009-02-10)
 
 - Bug fix : avoid the bug when setting a very small value in Gauge
 - Bug fix : avoid a NullPointerException when define null border multi color
