@@ -364,7 +364,10 @@ public final class Kuix {
 		if ((options & KuixConstants.ALERT_NO_BUTTON) != KuixConstants.ALERT_NO_BUTTON) {
 			
 			// First menuItem : OK or Yes
-			if ((options & KuixConstants.ALERT_OK) == KuixConstants.ALERT_OK) {
+			if ((options & KuixConstants.ALERT_OK) == KuixConstants.ALERT_OK
+					|| (		(options & KuixConstants.ALERT_YES) != KuixConstants.ALERT_YES
+							&& 	(options & KuixConstants.ALERT_CANCEL) != KuixConstants.ALERT_CANCEL
+							&& 	(options & KuixConstants.ALERT_NO) != KuixConstants.ALERT_NO)) {	// Case for default OK button if there no other button
 				if (alertOkLabelRenderer != null) {
 					firstLabel = alertOkLabelRenderer;
 				} else {
