@@ -632,7 +632,7 @@ public class Widget {
 			this.width = width;
 			this.height = height;
 			
-			// Compute visual center coordiantes
+			// Compute visual center coordinates
 			Insets margin = getMargin();
 			visualCenterX = (width - margin.left - margin.right) / 2 + margin.left;
 			visualCenterY = (height - margin.top - margin.bottom) / 2 + margin.top;
