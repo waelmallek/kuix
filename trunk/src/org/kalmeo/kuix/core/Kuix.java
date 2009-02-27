@@ -860,7 +860,7 @@ public final class Kuix {
 								while (enumeration.hasMoreElements()) {
 									String key = (String) enumeration.nextElement();
 									attributeName = key.toLowerCase();
-									attributeValue = convertParsePropertyStringValues((String) attributes.get(key));
+									attributeValue = (String) attributes.get(key);	// No property parsing at this position to optimize processing
 									if (!newWidget.setAttribute(attributeName, attributeValue)) {
 										throw new IllegalArgumentException("Unknow attribute : " + attributeName);
 									}

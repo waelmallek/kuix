@@ -155,9 +155,11 @@ public class InlineLayout implements Layout {
 			for (Metrics widgetMetrics = first; widgetMetrics != null; widgetMetrics = widgetMetrics.next) {
 				Widget widget = widgetMetrics.widget;
 				int h = widgetMetrics.height;
-				contentY = alignment.alignY(contentHeight, h);
 				if (alignment.isFill()) {
 					h = contentHeight;
+					contentY = 0;
+				} else {
+					contentY = alignment.alignY(contentHeight, h);
 				}
 				widget.setBounds(	x, 
 									y + contentY, 
@@ -171,9 +173,11 @@ public class InlineLayout implements Layout {
 			for (Metrics widgetMetrics = first; widgetMetrics != null; widgetMetrics = widgetMetrics.next) {
 				Widget widget = widgetMetrics.widget;
 				int w = widgetMetrics.width;
-				contentX = alignment.alignX(contentWidth, w);
 				if (alignment.isFill()) {
 					w = contentWidth;
+					contentX = 0;
+				} else {
+					contentX = alignment.alignX(contentWidth, w);
 				}
 				widget.setBounds(	x + contentX, 
 									y, 
