@@ -190,6 +190,42 @@ public final class KuixCanvas extends GameCanvas {
 	public void setInteractionListener(KuixCanvasInteractionListener interactionListener) {
 		this.interactionListener = interactionListener;
 	}
+	
+	/**
+	 * Set a custom J2ME key code for the left softkey.
+	 * 
+	 * @param softKeyLeftKeyCode the softKeyLeft to set
+	 */
+	public void setSoftKeyLeftKeyCode(int softKeyLeftKeyCode) {
+		this.softKeyLeftKeyCode = softKeyLeftKeyCode;
+	}
+
+	/**
+	 * Set a custom J2ME key code for the right softkey.
+	 * 
+	 * @param softKeyRightKeyCode the softKeyRight to set
+	 */
+	public void setSoftKeyRightKeyCode(int softKeyRightKeyCode) {
+		this.softKeyRightKeyCode = softKeyRightKeyCode;
+	}
+	
+	/**
+	 * Set a custom J2ME key code for the delete key.
+	 * 
+	 * @param keyDeleteKeyCode the softKeyDeleteKeyCode to set
+	 */
+	public void setKeyDeleteKeyCode(int keyDeleteKeyCode) {
+		this.keyDeleteKeyCode = keyDeleteKeyCode;
+	}
+
+	/**
+	 * Set a custom J2ME key code for the back key.
+	 * 
+	 * @param keyBackKeyCode the softKeyBackKeyCode to set
+	 */
+	public void setKeyBackKeyCode(int keyBackKeyCode) {
+		this.keyBackKeyCode = keyBackKeyCode;
+	}
 
 	/**
 	 * Define the key that the user need to press 3 consecutive times to display
@@ -237,10 +273,10 @@ public final class KuixCanvas extends GameCanvas {
 		
 		// Init keyCode adapter
 		platformName = getPlatform();
-		softKeyLeft = getLeftSoftkeyCode();
-		softKeyRight = getRightSoftkeyCode();
-		softKeyDelete = getDeleteKeyCode();
-		softKeyBack = getBackKeyCode();
+		softKeyLeftKeyCode = getLeftSoftkeyCode();
+		softKeyRightKeyCode = getRightSoftkeyCode();
+		keyDeleteKeyCode = getDeleteKeyCode();
+		keyBackKeyCode = getBackKeyCode();
 		
 		// Try to init statup locale
 		if (initializer.getMIDlet() != null) {
@@ -950,10 +986,10 @@ public final class KuixCanvas extends GameCanvas {
 	private String platformName;
 
 	// Current platform codeofSoftkey
-	private int softKeyLeft;
-	private int softKeyRight;
-	private int softKeyDelete;
-	private int softKeyBack;
+	private int softKeyLeftKeyCode;
+	private int softKeyRightKeyCode;
+	private int keyDeleteKeyCode;
+	private int keyBackKeyCode;
 
 	// Standard values for softkeys of different platforms used only in predefining
 	private static final int SOFT_KEY_LEFT_DEFAULT 		= -6;
@@ -1353,13 +1389,13 @@ public final class KuixCanvas extends GameCanvas {
 			case Canvas.KEY_POUND:
 				return KuixConstants.KUIX_KEY_POUND;
 			default:
-				if (keyCode == softKeyLeft) {
+				if (keyCode == softKeyLeftKeyCode) {
 					return KuixConstants.KUIX_KEY_SOFT_LEFT;
-				} else if (keyCode == softKeyRight) {
+				} else if (keyCode == softKeyRightKeyCode) {
 					return KuixConstants.KUIX_KEY_SOFT_RIGHT;
-				} else if (keyCode == softKeyDelete) {
+				} else if (keyCode == keyDeleteKeyCode) {
 					return KuixConstants.KUIX_KEY_DELETE;
-				} else if (keyCode == softKeyBack) {
+				} else if (keyCode == keyBackKeyCode) {
 					return KuixConstants.KUIX_KEY_BACK;
 				} else if (keyCode == PENCIL_KEY_NOKIA) {
 					return KuixConstants.KUIX_KEY_PENCIL;
