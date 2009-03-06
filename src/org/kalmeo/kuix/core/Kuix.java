@@ -782,7 +782,7 @@ public final class Kuix {
 					 * @see com.kalmeo.util.xml.DefaultHandler#startElement(java.lang.String, java.util.Hashtable)
 					 */
 					public void startElement(String name, Hashtable attributes) {
-
+						
 						// Currently reading inline attribute value, startElement is not allowed
 						if (currentAttribute != null) {
 							throw new IllegalArgumentException("Attribute tag (" + currentAttribute + ") can't enclose an other tag");

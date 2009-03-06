@@ -59,6 +59,9 @@ public class DataProvider implements LinkedListItem {
 	private Vector masters;
 	private Vector slaves;
 	
+	// Hashtable of property / values (Object) pair
+	private Hashtable values;
+	
 	// Hashtable of property / itemsValues (Object) pair
 	private Hashtable itemsValues;
 	
@@ -180,6 +183,22 @@ public class DataProvider implements LinkedListItem {
 	// Values ////////////////////////////////////////////////////////////////////
 	
 	/**
+	 * Define an object value for a specific <code>property</code>. Setting this
+	 * value invoke the <code>dispatchUpdateEvent</code> method for the
+	 * specified <code>property</code>.
+	 * 
+	 * @param property
+	 * @param value
+	 */
+	public final void setValue(String property, Object value) {
+		if (values == null) {
+			values = new Hashtable();
+		}
+		values.put(property, value);
+		dispatchUpdateEvent(property);
+	}
+	
+	/**
 	 * Returns the value (user defined values and items values) corresponding the
 	 * given <code>property</code>.
 	 * 
@@ -187,9 +206,12 @@ public class DataProvider implements LinkedListItem {
 	 * @return the value associated with the given <code>property</code>.
 	 */
 	public final Object getValue(String property) {
-		Object value = getUserDefinedValue(property);
+		Object value = (values != null) ? values.get(property) : null;
 		if (value == null) {
-			value = enumerateItems(property, true);
+			value = getUserDefinedValue(property);
+			if (value == null) {
+				value = enumerateItems(property, true);
+			}
 		}
 		if (value == null && slaves != null) {
 			for (int i = slaves.size() - 1; i >= 0; --i) {
