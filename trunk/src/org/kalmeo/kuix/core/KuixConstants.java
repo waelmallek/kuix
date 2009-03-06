@@ -157,6 +157,7 @@ public interface KuixConstants {
 	public static final String SELECTED_RADIOBUTTON_ATTRIBUTE				= "selectedradiobutton";
 	public static final String CURRENT_TABITEM_ATTRIBUTE					= "currenttabitem";
 	public static final String FOCUSED_WIDGET_ATTRIBUTE						= "focusedwidget";
+	public static final String FOCUS_SLIDE_ONLY_WIDGET_ATTRIBUTE			= "focusslideonly";
 	
 	public static final String ON_FOCUS_ATTRIBUTE 							= "onfocus";
 	public static final String ON_LOST_FOCUS_ATTRIBUTE 						= "onlostfocus";

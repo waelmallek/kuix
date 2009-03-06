@@ -30,6 +30,7 @@ import org.kalmeo.kuix.util.Alignment;
 import org.kalmeo.kuix.util.Color;
 import org.kalmeo.kuix.util.Insets;
 import org.kalmeo.kuix.util.Metrics;
+import org.kalmeo.util.BooleanUtil;
 import org.kalmeo.util.worker.Worker;
 import org.kalmeo.util.worker.WorkerTask;
 
@@ -50,6 +51,7 @@ public class Text extends TextWidget {
 	protected int insetHeight;
 	
 	// Slide animation stuff
+	private boolean focusSlideOnly = true;
 	private int originalTextX;
 	private int slideTextIncrement = 1;
 	private WorkerTask slideTextWorkerTask;
@@ -68,6 +70,17 @@ public class Text extends TextWidget {
 	 */
 	public Text(String tag) {
 		super(tag);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.TextWidget#setAttribute(java.lang.String, java.lang.String)
+	 */
+	public boolean setAttribute(String name, String value) {
+		if (KuixConstants.FOCUS_SLIDE_ONLY_WIDGET_ATTRIBUTE.equals(name)) {
+			focusSlideOnly = BooleanUtil.parseBoolean(value);
+			return true;
+		}
+		return super.setAttribute(name, value);
 	}
 
 	/* (non-Javadoc)
@@ -162,7 +175,7 @@ public class Text extends TextWidget {
 					}
 					
 				};
-				if (isFocusWidgetChild()) {
+				if (!focusSlideOnly || isFocusWidgetChild()) {
 					Worker.instance.pushTask(slideTextWorkerTask);
 				}
 			}
