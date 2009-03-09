@@ -274,29 +274,29 @@ public class Widget {
 	
 	// Style proprperties cache
 	
-	private long VALID_CACHED_FLAG_LAYOUT 				= 1 << 0;
-	private long VALID_CACHED_FLAG_LAYOUT_DATA 			= 1 << 1;
-	private long VALID_CACHED_FLAG_MARGIN 				= 1 << 2;
-	private long VALID_CACHED_FLAG_BORDER 				= 1 << 3;
-	private long VALID_CACHED_FLAG_PADDING 				= 1 << 4;
-	private long VALID_CACHED_FLAG_INSETS 				= 1 << 5;
-	private long VALID_CACHED_FLAG_MIN_SIZE 			= 1 << 6;
+	private static final long VALID_CACHED_FLAG_LAYOUT 				= 1 << 0;
+	private static final long VALID_CACHED_FLAG_LAYOUT_DATA 		= 1 << 1;
+	private static final long VALID_CACHED_FLAG_MARGIN 				= 1 << 2;
+	private static final long VALID_CACHED_FLAG_BORDER 				= 1 << 3;
+	private static final long VALID_CACHED_FLAG_PADDING 			= 1 << 4;
+	private static final long VALID_CACHED_FLAG_INSETS 				= 1 << 5;
+	private static final long VALID_CACHED_FLAG_MIN_SIZE 			= 1 << 6;
 
-	private long VALID_CACHED_FLAG_COLOR 				= 1 << 7;
-	private long VALID_CACHED_FLAG_BORDER_COLOR 		= 1 << 8;
-	private long VALID_CACHED_FLAG_BORDER_STROKE 		= 1 << 9;
-	private long VALID_CACHED_FLAG_BORDER_IMAGE 		= 1 << 10;
-	private long VALID_CACHED_FLAG_BORDER_ALIGN 		= 1 << 11;
-	private long VALID_CACHED_FLAG_BACKGROUND_COLOR 	= 1 << 12;
-	private long VALID_CACHED_FLAG_BACKGROUND_IMAGE 	= 1 << 13;
-	private long VALID_CACHED_FLAG_BACKGROUND_REPEAT 	= 1 << 14;
-	private long VALID_CACHED_FLAG_BACKGROUNG_ALIGN 	= 1 << 15;
-	private long VALID_CACHED_FLAG_GRAYED_COLOR 		= 1 << 16;
+	private static final long VALID_CACHED_FLAG_COLOR 				= 1 << 7;
+	private static final long VALID_CACHED_FLAG_BORDER_COLOR 		= 1 << 8;
+	private static final long VALID_CACHED_FLAG_BORDER_STROKE 		= 1 << 9;
+	private static final long VALID_CACHED_FLAG_BORDER_IMAGE 		= 1 << 10;
+	private static final long VALID_CACHED_FLAG_BORDER_ALIGN 		= 1 << 11;
+	private static final long VALID_CACHED_FLAG_BACKGROUND_COLOR 	= 1 << 12;
+	private static final long VALID_CACHED_FLAG_BACKGROUND_IMAGE 	= 1 << 13;
+	private static final long VALID_CACHED_FLAG_BACKGROUND_REPEAT 	= 1 << 14;
+	private static final long VALID_CACHED_FLAG_BACKGROUNG_ALIGN 	= 1 << 15;
+	private static final long VALID_CACHED_FLAG_GRAYED_COLOR 		= 1 << 16;
 
-	private long VALID_CACHED_FLAG_GAP 					= 1 << 17;
-	private long VALID_CACHED_FLAG_SPAN 				= 1 << 18;
-	private long VALID_CACHED_FLAG_WEIGHT 				= 1 << 19;
-	private long VALID_CACHED_FLAG_ALIGN 				= 1 << 20;
+	private static final long VALID_CACHED_FLAG_GAP 				= 1 << 17;
+	private static final long VALID_CACHED_FLAG_SPAN 				= 1 << 18;
+	private static final long VALID_CACHED_FLAG_WEIGHT 				= 1 << 19;
+	private static final long VALID_CACHED_FLAG_ALIGN 				= 1 << 20;
 
 	private long validCachedFlags;
 

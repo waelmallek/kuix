@@ -44,7 +44,7 @@ import org.kalmeo.util.worker.WorkerTask;
  * @author bbeaulant
  */
 public class Text extends TextWidget {
-
+	
 	// Text coordinates
 	protected int textX;
 	protected int textY;

@@ -5,6 +5,7 @@
 - Bug fix : avoid the "Ok" that appear in Alert when there's no Yes button
 - Bug fix : fix a layout problem in Inlinelayout when align is fill-center
 - Bug fix : fix backwardtabkey and forwardtabkey TabFolder's documentation
+- Bug fix : convert all VALID_XX Widget variable member to static final to reduce the memory usage
 
 - Add A KuixCanvasInteractionListener class to be able to intercept UI events at low level. (@see Kuix.getCanvas().setInteractionListener(...))
 - Add setter on KuixCanvas to customize softLeft, softRight, delete and back key codes
