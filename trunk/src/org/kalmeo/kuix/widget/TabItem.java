@@ -133,7 +133,16 @@ public class TabItem extends Widget {
 	 * Construct a {@link TabItem}
 	 */
 	public TabItem() {
-		super(KuixConstants.TAB_ITEM_WIDGET_TAG);
+		this(KuixConstants.TAB_ITEM_WIDGET_TAG);
+	}
+	
+	/**
+	 * Construct a {@link TabItem}
+	 *
+	 * @param tag
+	 */
+	public TabItem(String tag) {
+		super(tag);
 		
 		// Create the tabItem button
 		button = new TabItemButton();

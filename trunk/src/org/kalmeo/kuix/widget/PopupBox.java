@@ -158,7 +158,16 @@ public class PopupBox extends ActionWidget {
 	 * Construct a {@link PopupBox}
 	 */
 	public PopupBox() {
-		super(KuixConstants.POPUP_BOX_WIDGET_TAG);
+		this(KuixConstants.POPUP_BOX_WIDGET_TAG);
+	}
+	
+	/**
+	 * Construct a {@link PopupBox}
+	 *
+	 * @param tag
+	 */
+	public PopupBox(String tag) {
+		super(tag);
 		
 		container = new Widget() {
 

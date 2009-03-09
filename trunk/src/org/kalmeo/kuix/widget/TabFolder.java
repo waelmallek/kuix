@@ -58,7 +58,16 @@ public class TabFolder extends List {
 	 * Construct a {@link TabFolder}
 	 */
 	public TabFolder() {
-		super(KuixConstants.TAB_FOLDER_WIDGET_TAG);
+		this(KuixConstants.TAB_FOLDER_WIDGET_TAG);
+	}
+	
+	/**
+	 * Construct a {@link TabFolder}
+	 *
+	 * @param tag
+	 */
+	public TabFolder(String tag) {
+		super(tag);
 		
 		buttonsContainer = new ScrollPane(KuixConstants.TAB_FOLDER_BUTTONS_CONTAINER_WIDGET_TAG, false) {
 

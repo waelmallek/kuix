@@ -11,6 +11,8 @@
 - Add a setValue(String property, Object value) method to DataProvider class to be able to set value without extend DataProvider.
 - Add a *focusSlideOnly* attribute on the Text widget to customize text sliding feature
 
+- Add XXX(String tag) constructor for all derivable widgets
+
 - Remove the *not desired* property parsing on attribute syntax like **attribute="${property}"**.
 
 ##Version 1.1.0 (2009-02-10)

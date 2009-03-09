@@ -99,7 +99,16 @@ public class TextField extends Text implements CommandListener {
 	 * Construct a {@link TextField}
 	 */
 	public TextField() {
-		super(KuixConstants.TEXT_FIELD_WIDGET_TAG);
+		this(KuixConstants.TEXT_FIELD_WIDGET_TAG);
+	}
+	
+	/**
+	 * Construct a {@link TextField}
+	 *
+	 * @param tag
+	 */
+	public TextField(String tag) {
+		super(tag);
 		
 		// Create command to be sure that labels have the correct value
 		validateCommand = new Command(Kuix.getMessage(KuixConstants.VALIDATE_I18N_KEY), Command.OK, 1);

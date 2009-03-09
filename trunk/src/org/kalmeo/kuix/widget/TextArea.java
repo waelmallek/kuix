@@ -65,9 +65,18 @@ public class TextArea extends TextWidget {
 	 * Construct a {@link TextArea}
 	 */
 	public TextArea() {
-		super(KuixConstants.TEXT_AREA_WIDGET_TAG);
+		this(KuixConstants.TEXT_AREA_WIDGET_TAG);
 	}
 
+	/**
+	 * Construct a {@link TextArea}
+	 * 
+	 * @param tag
+	 */
+	public TextArea(String tag) {
+		super(tag);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#setAttribute(java.lang.String, java.lang.String)
 	 */
