@@ -7,6 +7,8 @@
 - Bug fix : fix backwardtabkey and forwardtabkey TabFolder's documentation
 - Bug fix : convert all VALID_XX Widget variable member to static final to reduce the memory usage
 
+- Improve memory usage by reducing the String repetition for widget's style classes attribute.
+
 - Add A KuixCanvasInteractionListener class to be able to intercept UI events at low level. (@see Kuix.getCanvas().setInteractionListener(...))
 - Add setter on KuixCanvas to customize softLeft, softRight, delete and back key codes
 - Add a setValue(String property, Object value) method to DataProvider class to be able to set value without extend DataProvider.
@@ -15,6 +17,10 @@
 - Add XXX(String tag) constructor for all derivable widgets
 
 - Remove the *not desired* property parsing on attribute syntax like **attribute="${property}"**.
+- Remove the Kuix.clearStyleCache(Widget, propagateToChildren) method. Use Kuix.getCanvas().getDesktop().clearCachedStyle(propagateToChildren) instead.
+
+- Methods **refactoring** :
+  - widget.clearCachedStyle(...) *has been moved to* widget.clearCachedStyles(...)   
 
 ##Version 1.1.0 (2009-02-10)
 

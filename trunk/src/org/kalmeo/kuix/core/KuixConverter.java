@@ -24,6 +24,7 @@ package org.kalmeo.kuix.core;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Hashtable;
 
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
@@ -90,6 +91,18 @@ import org.kalmeo.util.resource.ImageManager;
  */
 public class KuixConverter {
 
+	// Strings cache
+	private static final Hashtable cachedStrings = new Hashtable();
+	
+	/**
+	 * Clear strings cache (used by each convert method which result a String
+	 * object).
+	 */
+	public static void clearCachedStrings() {
+		cachedStrings.clear();
+		System.gc();
+	}
+	
 	/**
 	 * Returns the {@link Class} associated with the specified <code>tag</code>,
 	 * or <code>null</code> if the tag is unknow.
@@ -1002,7 +1015,13 @@ public class KuixConverter {
 			String[] styleClasses = new String[values.countTokens()];
 			int i = 0;
 			while (values.hasMoreTokens()) {
-				styleClasses[i++] = values.nextToken().toLowerCase();
+				String styleClasse = values.nextToken().toLowerCase();
+				if (cachedStrings.contains(styleClasse)) {
+					styleClasse = (String) cachedStrings.get(styleClasse);
+				} else {
+					cachedStrings.put(styleClasse, styleClasse);
+				}
+				styleClasses[i++] = styleClasse;
 			}
 			return styleClasses;
 		} else {

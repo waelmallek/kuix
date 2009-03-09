@@ -491,7 +491,7 @@ public class Widget {
 	 */
 	public void setStyleClasses(String[] styleClasses) {
 		this.styleClasses = styleClasses;
-		clearCachedStyle(true);
+		clearCachedStyles(true);
 	}
 	
 	/**
@@ -503,7 +503,7 @@ public class Widget {
 		} else {
 			styleClasses = new String[] { styleClass };
 		}
-		clearCachedStyle(true);
+		clearCachedStyles(true);
 	}
 	
 	/**
@@ -1550,7 +1550,7 @@ public class Widget {
 			widget.child = null;
 			widget.lastChild = null;
 			widget.invalidate();
-			clearCachedStyle(true);	// invalidate is called by clearCachedStyle
+			clearCachedStyles(true);	// invalidate is called by clearCachedStyle
 		}
 	}
 	
@@ -2140,15 +2140,15 @@ public class Widget {
 	}
 
 	/**
-	 * Clear the cachedStyle.
+	 * Clear the cachedStyles.
 	 * 
 	 * @param propagateToChildren
 	 */
-	public void clearCachedStyle(boolean propagateToChildren) {
+	public void clearCachedStyles(boolean propagateToChildren) {
 		cachedStyles = null;
 		if (propagateToChildren) {
 			for (Widget widget = child; widget != null; widget = widget.next) {
-				widget.clearCachedStyle(propagateToChildren);
+				widget.clearCachedStyles(propagateToChildren);
 			}
 		}
 		invalidateStylePropertiesCache(!propagateToChildren);	// if propagateToChildren is true invalidateStylePropertiesCache is already invoked
