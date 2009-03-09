@@ -78,7 +78,16 @@ public class Picture extends Widget {
 	 * Construct a {@link Picture}
 	 */
 	public Picture() {
-		super(KuixConstants.PICTURE_WIDGET_TAG);
+		this(KuixConstants.PICTURE_WIDGET_TAG);
+	}
+	
+	/**
+	 * Construct a {@link Picture}
+	 * 
+	 * @param tag
+	 */
+	public Picture(String tag) {
+		super(tag);
 	}
 
 	/* (non-Javadoc)

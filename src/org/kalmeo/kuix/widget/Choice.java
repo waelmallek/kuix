@@ -61,7 +61,16 @@ public class Choice extends ActionWidget {
 	 * Construct a {@link Choice}
 	 */
 	public Choice() {
-		super(KuixConstants.CHOICE_WIDGET_TAG);
+		this(KuixConstants.CHOICE_WIDGET_TAG);
+	}
+	
+	/**
+	 * Construct a {@link Choice}
+	 *
+	 * @param tag
+	 */
+	public Choice(String tag) {
+		super(tag);
 
 		// Create the inner choice container
 		choiceContainer = new Widget(KuixConstants.CHOICE_CONTAINER_WIDGET_TAG) {

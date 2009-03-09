@@ -59,7 +59,16 @@ public class Gauge extends FocusableWidget {
 	 * Construct a {@link Gauge}
 	 */
 	public Gauge() {
-		super(KuixConstants.GAUGE_WIDGET_TAG);
+		this(KuixConstants.GAUGE_WIDGET_TAG);
+	}
+	
+	/**
+	 * Construct a {@link Gauge}
+	 *
+	 * @param tag
+	 */
+	public Gauge(String tag) {
+		super(tag);
 		barLayoutData = new StaticLayoutData(Alignment.LEFT, 0, -1); 	// Caution the bar would not be resized by the gauge. But it's the bar that resize the gauge.
 		bar = new Widget(KuixConstants.GAUGE_BAR_WIDGET_TAG) {
 

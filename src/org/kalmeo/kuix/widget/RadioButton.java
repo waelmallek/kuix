@@ -41,7 +41,16 @@ public class RadioButton extends CheckBox {
 	 * Construct a {@link RadioButton}
 	 */
 	public RadioButton() {
-		super(KuixConstants.RADIO_BUTTON_WIDGET_TAG);
+		this(KuixConstants.RADIO_BUTTON_WIDGET_TAG);
+	}
+	
+	/**
+	 * Construct a {@link RadioButton}
+	 *
+	 * @param tag
+	 */
+	public RadioButton(String tag) {
+		super(tag);
 	}
 	
 	/* (non-Javadoc)
