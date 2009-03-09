@@ -139,9 +139,9 @@ public class Screen extends Widget {
 		/* (non-Javadoc)
 		 * @see org.kalmeo.kuix.widget.Widget#clearCachedStyle(boolean)
 		 */
-		public void clearCachedStyle(boolean propagateToChildren) {
+		public void clearCachedStyles(boolean propagateToChildren) {
 			layoutData = null;
-			super.clearCachedStyle(propagateToChildren);
+			super.clearCachedStyles(propagateToChildren);
 		}
 
 		/* (non-Javadoc)

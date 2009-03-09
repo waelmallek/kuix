@@ -668,9 +668,9 @@ public final class Kuix {
 	 */
 	public static void loadCss(InputStream inputStream) {
 		parseCss(inputStream);
-		if (canvas != null) {
+		if (canvas != null && canvas.getDesktop() != null) {
 			// Clear all style caches to use new loaded styles
-			clearStyleCache(canvas.getDesktop(), true);
+			canvas.getDesktop().clearCachedStyles(true);
 		}
 	}
 
@@ -800,7 +800,7 @@ public final class Kuix {
 							if (path.isEmpty() && mergeRootWidget && rootWidget != null) {
 								if (tag.equals(rootWidget.getTag())) {
 									newWidget = rootWidget;
-									rootWidget.clearCachedStyle(true);
+									rootWidget.clearCachedStyles(true);
 								} else {
 									// Case when mergeRootWidget is true and the real rootWidget != xml root widget
 									path.push(rootWidget);
@@ -1509,18 +1509,6 @@ public final class Kuix {
 		registredStyles.removeAll();
 	}
 
-	/**
-	 * Clear style cache from the specified {@link Widget} and its childs
-	 * 
-	 * @param target
-	 * @param propagateToChildren
-	 */
-	public static void clearStyleCache(Widget target, boolean propagateToChildren) {
-		if (target != null) {
-			target.clearCachedStyle(propagateToChildren);
-		}
-	}
-	
 	// Internationalization support ////////////////////////////////////////////////////////////////////////////////////
 	
 	/**

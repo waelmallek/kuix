@@ -202,9 +202,9 @@ public abstract class TextWidget extends FocusableWidget {
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#clearCachedStyle(boolean)
 	 */
-	public void clearCachedStyle(boolean propagateToChildren) {
+	public void clearCachedStyles(boolean propagateToChildren) {
 		cachedFont = null;
-		super.clearCachedStyle(propagateToChildren);
+		super.clearCachedStyles(propagateToChildren);
 	}
 	
 }

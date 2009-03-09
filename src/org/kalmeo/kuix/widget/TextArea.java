@@ -156,9 +156,9 @@ public class TextArea extends TextWidget {
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.AbstractTextWidget#clearCachedStyle(boolean)
 	 */
-	public void clearCachedStyle(boolean clearCachedStyle) {
+	public void clearCachedStyles(boolean clearCachedStyle) {
 		cachedGap = null;
-		super.clearCachedStyle(clearCachedStyle);
+		super.clearCachedStyles(clearCachedStyle);
 	}
 
 	/* (non-Javadoc)
