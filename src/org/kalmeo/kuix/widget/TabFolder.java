@@ -84,6 +84,7 @@ public class TabFolder extends List {
 		};
 		buttonsContainer.setHorizontal(true);
 		buttonsContainer.setShowScrollBar(false);
+		buttonsContainer.setShowIndicators(true);
 		super.add(buttonsContainer);
 		
 		container = new Widget(KuixConstants.TAB_FOLDER_CONTAINER_WIDGET_TAG) {

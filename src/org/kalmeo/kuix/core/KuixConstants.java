@@ -146,6 +146,7 @@ public interface KuixConstants {
 	public static final String HORIZONTAL_ATTRIBUTE 						= "horizontal";
 	public static final String AUTO_SCROLL_ATTRIBUTE 						= "autoscroll";
 	public static final String SHOW_SCROLL_BAR_ATTRIBUTE 					= "showscrollbar";
+	public static final String SHOW_INDICATORS_ATTRIBUTE 					= "showindicators";
 	public static final String RENDERER_ATTRIBUTE 							= "renderer";
 	public static final String ITEMS_ATTRIBUTE 								= "items";
 	public static final String DATAPROVIDER_ATTRIBUTE 						= "dataprovider";
@@ -279,6 +280,8 @@ public interface KuixConstants {
 	public static final String SCROLL_PANE_WIDGET_TAG 						= "scrollpane";
 	public static final String SCROLL_PANE_CONTAINER_WIDGET_TAG 			= "scrollpanecontainer";
 	public static final String SCROLL_PANE_SCROLL_BAR_WIDGET_TAG 			= "scrollpanescrollbar";
+	public static final String SCROLL_PANE_FIRST_INDICATOR_WIDGET_TAG 		= "scrollpanefirstindicator";
+	public static final String SCROLL_PANE_LAST_INDICATOR_WIDGET_TAG 		= "scrollpanelastindicator";
 
 	public static final String POPUP_BOX_WIDGET_TAG 						= "popupbox";
 	public static final String POPUP_BOX_CONTAINER_WIDGET_TAG 				= "popupboxcontainer";

@@ -43,6 +43,36 @@ import org.kalmeo.util.MathFP;
  * @author bbeaulant
  */
 public class ScrollPane extends Widget {
+	
+	/**
+	 * Class used to define the optional indicators.
+	 */
+	public class ScrollPaneIndicator extends Widget {
+		
+		/**
+		 * Construct a {@link ScrollPaneIndicator}
+		 *
+		 * @param tag
+		 */
+		public ScrollPaneIndicator(String tag) {
+			super(tag);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.kalmeo.kuix.widget.Widget#getDefaultStylePropertyValue(java.lang.String)
+		 */
+		protected Object getDefaultStylePropertyValue(String name) {
+			if (KuixConstants.LAYOUT_DATA_STYLE_PROPERTY.equals(name)) {
+				if (horizontal) {
+					return this == firstIndicator ? BorderLayoutData.instanceWest : BorderLayoutData.instanceEast;
+				} else {
+					return this == firstIndicator ? BorderLayoutData.instanceNorth : BorderLayoutData.instanceSouth;
+				}
+			}
+			return super.getDefaultStylePropertyValue(name);
+		}
+		
+	}
 
 	// Defaults
 	private static final int MAX_INCREMENT_DIVIDER = 4;
@@ -53,6 +83,10 @@ public class ScrollPane extends Widget {
 	// ScrollBar widget
 	private final ScrollBar scrollBar;
 	
+	// Scroll indicators
+	private ScrollPaneIndicator firstIndicator;
+	private ScrollPaneIndicator lastIndicator;
+	
 	// Markers
 	private boolean useMarkers = false;
 	private FocusableWidget firstMarker = null;
@@ -61,10 +95,11 @@ public class ScrollPane extends Widget {
 	// Attributes
 	private boolean horizontal;
 	private boolean showScrollBar;
+	private boolean showIndicators;
 	private boolean autoScroll = false;
 	private boolean needToAutoScroll = false;
 	
-	// offsets
+	// Offsets
 	private int xOffset = 0;
 	private int yOffset = 0;
 
@@ -249,6 +284,7 @@ public class ScrollPane extends Widget {
 			
 		};
 		setShowScrollBar(true);
+		setShowIndicators(false);
 		setHorizontal(false);
 	}
 	
@@ -262,6 +298,10 @@ public class ScrollPane extends Widget {
 		}
 		if (KuixConstants.SHOW_SCROLL_BAR_ATTRIBUTE.equals(name)) {
 			setShowScrollBar(BooleanUtil.parseBoolean(value));
+			return true;
+		}
+		if (KuixConstants.SHOW_INDICATORS_ATTRIBUTE.equals(name)) {
+			setShowIndicators(BooleanUtil.parseBoolean(value));
 			return true;
 		}
 		if (KuixConstants.AUTO_SCROLL_ATTRIBUTE.equals(name)) {
@@ -280,6 +320,12 @@ public class ScrollPane extends Widget {
 		}
 		if (KuixConstants.SCROLL_PANE_SCROLL_BAR_WIDGET_TAG.equals(tag)) {
 			return getScrollBar();
+		}
+		if (KuixConstants.SCROLL_PANE_FIRST_INDICATOR_WIDGET_TAG.equals(tag)) {
+			return getFirstIndicator();
+		}
+		if (KuixConstants.SCROLL_PANE_LAST_INDICATOR_WIDGET_TAG.equals(tag)) {
+			return getLastIndicator();
 		}
 		return super.getInternalChildInstance(tag);
 	}
@@ -322,9 +368,46 @@ public class ScrollPane extends Widget {
 	 */
 	public void setShowScrollBar(boolean showScrollBar) {
 		this.showScrollBar = showScrollBar;
-		updateScrollBarVisibility();
+		if (showScrollBar) {
+			if (scrollBar.parent != this) {
+				super.add(scrollBar);
+			}
+		} else {
+			if (scrollBar.parent == this) {
+				scrollBar.remove();
+			}
+		}
 	}
 	
+	/**
+	 * @return the showIndicators
+	 */
+	public boolean isShowIndicators() {
+		return showIndicators;
+	}
+
+	/**
+	 * @param showIndicators the showIndicators to set
+	 */
+	public void setShowIndicators(boolean showIndicators) {
+		this.showIndicators = showIndicators;
+		if (showIndicators) {
+			if (getFirstIndicator().parent != this) {
+				super.add(firstIndicator);
+			}
+			if (getLastIndicator().parent != this) {
+				super.add(lastIndicator);
+			}
+		} else {
+			if (firstIndicator != null) {
+				firstIndicator.remove();
+			}
+			if (lastIndicator != null) {
+				lastIndicator.remove();
+			}
+		}
+	}
+
 	/**
 	 * @return the autoScroll
 	 */
@@ -369,6 +452,30 @@ public class ScrollPane extends Widget {
 		return scrollBar;
 	}
 
+	/**
+	 * Return the first indicator instance.
+	 * 
+	 * @return the first indicator
+	 */
+	public ScrollPaneIndicator getFirstIndicator() {
+		if (firstIndicator == null) {
+			firstIndicator = new ScrollPaneIndicator(KuixConstants.SCROLL_PANE_FIRST_INDICATOR_WIDGET_TAG);
+		}
+		return firstIndicator;
+	}
+	
+	/**
+	 * Return the last indicator instance.
+	 * 
+	 * @return the last indicator
+	 */
+	public ScrollPaneIndicator getLastIndicator() {
+		if (lastIndicator == null) {
+			lastIndicator = new ScrollPaneIndicator(KuixConstants.SCROLL_PANE_LAST_INDICATOR_WIDGET_TAG);
+		}
+		return lastIndicator;
+	}
+	
 	/**
 	 * @param xOffset the xOffset to set
 	 * @return <code>true</code> if the xOffset value has changed
@@ -550,25 +657,18 @@ public class ScrollPane extends Widget {
 				scrollBar.setValue(MathFP.div(xOffset, contentWidth - innerWidth));
 				scrollBar.setSelection(MathFP.div(innerWidth, contentWidth));
 			}
+			if (showIndicators) {
+				firstIndicator.setVisible(xOffset != 0);
+				lastIndicator.setVisible(contentWidth > innerWidth && xOffset < contentWidth - innerWidth);
+			}
 		} else {
 			if (contentHeight != 0) {
 				scrollBar.setValue(MathFP.div(yOffset, contentHeight - innerHeight));
 				scrollBar.setSelection(MathFP.div(innerHeight, contentHeight));
 			}
-		}
-	}
-	
-	/**
-	 * Update the scrollBar visibility according to its selection size.
-	 */
-	private void updateScrollBarVisibility() {
-		if (showScrollBar) {
-			if (scrollBar.parent != this) {
-				super.add(scrollBar);
-			}
-		} else {
-			if (scrollBar.parent == this) {
-				scrollBar.remove();
+			if (showIndicators) {
+				firstIndicator.setVisible(yOffset != 0);
+				lastIndicator.setVisible(contentHeight > innerHeight && yOffset < contentHeight - innerHeight);
 			}
 		}
 	}
@@ -605,5 +705,5 @@ public class ScrollPane extends Widget {
 		}
 		return super.processPointerEvent(type, x, y);
 	}
-
+	
 }

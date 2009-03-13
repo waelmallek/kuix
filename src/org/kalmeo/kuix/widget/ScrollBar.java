@@ -72,7 +72,7 @@ public class ScrollBar extends Widget {
 	 */
 	public ScrollBar(String tag) {
 		super(tag);
-		barLayoutData = new StaticLayoutData(null, 0, 0);
+		barLayoutData = new StaticLayoutData(null, -1, -1);
 		bar = new Widget(KuixConstants.SCROLL_BAR_BAR_WIDGET_TAG) {
 
 			/* (non-Javadoc)

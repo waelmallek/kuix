@@ -648,9 +648,9 @@ public class Widget {
 	public Style getAuthorStyle() {
 		return authorStyle;
 	}
-	
+
 	/**
-	 * Caution, if widget attribute are already cached, you need to call the
+	 * Caution, if widget attribute are already cached, you need to invoke
 	 * <code>invalidateStylePropertiesCache(propagateToChildern)</code>.
 	 * 
 	 * @param authorStyle the authorStyle to set
@@ -879,10 +879,18 @@ public class Widget {
 	}
 	
 	/**
+	 * @param flag
+	 * @return true if the given <code>flag</code> is already activated
+	 */
+	private boolean checkValidCachedFlag(long flag) {
+		return (validCachedFlags & flag) == flag;
+	}
+	
+	/**
 	 * @return the layout
 	 */
 	public Layout getLayout() {
-		if ((validCachedFlags & VALID_CACHED_FLAG_LAYOUT) != VALID_CACHED_FLAG_LAYOUT) {
+		if (!checkValidCachedFlag(VALID_CACHED_FLAG_LAYOUT)) {
 			cachedLayout = (Layout) getStylePropertyValue(KuixConstants.LAYOUT_STYLE_PROPERTY, false);
 			validCachedFlags |= VALID_CACHED_FLAG_LAYOUT;
 		}
@@ -893,7 +901,7 @@ public class Widget {
 	 * @return the layoutData
 	 */
 	public LayoutData getLayoutData() {
-		if ((validCachedFlags & VALID_CACHED_FLAG_LAYOUT_DATA) != VALID_CACHED_FLAG_LAYOUT_DATA) {
+		if (!checkValidCachedFlag(VALID_CACHED_FLAG_LAYOUT_DATA)) {
 			cachedLayoutData = (LayoutData) getStylePropertyValue(KuixConstants.LAYOUT_DATA_STYLE_PROPERTY, false);
 			validCachedFlags |= VALID_CACHED_FLAG_LAYOUT_DATA;
 		}
@@ -904,7 +912,7 @@ public class Widget {
 	 * @return the margin
 	 */
 	public Insets getMargin() {
-		if ((validCachedFlags & VALID_CACHED_FLAG_MARGIN) != VALID_CACHED_FLAG_MARGIN) {
+		if (!checkValidCachedFlag(VALID_CACHED_FLAG_MARGIN)) {
 			cachedMargin = (Insets) getStylePropertyValue(KuixConstants.MARGIN_STYLE_PROPERTY, false);
 			validCachedFlags |= VALID_CACHED_FLAG_MARGIN;
 		}
@@ -915,7 +923,7 @@ public class Widget {
 	 * @return the border
 	 */
 	public Insets getBorder() {
-		if ((validCachedFlags & VALID_CACHED_FLAG_BORDER) != VALID_CACHED_FLAG_BORDER) {
+		if (!checkValidCachedFlag(VALID_CACHED_FLAG_BORDER)) {
 			cachedBorder = (Insets) getStylePropertyValue(KuixConstants.BORDER_STYLE_PROPERTY, false);
 			validCachedFlags |= VALID_CACHED_FLAG_BORDER;
 		}
@@ -926,7 +934,7 @@ public class Widget {
 	 * @return the padding
 	 */
 	public Insets getPadding() {
-		if ((validCachedFlags & VALID_CACHED_FLAG_PADDING) != VALID_CACHED_FLAG_PADDING) {
+		if (!checkValidCachedFlag(VALID_CACHED_FLAG_PADDING)) {
 			cachedPadding = (Insets) getStylePropertyValue(KuixConstants.PADDING_STYLE_PROPERTY, false);
 			validCachedFlags |= VALID_CACHED_FLAG_PADDING;
 		}
@@ -937,7 +945,7 @@ public class Widget {
 	 * @return the minSize
 	 */
 	public Metrics getMinSize() {
-		if ((validCachedFlags & VALID_CACHED_FLAG_MIN_SIZE) != VALID_CACHED_FLAG_MIN_SIZE) {
+		if (!checkValidCachedFlag(VALID_CACHED_FLAG_MIN_SIZE)) {
 			cachedMinSize = (Metrics) getStylePropertyValue(KuixConstants.MIN_SIZE_STYLE_PROPERTY, false);
 			validCachedFlags |= VALID_CACHED_FLAG_MIN_SIZE;
 		}
@@ -948,7 +956,7 @@ public class Widget {
 	 * @return The insets
 	 */
 	public Insets getInsets() {
-		if ((validCachedFlags & VALID_CACHED_FLAG_INSETS) != VALID_CACHED_FLAG_INSETS) {
+		if (!checkValidCachedFlag(VALID_CACHED_FLAG_INSETS)) {
 			
 			Insets margin = getMargin();
 			Insets border = getBorder();
@@ -973,7 +981,7 @@ public class Widget {
 	 * @return the color
 	 */
 	public Color getColor() {
-		if ((validCachedFlags & VALID_CACHED_FLAG_COLOR) != VALID_CACHED_FLAG_COLOR) {
+		if (!checkValidCachedFlag(VALID_CACHED_FLAG_COLOR)) {
 			Object colorValue = getStylePropertyValue(KuixConstants.COLOR_STYLE_PROPERTY, true);
 			if (colorValue != null) {
 				cachedColor = (Color) colorValue;
@@ -992,7 +1000,7 @@ public class Widget {
 	 * @return the borderColor
 	 */
 	public Color[] getBorderColor() {
-		if ((validCachedFlags & VALID_CACHED_FLAG_BORDER_COLOR) != VALID_CACHED_FLAG_BORDER_COLOR) {
+		if (!checkValidCachedFlag(VALID_CACHED_FLAG_BORDER_COLOR)) {
 			Object borderColorValue = getStylePropertyValue(KuixConstants.BORDER_COLOR_STYLE_PROPERTY, false);
 			if (borderColorValue != null) {
 				cachedBorderColor = (Color[]) borderColorValue;
@@ -1011,7 +1019,7 @@ public class Widget {
 	 * @return the borderStroke
 	 */
 	public int getBorderStroke() {
-		if ((validCachedFlags & VALID_CACHED_FLAG_BORDER_STROKE) != VALID_CACHED_FLAG_BORDER_STROKE) {
+		if (!checkValidCachedFlag(VALID_CACHED_FLAG_BORDER_STROKE)) {
 			Object borderStrokeValue = getStylePropertyValue(KuixConstants.BORDER_STROKE_STYLE_PROPERTY, false);
 			if (borderStrokeValue != null) {
 				cachedBorderStroke = ((Integer) borderStrokeValue).intValue();
@@ -1030,7 +1038,7 @@ public class Widget {
 	 * @return the borderImages array
 	 */
 	public Image[] getBorderImage() {
-		if ((validCachedFlags & VALID_CACHED_FLAG_BORDER_IMAGE) != VALID_CACHED_FLAG_BORDER_IMAGE) {
+		if (!checkValidCachedFlag(VALID_CACHED_FLAG_BORDER_IMAGE)) {
 			Object borderImageValue = getStylePropertyValue(KuixConstants.BORDER_IMAGE_STYLE_PROPERTY, false);
 			if (borderImageValue != null) {
 				cachedBorderImage = (Image[]) borderImageValue;
@@ -1049,7 +1057,7 @@ public class Widget {
 	 * @return the borderAlignments array
 	 */
 	public Alignment[] getBorderAlign() {
-		if ((validCachedFlags & VALID_CACHED_FLAG_BORDER_ALIGN) != VALID_CACHED_FLAG_BORDER_ALIGN) {
+		if (!checkValidCachedFlag(VALID_CACHED_FLAG_BORDER_ALIGN)) {
 			Object borderAlignValue = getStylePropertyValue(KuixConstants.BORDER_ALIGN_STYLE_PROPERTY, false);
 			if (borderAlignValue != null) {
 				cachedBorderAlign = (Alignment[]) borderAlignValue;
@@ -1068,7 +1076,7 @@ public class Widget {
 	 * @return the backgroundColor
 	 */
 	public Color getBackgroundColor() {
-		if ((validCachedFlags & VALID_CACHED_FLAG_BACKGROUND_COLOR) != VALID_CACHED_FLAG_BACKGROUND_COLOR) {
+		if (!checkValidCachedFlag(VALID_CACHED_FLAG_BACKGROUND_COLOR)) {
 			Object backgroundColorValue = getStylePropertyValue(KuixConstants.BACKGROUND_COLOR_STYLE_PROPERTY, false);
 			if (backgroundColorValue != null) {
 				cachedBackgroundColor = (Color) backgroundColorValue;
@@ -1086,7 +1094,7 @@ public class Widget {
 	 * @return the backroundImage array
 	 */
 	public Image[] getBackgroundImage() {
-		if ((validCachedFlags & VALID_CACHED_FLAG_BACKGROUND_IMAGE) != VALID_CACHED_FLAG_BACKGROUND_IMAGE) {
+		if (!checkValidCachedFlag(VALID_CACHED_FLAG_BACKGROUND_IMAGE)) {
 			Object backgroundImageValue = getStylePropertyValue(KuixConstants.BACKGROUND_IMAGE_STYLE_PROPERTY, false);
 			if (backgroundImageValue != null) {
 				cachedBackgroundImage = (Image[]) backgroundImageValue;
@@ -1104,7 +1112,7 @@ public class Widget {
 	 * @return the backroundAlign array
 	 */
 	public Alignment[] getBackgroundAlign() {
-		if ((validCachedFlags & VALID_CACHED_FLAG_BACKGROUNG_ALIGN) != VALID_CACHED_FLAG_BACKGROUNG_ALIGN) {
+		if (!checkValidCachedFlag(VALID_CACHED_FLAG_BACKGROUNG_ALIGN)) {
 			Object backgroundAlignValue = getStylePropertyValue(KuixConstants.BACKGROUND_ALIGN_STYLE_PROPERTY, false);
 			if (backgroundAlignValue != null) {
 				cachedBackgroundAlign = (Alignment[]) backgroundAlignValue;
@@ -1122,7 +1130,7 @@ public class Widget {
 	 * @return the backgroundRepeat array
 	 */
 	public Repeat[] getBackgroundRepeat() {
-		if ((validCachedFlags & VALID_CACHED_FLAG_BACKGROUND_REPEAT) != VALID_CACHED_FLAG_BACKGROUND_REPEAT) {
+		if (!checkValidCachedFlag(VALID_CACHED_FLAG_BACKGROUND_REPEAT)) {
 			Object backgroundRepeatValue = getStylePropertyValue(KuixConstants.BACKGROUND_REPEAT_STYLE_PROPERTY, false);
 			if (backgroundRepeatValue != null) {
 				cachedBackgroundRepeat = (Repeat[]) backgroundRepeatValue;
@@ -1140,7 +1148,7 @@ public class Widget {
 	 * @return the grayed color
 	 */
 	public Color getGrayedColor() {
-		if ((validCachedFlags & VALID_CACHED_FLAG_GRAYED_COLOR) != VALID_CACHED_FLAG_GRAYED_COLOR) {
+		if (!checkValidCachedFlag(VALID_CACHED_FLAG_GRAYED_COLOR)) {
 			Object grayedColorValue = getStylePropertyValue(KuixConstants.GRAYED_COLOR_STYLE_PROPERTY, true);
 			if (grayedColorValue != null) {
 				cachedGrayedColor = (Color) grayedColorValue;
@@ -1159,7 +1167,7 @@ public class Widget {
 	 * @return the gap
 	 */
 	public Gap getGap() {
-		if ((validCachedFlags & VALID_CACHED_FLAG_GAP) != VALID_CACHED_FLAG_GAP) {
+		if (!checkValidCachedFlag(VALID_CACHED_FLAG_GAP)) {
 			cachedGap = (Gap) getStylePropertyValue(KuixConstants.GAP_STYLE_PROPERTY, false);
 			validCachedFlags |= VALID_CACHED_FLAG_GAP;
 		}
@@ -1172,7 +1180,7 @@ public class Widget {
 	 * @return the span
 	 */
 	public Span getSpan() {
-		if ((validCachedFlags & VALID_CACHED_FLAG_SPAN) != VALID_CACHED_FLAG_SPAN) {
+		if (!checkValidCachedFlag(VALID_CACHED_FLAG_SPAN)) {
 			cachedSpan = (Span) getStylePropertyValue(KuixConstants.SPAN_STYLE_PROPERTY, false);
 			validCachedFlags |= VALID_CACHED_FLAG_SPAN;
 		}
@@ -1186,7 +1194,7 @@ public class Widget {
 	 * @return the weight
 	 */
 	public Weight getWeight() {
-		if ((validCachedFlags & VALID_CACHED_FLAG_WEIGHT) != VALID_CACHED_FLAG_WEIGHT) {
+		if (!checkValidCachedFlag(VALID_CACHED_FLAG_WEIGHT)) {
 			cachedWeight = (Weight) getStylePropertyValue(KuixConstants.WEIGHT_STYLE_PROPERTY, false);
 			validCachedFlags |= VALID_CACHED_FLAG_WEIGHT;
 		}
@@ -1199,7 +1207,7 @@ public class Widget {
 	 * @return the alignment
 	 */
 	public Alignment getAlign() {
-		if ((validCachedFlags & VALID_CACHED_FLAG_ALIGN) != VALID_CACHED_FLAG_ALIGN) {
+		if (!checkValidCachedFlag(VALID_CACHED_FLAG_ALIGN)) {
 			cachedAlign = (Alignment) getStylePropertyValue(KuixConstants.ALIGN_STYLE_PROPERTY, false);
 			validCachedFlags |= VALID_CACHED_FLAG_ALIGN;
 		}
