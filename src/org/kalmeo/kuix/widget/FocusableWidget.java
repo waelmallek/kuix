@@ -127,7 +127,8 @@ public class FocusableWidget extends Widget {
 	 * @see org.kalmeo.kuix.widget.Widget#isFocusable()
 	 */
 	public boolean isFocusable() {
-		return enabled && focusable;
+		// Since 1.1.1 enable do not interact with focusable state
+		return focusable;
 	}
 
 	/* (non-Javadoc)

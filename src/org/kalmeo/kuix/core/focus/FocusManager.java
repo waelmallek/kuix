@@ -200,6 +200,10 @@ public class FocusManager {
 				if (scrollPane.isMarkerWidget(otherFocus)) {
 					Widget nextOtherFocus = otherFocus.getOtherFocus(rootWidget, otherFocus, null, forward, direction, false, true, true);
 					if (nextOtherFocus == null) {
+						if (loop) {
+							requestFocus(null);
+							requestOtherFocus(null, forward, direction, ++loopCount);
+						}
 						return;
 					}
 					if (findFirstScrollPaneParent(nextOtherFocus) != scrollPane || scrollPane.isChildInsideClippedArea(nextOtherFocus) && !scrollPane.isMarkerWidget(nextOtherFocus)) {
