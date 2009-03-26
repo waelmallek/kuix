@@ -1040,7 +1040,7 @@ public final class KuixCanvas extends GameCanvas {
 				return KuixConstants.PLATFORM_NOKIA;
 			} else if (currentPlatform.indexOf("SonyEricsson") != -1) {
 				return KuixConstants.PLATFORM_SONY_ERICSSON;
-			} else if (currentPlatform.indexOf("SunMicrosystems") != -1 || currentPlatform.indexOf("j2me") != -1) {	// SunMicrosystems = WTK 2.5.x, j2me = J2ME Platforme SDK 3.0
+			} else if (currentPlatform.indexOf("SunMicrosystems") != -1) {	// SunMicrosystems = WTK 2.5.x
 				return KuixConstants.PLATFORM_SUN;
 			} else if (currentPlatform.indexOf("intent") != -1) {
 				return KuixConstants.PLATFORM_INTENT;
@@ -1124,11 +1124,18 @@ public final class KuixCanvas extends GameCanvas {
 				}
 			}
 		}
-		// Detecting LG
+		// Detecting Blackberry
 		try {
 			Class.forName("net.rim.device.api.ui.UiApplication");
 			return KuixConstants.PLATFORM_BLACKBERRY;
 		} catch (Throwable ex) {
+		}
+		// J2ME Platform SDK 3.0 (placed at the end because of motorola detection conflict
+		try {
+			if (System.getProperty("microedition.platform").indexOf("j2me") != -1) {
+				return KuixConstants.PLATFORM_SUN;
+			}
+		} catch (Exception e) {
 		}
 		return KuixConstants.PLATFORM_NOT_DEFINED;
 	}

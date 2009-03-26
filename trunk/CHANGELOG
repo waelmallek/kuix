@@ -7,6 +7,8 @@
 - Bug fix : fix backwardtabkey and forwardtabkey TabFolder's documentation
 - Bug fix : convert all VALID_XX Widget variable member to static final to reduce the memory usage
 - Bug fix : fix hidden scrollbar in fresh displayed scrollPane
+- Bug fix : avoid Sun wtk 3.0 detection conflict with Motorola detection
+- Bug fix : fix the focusLoop problem when using scrollPane widgets
 
 - Improve memory usage by reducing the String repetition for widget's style classes attribute.
 
@@ -20,6 +22,7 @@
 
 - Remove the *not desired* property parsing on attribute syntax like **attribute="${property}"**.
 - Remove the Kuix.clearStyleCache(Widget, propagateToChildren) method. Use Kuix.getCanvas().getDesktop().clearCachedStyle(propagateToChildren) instead.
+- Remove enabled action on focusable attribute in FocusableWidgets. A disabled widget could be focused if focusable is true
 
 - Methods **refactoring** :
   - widget.clearCachedStyle(...) *has been moved to* widget.clearCachedStyles(...)   
