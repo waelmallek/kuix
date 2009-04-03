@@ -47,7 +47,8 @@ public class FocusManager {
 	protected Widget focusedWidget;
 	
 	// Key shortcut handler list
-	private Vector shortcuts;
+	private Vector shortcutsHandlers;
+	private boolean forceShortcutsAssociationCheck = true;
 	
 	// Represent the widget where the drag event starts
 	private Widget draggedEventWidget = null;
@@ -117,11 +118,11 @@ public class FocusManager {
 	 */
 	public void addShortcutHandler(Widget widget) {
 		if (widget != null) {
-			if (shortcuts == null) {
-				shortcuts = new Vector();
+			if (shortcutsHandlers == null) {
+				shortcutsHandlers = new Vector();
 			}
-			if (!shortcuts.contains(widget)) {
-				shortcuts.addElement(widget);
+			if (!shortcutsHandlers.contains(widget)) {
+				shortcutsHandlers.addElement(widget);
 			}
 		}
 	}
@@ -132,9 +133,9 @@ public class FocusManager {
 	 * @param widget the widget that handle the shortcut key event
 	 */
 	public void removeShortcutHandler(Widget widget) {
-		if (widget != null && shortcuts != null) {
-			if (shortcuts.contains(widget)) {
-				shortcuts.removeElement(widget);
+		if (widget != null && shortcutsHandlers != null) {
+			if (shortcutsHandlers.contains(widget)) {
+				shortcutsHandlers.removeElement(widget);
 			}
 		}
 	}
@@ -281,12 +282,21 @@ public class FocusManager {
 			}
 		}
 		
+		// Check shortcuts association
+		if (rootWidget != null && (forceShortcutsAssociationCheck || rootWidget.isShortcutsInvalidated())) {
+			if (shortcutsHandlers != null) {
+				shortcutsHandlers.removeAllElements();
+			}
+			rootWidget.applyShortcutsAssociation(this, forceShortcutsAssociationCheck);
+			forceShortcutsAssociationCheck = false;
+		}
+		
 		// Check shortcuts
 		boolean processDefault = true;
-		if (shortcuts != null && !shortcuts.isEmpty()) {
+		if (shortcutsHandlers != null && !shortcutsHandlers.isEmpty()) {
 			Widget widget = null;
-			for (int i = shortcuts.size() - 1; i >= 0; --i) {
-				widget = (Widget) shortcuts.elementAt(i);
+			for (int i = shortcutsHandlers.size() - 1; i >= 0; --i) {
+				widget = (Widget) shortcutsHandlers.elementAt(i);
 
 				// If the widget has a Released or Repeated shortcut associated with the current kuixKeyCode default processing will be passed
 				if (processDefault 
@@ -296,7 +306,7 @@ public class FocusManager {
 						processDefault = false;
 				}
 				
-				if (widget != null && widget.isVisible() && widget.isInWidgetTree() && widget.hasShortcutKeyCodes(type)) {
+				if (widget != null && widget.isShortcutsAccessible() && widget.hasShortcutKeyCodes(type)) {
 					if (widget.isShortcutKeyCodeCompatible(kuixKeyCode, type)) {
 						if (widget.processShortcutKeyEvent(type, kuixKeyCode)) {
 							return true;

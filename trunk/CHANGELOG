@@ -9,8 +9,11 @@
 - Bug fix : fix hidden scrollbar in fresh displayed scrollPane
 - Bug fix : avoid Sun wtk 3.0 detection conflict with Motorola detection
 - Bug fix : fix the focusLoop problem when using scrollPane widgets
+- Bug fix : fix the shortcuts association
+- Bug fix : fix a customize secondLabel problem en PopupBox
 
 - Improve memory usage by reducing the String repetition for widget's style classes attribute.
+- Improve the shortcuts association. Sub MenuItem's shortcuts are now accessible on the main screen
 
 - Add A KuixCanvasInteractionListener class to be able to intercept UI events at low level. (@see Kuix.getCanvas().setInteractionListener(...))
 - Add setter on KuixCanvas to customize softLeft, softRight, delete and back key codes
