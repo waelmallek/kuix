@@ -256,6 +256,9 @@ public class Widget {
 	private byte[] repeatedShortcutActions = null;
 	private byte[] releasedShortcutActions = null;
 	
+	// Define if the widget shortcuts need to be reassocate
+	private boolean shortcutsInvalidated = true;
+	
 	// List of data binds instructions (key:property / value:attribute)
 	protected LinkedList bindInstructions = null;
 	
@@ -673,13 +676,18 @@ public class Widget {
 	
 	/**
 	 * Returns the widget's visibility state. If the parent or an ancestror of
-	 * the widget is not visible the function returns <code>false</code>.
+	 * the widget is not visible or <code>null</code> the function returns
+	 * <code>false</code>.
 	 * 
 	 * @return the visibility state
 	 */
 	public boolean isVisible() {
-		if (visible && parent != null) {
-			return parent.isVisible();
+		if (visible) {
+			if (parent != null) {
+				return parent.isVisible();
+			} else {
+				return false;
+			}
 		}
 		return visible;
 	}
@@ -771,13 +779,54 @@ public class Widget {
 				releasedShortcutActions = shortcuts;
 				break;
 		}
-		FocusManager focusManager = getFocusManager();
-		if (focusManager != null) {
+		invalidateShortcuts();
+	}
+	
+	/**
+	 * Check if widget is accessible through shortcuts.
+	 * 
+	 * @return <code>true</code> if the shortcuts are accessible.
+	 */
+	public boolean isShortcutsAccessible() {
+		if (parent != null) {
+			return parent.isShortcutsAccessible();
+		}
+		return isInWidgetTree();
+	}
+	
+	/**
+	 * Update the shortcuts association with currtent focusManager if it exists.
+	 * 
+	 * @param focusManager the focusManager that request the shortcuts association.
+	 * @param forced bypass the invalidated property
+	 */
+	public void applyShortcutsAssociation(FocusManager focusManager, boolean forced) {
+		if (forced || shortcutsInvalidated) {
 			if (hasShortcuts()) {
 				focusManager.addShortcutHandler(this);
-			} else {
-				focusManager.removeShortcutHandler(this);
 			}
+			for (Widget widget = child; widget != null; widget = widget.next) {
+				widget.applyShortcutsAssociation(focusManager, forced);
+			}
+			shortcutsInvalidated = false;
+		}
+	}
+	
+	/**
+	 * @return the shortcutsInvalidated
+	 */
+	public boolean isShortcutsInvalidated() {
+		return shortcutsInvalidated;
+	}
+
+	/**
+	 * Invalidate the widget's shortcuts and propagate the information
+	 * to its parent.
+	 */
+	protected void invalidateShortcuts() {
+		shortcutsInvalidated = true;
+		if (parent != null && !parent.shortcutsInvalidated) {
+			parent.invalidateShortcuts();
 		}
 	}
 	
@@ -1437,12 +1486,6 @@ public class Widget {
 			widget.remove();
 		}
 		widget.parent = this;
-		if (widget.hasShortcuts()) {
-			FocusManager focusManager = widget.getFocusManager();
-			if (focusManager != null) {
-				focusManager.addShortcutHandler(widget);
-			}
-		}
 		invalidate();
 		onChildAdded(widget);
 		widget.onAdded(this);

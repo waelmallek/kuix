@@ -58,7 +58,7 @@ public class Menu extends MenuItem {
 			
 			// Create the associated focusManager
 			focusManager = new FocusManager(this, true) {
-
+				
 				/* (non-Javadoc)
 				 * @see org.kalmeo.kuix.core.focus.FocusManager#processKeyEvent(byte, int)
 				 */
@@ -155,6 +155,13 @@ public class Menu extends MenuItem {
 			return layoutData;
 		}
 		
+		/* (non-Javadoc)
+		 * @see org.kalmeo.kuix.widget.Widget#isShortcutsAccessible()
+		 */
+		public boolean isShortcutsAccessible() {
+			return Menu.this.isShortcutsAccessible();
+		}
+
 		/**
 		 * Display the {@link MenuPopup}
 		 * 
@@ -260,6 +267,27 @@ public class Menu extends MenuItem {
 			return ((MenuPopup) parent).getMenu().getDepth() + 1;
 		}
 		return 0;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#getWidget(java.lang.String)
+	 */
+	public Widget getWidget(String id) {
+		Widget widget = super.getWidget(id);
+		if (widget == null && popup != null) {
+			return popup.getWidget(id);
+		}
+		return widget;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#applyShortcutsAssociation(org.kalmeo.kuix.core.focus.FocusManager, boolean)
+	 */
+	public void applyShortcutsAssociation(FocusManager focusManager, boolean forced) {
+		super.applyShortcutsAssociation(focusManager, forced);
+		if (popup != null) {
+			popup.applyShortcutsAssociation(focusManager, forced);
+		}
 	}
 
 	/**

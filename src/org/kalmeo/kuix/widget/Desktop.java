@@ -210,6 +210,13 @@ public class Desktop extends Widget {
 		super.setBounds(x, y, width, height);
 		popupContainer.setBounds(x, y, width, height);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#isVisible()
+	 */
+	public boolean isVisible() {
+		return true;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.Widget#isInWidgetTree()

@@ -151,9 +151,6 @@ public class FocusableWidget extends Widget {
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 		invalidateStylePropertiesCache(true);
-		if (!enabled) {
-			giveFocusToNearestWidget();
-		}
 	}
 	
 	/* (non-Javadoc)
@@ -192,6 +189,13 @@ public class FocusableWidget extends Widget {
 	 */
 	public void setOnLostFocus(String onLostFocus) {
 		this.onLostFocus = onLostFocus;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.kalmeo.kuix.widget.Widget#isShortcutsAccessible()
+	 */
+	public boolean isShortcutsAccessible() {
+		return super.isShortcutsAccessible() && isEnabled();
 	}
 
 	/* (non-Javadoc)

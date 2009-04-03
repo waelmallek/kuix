@@ -278,7 +278,7 @@ public final class Kuix {
 			
 			if (secondLabel != null) {
 				MenuItem secondMenuItem = popupBox.getSecondMenuItem();
-				if (firstLabel instanceof ByteArrayInputStream) {
+				if (secondLabel instanceof ByteArrayInputStream) {
 					((ByteArrayInputStream) secondLabel).reset();
 					secondMenuItem.add(Kuix.loadWidget((ByteArrayInputStream) secondLabel, null));
 				} else if (secondLabel instanceof Widget) {
