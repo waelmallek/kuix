@@ -62,6 +62,7 @@ public interface KuixConstants {
 	public static final int ALERT_CANCEL									= 1 << 7;
 	public static final int ALERT_YES										= 1 << 8;
 	public static final int ALERT_NO										= 1 << 9;
+	public static final int ALERT_HELP										= 1 << 10;
 	
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Default i18n keys
@@ -73,6 +74,7 @@ public interface KuixConstants {
 	public static final String OK_I18N_KEY									= "OK";
 	public static final String YES_I18N_KEY									= "YES";
 	public static final String NO_I18N_KEY									= "NO";
+	public static final String HELP_I18N_KEY								= "HELP";
 	public static final String SOFT_LEFT_I18N_KEY							= "SOFT_LEFT";
 	public static final String SOFT_RIGHT_I18N_KEY							= "SOFT_RIGHT";
 	

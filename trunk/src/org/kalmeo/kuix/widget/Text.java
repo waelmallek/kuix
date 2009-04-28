@@ -100,12 +100,9 @@ public class Text extends TextWidget {
 			String text = getText();
 			Font font = getFont();
 			if (font != null) {
-				if (text != null) {
-					metrics.width += font.stringWidth(text);
-				} else {
-					metrics.width += font.charWidth(' ');
-				}
-				metrics.height += font.getHeight();
+				Metrics minSize = getMinSize();
+				metrics.width += Math.max(minSize.width, text != null ? font.stringWidth(text) : font.charWidth(' ')) - minSize.width;
+				metrics.height += Math.max(minSize.height, font.getHeight()) - minSize.height;
 			}
 		} else {
 			metrics = getCachedMetrics();

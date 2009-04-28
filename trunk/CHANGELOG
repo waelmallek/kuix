@@ -11,6 +11,9 @@
 - Bug fix : fix the focusLoop problem when using scrollPane widgets
 - Bug fix : fix the shortcuts association
 - Bug fix : fix a customize secondLabel problem en PopupBox
+- Bug fix : fix minSize problem on Picture and Text widgets
+
+- Focus is now gained by a widget on pointer pressed event instead of release. 
 
 - Improve memory usage by reducing the String repetition for widget's style classes attribute.
 - Improve the shortcuts association. Sub MenuItem's shortcuts are now accessible on the main screen
@@ -20,6 +23,7 @@
 - Add a setValue(String property, Object value) method to DataProvider class to be able to set value without extend DataProvider.
 - Add a *focusSlideOnly* attribute on the Text widget to customize text sliding feature
 - Add a *indicators* the the ScrollPane to be able to indicate that extra content is present before or after visible area. Check the *showindicators* property on ScrollPane.
+- Add *help* option and label on Alerts.
 
 - Add XXX(String tag) constructor for all derivable widgets
 

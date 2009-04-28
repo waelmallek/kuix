@@ -88,6 +88,7 @@ public final class Kuix {
 	private static ByteArrayInputStream alertCancelLabelRenderer;
 	private static ByteArrayInputStream alertYesLabelRenderer;
 	private static ByteArrayInputStream alertNoLabelRenderer;
+	private static ByteArrayInputStream alertHelpLabelRenderer;
 
 	/**
 	 * Construct a {@link Kuix}
@@ -183,15 +184,17 @@ public final class Kuix {
 	 * Cutomize Kuix alert labels.
 	 * 
 	 * @param okLabelRenderer the renderer (xml input stream) used as ok label
-	 * @param cancelLabelRenderer the renderer (xml input stream)  used as cancel label
-	 * @param yesLabelRenderer the renderer (xml input stream)  used as yes label
-	 * @param noLabelRenderer the renderer (xml input stream)  used as no label
+	 * @param cancelLabelRenderer the renderer (xml input stream) used as cancel label
+	 * @param yesLabelRenderer the renderer (xml input stream) used as yes label
+	 * @param noLabelRenderer the renderer (xml input stream) used as no label
+	 * @param helpLabelRenderer the renderer (xml input stream) used as help label
 	 */
-	public static void customizeAlertLabels(ByteArrayInputStream okLabelRenderer, ByteArrayInputStream cancelLabelRenderer, ByteArrayInputStream yesLabelRenderer, ByteArrayInputStream noLabelRenderer) {
+	public static void customizeAlertLabels(ByteArrayInputStream okLabelRenderer, ByteArrayInputStream cancelLabelRenderer, ByteArrayInputStream yesLabelRenderer, ByteArrayInputStream noLabelRenderer, ByteArrayInputStream helpLabelRenderer) {
 		alertOkLabelRenderer = okLabelRenderer;
 		alertCancelLabelRenderer = cancelLabelRenderer;
 		alertYesLabelRenderer = yesLabelRenderer;
 		alertNoLabelRenderer = noLabelRenderer;
+		alertHelpLabelRenderer = helpLabelRenderer;
 	}
 	
 	/**
@@ -367,7 +370,8 @@ public final class Kuix {
 			if ((options & KuixConstants.ALERT_OK) == KuixConstants.ALERT_OK
 					|| (		(options & KuixConstants.ALERT_YES) != KuixConstants.ALERT_YES
 							&& 	(options & KuixConstants.ALERT_CANCEL) != KuixConstants.ALERT_CANCEL
-							&& 	(options & KuixConstants.ALERT_NO) != KuixConstants.ALERT_NO)) {	// Case for default OK button if there no other button
+							&& 	(options & KuixConstants.ALERT_NO) != KuixConstants.ALERT_NO
+							&& 	(options & KuixConstants.ALERT_HELP) != KuixConstants.ALERT_HELP)) {	// Case for default OK button if there no other button
 				if (alertOkLabelRenderer != null) {
 					firstLabel = alertOkLabelRenderer;
 				} else {
@@ -381,7 +385,7 @@ public final class Kuix {
 				}
 			}
 			
-			// Second menuItem : Cancel or No
+			// Second menuItem : Cancel or No or Other
 			if ((options & KuixConstants.ALERT_CANCEL) == KuixConstants.ALERT_CANCEL) {
 				if (alertCancelLabelRenderer != null) {
 					secondLabel = alertCancelLabelRenderer;
@@ -393,6 +397,12 @@ public final class Kuix {
 					secondLabel = alertNoLabelRenderer;
 				} else {
 					secondLabel = Kuix.getMessage(KuixConstants.NO_I18N_KEY);
+				}
+			} else if ((options & KuixConstants.ALERT_HELP) == KuixConstants.ALERT_HELP) {
+				if (alertHelpLabelRenderer != null) {
+					secondLabel = alertHelpLabelRenderer;
+				} else {
+					secondLabel = Kuix.getMessage(KuixConstants.HELP_I18N_KEY);
 				}
 			}
 			

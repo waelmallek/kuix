@@ -272,13 +272,14 @@ public class TextField extends Text implements CommandListener {
 	 * @see org.kalmeo.kuix.widget.FocusableWidget#isFocusable()
 	 */
 	public boolean isFocusable() {
-		return enabled && focusable;
+		return focusable;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.kalmeo.kuix.widget.AbstractTextWidget#setText(java.lang.String)
 	 */
 	public TextWidget setText(String text) {
+		hideTooltip();
 		displayedText = null;
 		return super.setText(text != null ? text.substring(0, Math.min(text.length(), maxSize)) : null);
 	}
