@@ -272,9 +272,10 @@ public class Picture extends Widget {
 		if (needToComputePreferredSize(preferredWidth)) {
 			metrics = super.getPreferredSize(preferredWidth);
 			if (image != null) {
+				Metrics minSize = getMinSize();
 				boolean rotate = isRotate();
-				metrics.width += rotate ? frameHeight : frameWidth;
-				metrics.height += rotate ? frameWidth : frameHeight;
+				metrics.width += Math.max(minSize.width, rotate ? frameHeight : frameWidth) - minSize.width;
+				metrics.height += Math.max(minSize.height, rotate ? frameWidth : frameHeight) - minSize.height;
 			}
 		} else {
 			metrics = getCachedMetrics();

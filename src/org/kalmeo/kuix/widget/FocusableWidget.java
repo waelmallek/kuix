@@ -293,7 +293,7 @@ public class FocusableWidget extends Widget {
 	 * @see org.kalmeo.kuix.widget.Widget#processPointerEvent(byte, int, int)
 	 */
 	public boolean processPointerEvent(byte type, int x, int y) {
-		if (isFocusable() && type == KuixConstants.POINTER_RELEASED_EVENT_TYPE) {
+		if (isFocusable() && type == KuixConstants.POINTER_PRESSED_EVENT_TYPE) {
 			requestFocus();
 			return true;
 		}
