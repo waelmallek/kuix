@@ -33,6 +33,7 @@
 
 - Methods **refactoring** :
   - widget.clearCachedStyle(...) *has been moved to* widget.clearCachedStyles(...)   
+  - focusManager.findFirstScrollPaneParent(...) *has been moved to* Kuix.findFirstScrollPaneParent(...) - as static method
 
 ##Version 1.1.0 (2009-02-10)
 

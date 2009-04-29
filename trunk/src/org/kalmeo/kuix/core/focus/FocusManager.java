@@ -23,6 +23,7 @@ package org.kalmeo.kuix.core.focus;
 
 import java.util.Vector;
 
+import org.kalmeo.kuix.core.Kuix;
 import org.kalmeo.kuix.core.KuixConstants;
 import org.kalmeo.kuix.util.Alignment;
 import org.kalmeo.kuix.widget.Menu;
@@ -141,23 +142,6 @@ public class FocusManager {
 	}
 	
 	/**
-	 * Try to retrieve the direct or indirect parent scrollPane of the given
-	 * <code>widget</code> instance.
-	 * 
-	 * @param widget
-	 * @return The direct or indirect parent {@link ScrollPane} if it exists or
-	 *         <code>null</code>
-	 */
-	public ScrollPane findFirstScrollPaneParent(Widget widget) {
-		for (Widget container = widget.parent; container != null; container = container.parent) {
-			if (container instanceof ScrollPane) {
-				return ((ScrollPane) container);
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * Request the <code>widget</code> focus
 	 * 
 	 * @param widget
@@ -193,7 +177,7 @@ public class FocusManager {
 		}
 		Widget otherFocus = ((startWidget == null) ? rootWidget : startWidget).getOtherFocus(rootWidget, startWidget, null, forward, direction, true, true, true);
 		if (otherFocus != null) {
-			ScrollPane scrollPane = findFirstScrollPaneParent(otherFocus);
+			ScrollPane scrollPane = Kuix.findFirstScrollPaneParent(otherFocus);
 			if (scrollPane != null) {
 				if (!scrollPane.bestScrollToChild(otherFocus, startWidget != null)) {
 					return;
@@ -207,14 +191,14 @@ public class FocusManager {
 						}
 						return;
 					}
-					if (findFirstScrollPaneParent(nextOtherFocus) != scrollPane || scrollPane.isChildInsideClippedArea(nextOtherFocus) && !scrollPane.isMarkerWidget(nextOtherFocus)) {
+					if (Kuix.findFirstScrollPaneParent(nextOtherFocus) != scrollPane || scrollPane.isChildInsideClippedArea(nextOtherFocus) && !scrollPane.isMarkerWidget(nextOtherFocus)) {
 						otherFocus = nextOtherFocus;
 					}
 				}
 			}
 			requestFocus(otherFocus);
 		} else if (!loop && focusedWidget != null) {
-			ScrollPane scrollPane = findFirstScrollPaneParent(focusedWidget);
+			ScrollPane scrollPane = Kuix.findFirstScrollPaneParent(focusedWidget);
 			if (scrollPane != null) {
 				scrollPane.bestScrollToChild(focusedWidget, true);
 			}
