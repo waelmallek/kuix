@@ -251,7 +251,7 @@ public class FocusableWidget extends Widget {
 		if (isFocusable()) {
 			FocusManager focusManager = getFocusManager();
 			if (focusManager != null) {
-				ScrollPane scrollContainer = focusManager.findFirstScrollPaneParent(this);
+				ScrollPane scrollContainer = Kuix.findFirstScrollPaneParent(this);
 				if (scrollContainer != null) {
 					scrollContainer.bestScrollToChild(this, false);
 				}
@@ -294,6 +294,10 @@ public class FocusableWidget extends Widget {
 	 */
 	public boolean processPointerEvent(byte type, int x, int y) {
 		if (isFocusable() && type == KuixConstants.POINTER_PRESSED_EVENT_TYPE) {
+			ScrollPane scrollPane = null;
+			if ((scrollPane = Kuix.findFirstScrollPaneParent(this)) != null) {
+				scrollPane.processPointerEvent(type, x, y);
+			}
 			requestFocus();
 			return true;
 		}

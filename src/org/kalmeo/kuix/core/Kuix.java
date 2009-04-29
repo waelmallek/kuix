@@ -44,6 +44,7 @@ import org.kalmeo.kuix.widget.MenuItem;
 import org.kalmeo.kuix.widget.Picture;
 import org.kalmeo.kuix.widget.PopupBox;
 import org.kalmeo.kuix.widget.Screen;
+import org.kalmeo.kuix.widget.ScrollPane;
 import org.kalmeo.kuix.widget.Text;
 import org.kalmeo.kuix.widget.TextWidget;
 import org.kalmeo.kuix.widget.Widget;
@@ -594,6 +595,25 @@ public final class Kuix {
 		Kuix.loadXml(menu, inputStream, dataProvider);
 	}
 	
+	// Widget Manipulation ////////////////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * Try to retrieve the direct or indirect parent scrollPane of the given
+	 * <code>widget</code> instance.
+	 * 
+	 * @param widget
+	 * @return The direct or indirect parent {@link ScrollPane} if it exists or
+	 *         <code>null</code>
+	 */
+	public static ScrollPane findFirstScrollPaneParent(Widget widget) {
+		for (Widget container = widget.parent; container != null; container = container.parent) {
+			if (container instanceof ScrollPane) {
+				return ((ScrollPane) container);
+			}
+		}
+		return null;
+	}
+
 	// XML ////////////////////////////////////////////////////////////////////////////////////
 	
 	/**
