@@ -506,6 +506,13 @@ public class Screen extends Widget {
 	}
 	
 	/**
+	 * @return <code>true</code> if the Screen has a top bar
+	 */
+	public boolean hasTopBar() {
+		return topBar != null;
+	}
+	
+	/**
 	 * Create the internal topBar instance if it doesn't exist and return it.
 	 * 
 	 * @return the internal topBar instance
@@ -516,6 +523,13 @@ public class Screen extends Widget {
 			super.add(topBar);
 		}
 		return topBar;
+	}
+	
+	/**
+	 * @return <code>true</code> if the Screen has a bottom bar
+	 */
+	public boolean hasBottomBar() {
+		return bottomBar != null;
 	}
 	
 	/**

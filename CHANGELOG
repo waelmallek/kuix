@@ -12,6 +12,7 @@
 - Bug fix : fix the shortcuts association
 - Bug fix : fix a customize secondLabel problem en PopupBox
 - Bug fix : fix minSize problem on Picture and Text widgets
+- Bug fix : screen bottom bar are not grayed if MenuPopup is opened
 
 - Focus is now gained by a widget on pointer pressed event instead of release. 
 
