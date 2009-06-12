@@ -36,6 +36,8 @@ import org.kalmeo.kuix.layout.StaticLayoutData;
 import org.kalmeo.kuix.transition.Transition;
 import org.kalmeo.kuix.util.Color;
 import org.kalmeo.kuix.util.Insets;
+import org.kalmeo.kuix.widget.Menu.MenuPopup;
+import org.kalmeo.kuix.widget.Screen.ScreenMenu;
 
 /**
  * This class represents the Kuix desktop. <br>
@@ -483,10 +485,30 @@ public class Desktop extends Widget {
 			// Retrieve the last child gray color
 			Color grayedColor = popupContainer.getLastChild().getGrayedColor();
 			if (grayedColor != null) {
+				
+				// Special case for screen bottom bar menu popup : the bottom bar is not grayed if it exists
+				int grayedAreaHeight = getHeight();
+				Widget popupWidget = popupContainer.getLastChild();
+				if (popupWidget instanceof MenuPopup) {
+					MenuPopup menuPopup = (MenuPopup) popupWidget;
+					while (menuPopup != null) {
+						Menu menu = menuPopup.getMenu();
+						if (menu instanceof ScreenMenu) {
+							if (screen != null && screen.hasBottomBar()) {
+								grayedAreaHeight -= screen.getBottomBar().getHeight();
+							}
+							break;
+						} else if (menu != null && menu.parent instanceof MenuPopup) {
+							menuPopup = (MenuPopup) menu.parent;
+						} else {
+							break;
+						}
+					}
+				}
 			
 				// Draw the grayed layer
-				int maxSize = Math.max(getWidth(), getHeight());
-				int minSize = Math.min(getWidth(), getHeight());
+				int maxSize = Math.max(getWidth(), grayedAreaHeight);
+				int minSize = Math.min(getWidth(), grayedAreaHeight);
 				g.setColor(grayedColor.getRGB());
 				int i, j;
 				for (i = 0; i < maxSize; i = i + 2) {
