@@ -178,6 +178,13 @@ public class ScrollPane extends Widget {
 			}
 			
 			/* (non-Javadoc)
+			 * @see org.kalmeo.kuix.widget.Widget#add(org.kalmeo.kuix.widget.Widget)
+			 */
+			public Widget add(Widget widget) {
+				return this.add(widget, this.getLastChild(), !ScrollPane.this.useMarkers);
+			}
+			
+			/* (non-Javadoc)
 			 * @see org.kalmeo.kuix.widget.Widget#removeAll()
 			 */
 			public void removeAll() {
