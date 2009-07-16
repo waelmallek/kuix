@@ -892,7 +892,7 @@ public final class Kuix {
 									attributeName = key.toLowerCase();
 									attributeValue = (String) attributes.get(key);	// No property parsing at this position to optimize processing
 									if (!newWidget.setAttribute(attributeName, attributeValue)) {
-										throw new IllegalArgumentException("Unknow attribute : " + attributeName);
+										throw new IllegalArgumentException("Unknow attribute : " + attributeName + " for tag : " + tag);
 									}
 								}
 							}
